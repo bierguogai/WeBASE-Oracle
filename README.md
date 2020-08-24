@@ -1,6 +1,6 @@
 # Oracle-Service
    
-###原理简介：
+### 原理简介：
    区块链是一个确定性的、封闭的系统环境，目前区块链只能获取到链内的数据，而不能获取到链外真实世界的数据，区块链与现实世界是割裂的。
    
    
@@ -31,13 +31,13 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone https://github.com/WeBankFinTech/WeBASE-Front.git
+git clone -b https://github.com/WeBankFinTech/WeBASE-Oracle.git
 ```
 
 进入目录：
 
 ```
-cd WeBASE-Front
+cd WeBASE-Oracle
 ```
 
 ## 3. 编译代码
@@ -131,7 +131,6 @@ cd conf
 **备注**：服务进程起来后，需通过日志确认是否正常启动，出现以下内容表示正常；如果服务出现异常，确认修改配置后，重启提示服务进程在运行，则先执行stop.sh，再执行start.sh。
 
 ```
-...
 	Application() - main run success...
 ```
 
