@@ -1,0 +1,12 @@
+/.gradle/
+/.idea/
+/build/
+/key/
+log/
+/dist/
+/dist.zip
+*.crt
+*.key
+*.iml
+out/
+.DS_Store
