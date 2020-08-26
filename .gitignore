@@ -1,7 +1,7 @@
-/.gradle/
-/.idea/
-/build/
-/key/
+.gradle/
+.idea/
+build/
+key/
 log/
 /dist/
 /dist.zip
