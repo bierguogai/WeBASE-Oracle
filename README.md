@@ -31,7 +31,7 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone -b https://github.com/WeBankFinTech/WeBASE-Oracle.git
+git clone -b  dev https://github.com/WeBankFinTech/WeBASE-Oracle.git
 ```
 
 进入目录：
