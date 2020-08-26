@@ -23,7 +23,7 @@
 | 依赖软件 | 支持版本 |
 | :-: | :-: |
 | Java | JDK8或以上版本 |
-| FISCO-BCOS | V2.0.x版本 |
+| FISCO-BCOS | V2.x版本 |
 
 **备注：** Java推荐使用[OpenJDK](./appendix.html#java )，建议从[OpenJDK网站](https://jdk.java.net/java-se-ri/11) 自行下载（CentOS的yum仓库的OpenJDK缺少JCE(Java Cryptography Extension)，导致Web3SDK无法正常连接区块链节点）
 
@@ -31,7 +31,7 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone -b  dev https://github.com/WeBankFinTech/WeBASE-Oracle.git
+git clone -b dev https://github.com/WeBankFinTech/WeBASE-Oracle.git
 ```
 
 进入目录：
