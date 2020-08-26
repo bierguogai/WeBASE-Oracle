@@ -55,7 +55,7 @@ gradle build -x test
 chmod +x ./gradlew && ./gradlew build -x test
 ```
 
-构建完成后，会在根目录WeBASE-Front下生成已编译的代码目录dist。
+构建完成后，会在根目录WeBASE-Oracle下生成已编译的代码目录dist。
 
 ## 4. 修改配置
 
