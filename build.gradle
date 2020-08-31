@@ -43,7 +43,7 @@ List http = ['org.apache.httpcomponents:httpclient:4.5.3']
 
 dependencies {
     // guomi contract compile: USE 'socJ-all-0.4.25-gm' to REPLACE 'ethereum:solcJ-all'
-    compile('org.fisco-bcos:web3sdk:2.5.0')
+    compile('org.fisco-bcos:web3sdk:2.6.1')
     //        {
 //            exclude group:"org.ethereum"
 //        }

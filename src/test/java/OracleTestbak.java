@@ -2,8 +2,10 @@ import com.webank.oracle.Application;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.transaction.OracleCore;
 import org.fisco.bcos.channel.client.Service;
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.channel.ChannelEthereumService;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -44,14 +46,14 @@ public class OracleTestbak {
 
     @Test
     public void testOracleChain1() throws Exception {
-
+        Credentials credentials = GenCredential.create();
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
 
         //fist  secretRegistty
 //        OraclizeCore oraliceCore = OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
         System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getContractAddress(), web3j,credentials, contractGasProvider);
+        OracleCore oraliceCore = OracleCore.load(eventRegisterProperties.getEventRegisters().get(0).getContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset
@@ -77,7 +79,7 @@ public class OracleTestbak {
 //        OraclizeCore oraliceCore = OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
         System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(1).getContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(1).getContractAddress(), web3j,credentials, contractGasProvider);
+        OracleCore oraliceCore = OracleCore.load(eventRegisterProperties.getEventRegisters().get(1).getContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset
