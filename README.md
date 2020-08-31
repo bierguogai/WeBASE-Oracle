@@ -15,7 +15,7 @@
    如图![oracle流程图](./oracle.png)
    
    用户只需要参考SampleOracle.sol合约，部署此合约并调用oracle_setNetwork方法并传入oracleCore合约地址，这样Oracle-Service可以回写结果到用户的SampleOracle合约。用户就可以调用自己的SampleOracle合约查询到链下的数据。
-
+   此版本支持国密码。
 ### 部署说明：
 
 ## 1. 前提条件
@@ -31,7 +31,7 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone -b dev https://github.com/WeBankFinTech/WeBASE-Oracle.git
+git clone -b dev-gm https://github.com/WeBankFinTech/WeBASE-Oracle.git
 ```
 
 进入目录：
