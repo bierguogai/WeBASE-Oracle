@@ -10,3 +10,5 @@ log/
 *.iml
 out/
 .DS_Store
+*.crt
+*.key
