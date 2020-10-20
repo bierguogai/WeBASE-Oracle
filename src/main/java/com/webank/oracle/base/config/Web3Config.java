@@ -14,9 +14,14 @@
 package com.webank.oracle.base.config;
 
 
-import com.webank.oracle.base.properties.SdkProperties;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
+import java.util.stream.Collectors;
+
 import org.fisco.bcos.channel.client.Service;
 import org.fisco.bcos.channel.handler.ChannelConnections;
 import org.fisco.bcos.web3j.crypto.EncryptType;
@@ -28,14 +33,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
-import java.util.stream.Collectors;
+import com.webank.oracle.base.properties.SdkProperties;
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * init web3sdk getService.
@@ -59,25 +60,6 @@ public class Web3Config {
         log.info("*****init EncrytType:" + sdk.getEncryptType());
         return new EncryptType(sdk.getEncryptType());
     }
-
-
-//    @Bean
-//    public GroupChannelConnectionsConfig getGroupChannelConnectionsConfig() {
-//        List<ChannelConnections> channelConnectionsList = new ArrayList<>();
-//
-//        List<String> connectionsList = new ArrayList<>();
-//        connectionsList.add(sdk.getIp() + ":" + sdk.getChannelPort());
-//        log.info("*********" + sdk.getIp() + ":" + sdk.getChannelPort());
-//        ChannelConnections channelConnections = new ChannelConnections();
-//        channelConnections.setConnectionsStr(connectionsList);
-//        channelConnections.setGroupId(1);
-//        channelConnectionsList.add(channelConnections);
-//
-//        GroupChannelConnectionsConfig groupChannelConnectionsConfig =
-//                new GroupChannelConnectionsConfig();
-//        groupChannelConnectionsConfig.setAllChannelConnections(channelConnectionsList);
-//        return groupChannelConnectionsConfig;
-//    }
 
     /**
      * init getWeb3j.

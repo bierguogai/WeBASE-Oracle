@@ -1,12 +1,7 @@
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.junit.Test;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+package com.webank.test.oracle;
+
+import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
+import static com.webank.oracle.base.utils.JsonUtils.toList;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -16,28 +11,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
-import static com.webank.oracle.base.utils.JsonUtils.toList;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.webank.oracle.base.utils.HttpUtil;
 
 public class OracleTest {
 
-    CloseableHttpClient httpClient
-            = HttpClients.custom()
-            .setSSLHostnameVerifier(new NoopHostnameVerifier())
-            .build();
-    HttpComponentsClientHttpRequestFactory requestFactory
-            = new HttpComponentsClientHttpRequestFactory();
-
-
-
-
     @Test
     public void stringTest(){
-
-        requestFactory.setHttpClient(httpClient);
-        RestTemplate restTemplate = new RestTemplate( requestFactory);
-
-
 
         String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
         int left = argValue.indexOf("(");
@@ -66,9 +50,6 @@ public class OracleTest {
     @Test
     public void httpsTest() throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
-        requestFactory.setHttpClient(httpClient);
-        RestTemplate restTemplate = new RestTemplate( requestFactory);
-
        // String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
 
         String argValue = "json(https://api.kraken.com/0/public/Ticker?pair=ETHXBT).result.XETHXXBT.c.0";
@@ -87,7 +68,7 @@ public class OracleTest {
 //            Object o = getValueByKeys(result, httpResultIndexList);
 //            System.out.println(o);
        // Object o =  HttpService.getObjectByUrlAndKeys(url,header,httpResultIndexList);
-        String result = restTemplate.getForObject(url, String.class);
+        String result = HttpUtil.get(url);
         System.out.println(result);
     }
 

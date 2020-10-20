@@ -8,7 +8,6 @@ log/
 *.crt
 *.key
 *.iml
-out/
-.DS_Store
 *.crt
 *.key
+out
