@@ -1,24 +1,22 @@
 package com.webank.oracle.http;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.webank.oracle.base.utils.HttpsUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+import static com.webank.oracle.base.utils.JsonUtils.toList;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
-import static com.webank.oracle.base.utils.JsonUtils.toList;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.webank.oracle.base.utils.HttpUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * service for http request.
@@ -26,8 +24,6 @@ import static com.webank.oracle.base.utils.JsonUtils.toList;
 @Slf4j
 @Service
 public class HttpService {
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * get result by url,and get value from the result by keyList.
@@ -39,14 +35,13 @@ public class HttpService {
     //todo  exception log
     public Object getObjectByUrlAndKeys(String url, String formate, List<String> resultKeyList) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
         try {
-            //String result = restTemplate.getForObject(url, String.class);
-            String result =     HttpsUtil.get(url);
-            if(formate.equals("json")) {
+            String result = HttpUtil.get(url);
+            if (formate.equals("json")) {
                 JsonNode jsonNode = stringToJsonNode(result);
                 return getValueByKeys(jsonNode, resultKeyList);
             }
             //if(formate.equals("plain"))
-            else  {
+            else {
                 return result.split("\n")[0];
             }
         }
@@ -67,7 +62,7 @@ public class HttpService {
      * @param keyList
      * @return
      */
-    private static  Object getValueByKeys(JsonNode jsonNode, List<String> keyList) {
+    private static Object getValueByKeys(JsonNode jsonNode, List<String> keyList) {
         if (jsonNode == null || keyList == null || keyList.size() == 0) return jsonNode;
         Object finalResult = jsonNode;
         for (String key : keyList) {
@@ -90,7 +85,7 @@ public class HttpService {
             return jsonArray.get(Integer.valueOf(String.valueOf(key)));
         }
         try {
-            JsonNode jsonNode1 = (JsonNode)jsonNode;
+            JsonNode jsonNode1 = (JsonNode) jsonNode;
             return jsonNode1.get(key);
         } catch (Exception ex) {
             return jsonNode;
