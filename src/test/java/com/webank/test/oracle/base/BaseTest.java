@@ -9,7 +9,6 @@ import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.webank.oracle.Application;
 import com.webank.oracle.base.exception.OracleException;
@@ -21,7 +20,7 @@ import com.webank.oracle.base.properties.EventRegisterProperties;
  */
 
 @SpringBootTest(classes = Application.class)
-@Transactional
+//@Transactional
 public class BaseTest {
     @Autowired protected Map<Integer, Map<Integer, Web3j>> web3jMap;
     @Autowired protected EventRegisterProperties eventRegisterProperties;

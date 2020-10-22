@@ -3,7 +3,6 @@ package com.webank.test.oracle;
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
-import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -48,7 +47,7 @@ public class OracleTest {
     }
 
     @Test
-    public void httpsTest() throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public void httpsTest() throws Exception, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
        // String argValue = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
 

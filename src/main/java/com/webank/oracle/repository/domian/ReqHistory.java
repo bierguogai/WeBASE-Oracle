@@ -1,5 +1,7 @@
 package com.webank.oracle.repository.domian;
 
+import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -12,6 +14,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.webank.oracle.base.enums.OracleVersionEnum;
+import com.webank.oracle.base.enums.SourceTypeEnum;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,7 +49,7 @@ public class ReqHistory {
     /**
      * 请求编号，唯一
      */
-    @Column(unique = true, nullable = false, length = 64)
+    @Column(unique = true, nullable = false, length = 66)
     @EqualsAndHashCode.Include
     private String reqId;
 
@@ -86,8 +91,8 @@ public class ReqHistory {
      * 请求处理时长，默认 0
      */
     @ColumnDefault("0")
-    @Column(unique = false, nullable = false, columnDefinition = "INT(11) UNSIGNED")
-    private int processTime;
+    @Column(unique = false, nullable = false, columnDefinition = "BIGINT(20) UNSIGNED")
+    private long processTime;
 
     /**
      * 请求结果
@@ -98,7 +103,7 @@ public class ReqHistory {
     /**
      * 请求失败是错误信息
      */
-    @Column(nullable = true, length = 512)
+    @Column(nullable = true, length = MAX_ERROR_LENGTH)
     private String error;
 
     /**
@@ -119,4 +124,17 @@ public class ReqHistory {
     private LocalDateTime modifyTime;
 
 
+    /**
+     * @return
+     */
+    public static ReqHistory build(String reqId, String userContract,
+                                   OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum, String reqQuery) {
+        ReqHistory reqHistory = new ReqHistory();
+        reqHistory.setReqId(reqId);
+        reqHistory.setOracleVersion(oracleVersionEnum.getId());
+        reqHistory.setUserContract(userContract);
+        reqHistory.setSourceType(sourceTypeEnum.getId());
+        reqHistory.setReqQuery(reqQuery);
+        return reqHistory;
+    }
 }

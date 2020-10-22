@@ -10,11 +10,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OracleVersionEnum {
-    _0(0,"eg. init version")
+public enum SourceTypeEnum {
+    URL(0, "url","eg. init version")
     ;
 
     private int id;
+    private String type;
     private String description;
+
 
 }

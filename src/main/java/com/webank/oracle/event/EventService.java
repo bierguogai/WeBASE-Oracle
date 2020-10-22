@@ -16,23 +16,26 @@
 
 package com.webank.oracle.event;
 
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.event.callback.ContractEventCallback;
-import com.webank.oracle.transaction.OracleCore;
-import com.webank.oracle.transaction.OracleService;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.transaction.OracleCore.LOG1_EVENT;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.fisco.bcos.channel.event.filter.EventLogUserParams;
 import org.fisco.bcos.web3j.abi.EventEncoder;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.event.callback.ContractEventCallback;
+import com.webank.oracle.repository.ReqHistoryRepository;
+import com.webank.oracle.transaction.OracleCore;
+import com.webank.oracle.transaction.OracleService;
 
-import static com.webank.oracle.transaction.OracleCore.LOG1_EVENT;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * event notify in message queue service
@@ -51,6 +54,7 @@ public class EventService {
     @Autowired
     private EventRegisterProperties eventRegisterProperties;
 
+    @Autowired private ReqHistoryRepository reqHistoryRepository;
 
     /**
      * 在org.fisco.bcos.channel.client.Service中注册EventLogPush不会持久化
@@ -63,8 +67,8 @@ public class EventService {
             String contractAddress;
             EventRegister eventRegister = eventRegisterList.get(i);
             if (eventRegister.getContractAddress() == null || eventRegister.getContractAddress().equals("")) {
-                contractAddress = oracleService.deployOracleCore(eventRegister.getChainId(),eventRegister.getGroup());
-                log.info("chain {} group {} oracle-core has been deployed and  address is : {}" , eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
+                contractAddress = oracleService.deployOracleCore(eventRegister.getChainId(), eventRegister.getGroup());
+                log.info("chain {} group {} oracle-core has been deployed and  address is : {}", eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
                 eventRegister.setContractAddress(contractAddress);
             }
 
@@ -73,8 +77,8 @@ public class EventService {
 
             // init EventLogUserParams for register
             EventLogUserParams params = initSingleEventLogUserParams(eventRegister);
-            ContractEventCallback callBack = new ContractEventCallback(oracleService, decoder,eventRegister.getChainId(),eventRegister.getGroup() );
-            log.debug("&&&&&&registerContractEvent chainId: {} groupId:{},abi:{},params:{}",eventRegister.getChainId(), eventRegister.getGroup(), OracleCore.ABI, params);
+            ContractEventCallback callBack = new ContractEventCallback(oracleService, reqHistoryRepository, decoder, eventRegister.getChainId(), eventRegister.getGroup());
+            log.debug("&&&&&&registerContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), OracleCore.ABI, params);
             org.fisco.bcos.channel.client.Service service = serviceMapWithChainId.get(eventRegister.getChainId()).get(eventRegister.getGroup());
             service.registerEventLogFilter(params, callBack);
         }

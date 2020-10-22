@@ -14,14 +14,12 @@
 
 package com.webank.oracle.transaction;
 
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.utils.DecodeOutputUtils;
-import com.webank.oracle.http.HttpService;
-import com.webank.oracle.keystore.KeyStoreService;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
+
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -31,11 +29,14 @@ import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
+import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.base.utils.DecodeOutputUtils;
+import com.webank.oracle.http.HttpService;
+import com.webank.oracle.keystore.KeyStoreService;
 
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * OracleService.
@@ -43,8 +44,9 @@ import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 @Slf4j
 @Service
 public class OracleService {
+
     @Autowired
-    Map<Integer,Map<Integer, Web3j>> web3jMap;
+    Map<Integer, Map<Integer, Web3j>> web3jMap;
     @Autowired
     private EventRegisterProperties properties;
     @Autowired
@@ -59,9 +61,9 @@ public class OracleService {
     /**
      * Get data from url in contractEventLog and upload it to blockChain.
      */
-    public void getDataFromUrlAndUpChain(String contractAddress, byte[] logId, String url,String formate, List<String> httpResultIndexList, int chainId, int groupId) throws Exception {
+    public void getDataFromUrlAndUpChain(String contractAddress, byte[] logId, String url, String formate, List<String> httpResultIndexList, int chainId, int groupId) throws Exception {
         //get data
-        Object httpResult = httpService.getObjectByUrlAndKeys(url,formate, httpResultIndexList);
+        Object httpResult = httpService.getObjectByUrlAndKeys(logId,url,formate, httpResultIndexList);
         log.info("url {} https result: {} ", url, toJSONString(httpResult));
         //send transaction
         upBlockChain(contractAddress, logId, toJSONString(httpResult), chainId, groupId);
@@ -75,13 +77,13 @@ public class OracleService {
         String cidStr = Numeric.toHexString(cid);
         log.debug("upBlockChain start. contractAddress:{} data:{} cid:{}", contractAddress, data, cidStr);
         try {
-            Web3j web3j = getWeb3j(chainId,groupId);
+            Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
             TemplateOracle templateOracle = TemplateOracle.load(contractAddress, web3j, credentials, contractGasProvider);
             TransactionReceipt receipt = templateOracle.__callback(cid, data).send();
             log.info("&&&&&" + receipt.getStatus());
             dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}",chainId,groupId, contractAddress, data, cidStr);
+            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr);
         } catch (OracleException oe) {
             //todo
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr, oe);
@@ -115,16 +117,14 @@ public class OracleService {
         }
     }
 
-    public   String deployOracleCore(int chainId, int group)  {
+    public String deployOracleCore(int chainId, int group) {
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {
             oraliceCore = OracleCore.deploy(getWeb3j(chainId, group), credentials, contractGasProvider).send();
-        }
-        catch (OracleException e ){
-            throw e ;
-        }
-        catch  (Exception e) {
+        } catch (OracleException e) {
+            throw e;
+        } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
         String orcleAddress = oraliceCore.getContractAddress();

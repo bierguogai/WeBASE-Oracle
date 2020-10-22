@@ -1,5 +1,7 @@
 package com.webank.oracle.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.webank.oracle.repository.domian.ReqHistory;
@@ -17,7 +19,7 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
      * @param reqId
      * @return
      */
-    ReqHistory findByReqId(String reqId);
+    Optional<ReqHistory> findByReqId(String reqId);
 
 
 //    List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);

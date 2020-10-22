@@ -18,8 +18,13 @@ public class ConstantProperties {
     public static final String TYPE_CONSTRUCTOR = "constructor";
     public static final String TYPE_FUNCTION = "function";
     public static final String TYPE_EVENT = "event";
+
+    public static final int MAX_ERROR_LENGTH = 512;
+
     public static String version;
     public static int chainId;
 
-    private Long transMaxWait;
+    private int connectTimeout = 5000;
+    private int readTimeout = 5000;
+    private int writeTimeout = 5000;
 }
