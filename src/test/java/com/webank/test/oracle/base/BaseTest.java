@@ -7,10 +7,9 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webank.oracle.Application;
 import com.webank.oracle.base.exception.OracleException;
@@ -21,8 +20,8 @@ import com.webank.oracle.base.properties.EventRegisterProperties;
  *
  */
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Application.class)
+@Transactional
 public class BaseTest {
     @Autowired protected Map<Integer, Map<Integer, Web3j>> web3jMap;
     @Autowired protected EventRegisterProperties eventRegisterProperties;

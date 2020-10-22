@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-public class TestHttpUtil {
+public class HttpUtilTest {
 
     public static final String[] URL_ARRAY = new String[]{
             "https://api.kraken.com/0/public/Ticker?pair=ETHXBT",
