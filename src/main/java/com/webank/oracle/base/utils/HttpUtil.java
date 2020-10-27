@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.webank.oracle.base.enums.ReqStatusEnum;
+import com.webank.oracle.base.exception.RemoteCallException;
+
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -21,32 +24,59 @@ public class HttpUtil {
     public static final String EMPTY_RESPONSE = "";
 
 
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     /**
-     * 连接超时时间, 默认 10s.
+     * 连接超时时间, 默认 5s.
      */
-    private static final int CONNECT_TIMEOUT = 5000;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 5;
     /**
-     * 默认超时时间, 默认 10s.
+     * 默认读取超时时间, 默认 5s.
      */
-    private static final int DEFAULT_TIMEOUT = 60000;
+    private static final int DEFAULT_READ_TIMEOUT = 5;
+    /**
+     * 默认写数据超时时间, 默认 5s.
+     */
+    private static final int DEFAULT_WRITE_TIMEOUT = 5;
 
     // avoid creating several instances, should be singleon
     private static OkHttpClient client = null;
 
-    static {
+
+    /**
+     *
+     * @param connectTimeout
+     * @param readTimeout
+     * @param writeTimeout
+     */
+    public static void init(int connectTimeout, int readTimeout, int writeTimeout) {
+        log.info("Init http util, connect timeout:[{}], read timeout:[{}], write timeout:[{}]",
+                connectTimeout, readTimeout, writeTimeout);
+
         client = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS) //连接超时
-                .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS) //读取超时
-                .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS) //写超时
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS) //连接超时
+                .readTimeout(readTimeout, TimeUnit.SECONDS) //读取超时
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS) //写超时
                 .build();
     }
 
-    public static String post(String url, Map<String, String> queryMap, Object body) {
+    /**
+     *
+     * @param url
+     * @param queryMap
+     * @param body
+     * @return
+     * @throws IOException
+     */
+    public static String post(String url, Map<String, String> queryMap, Object body) throws Exception {
+        // check if client is null
+        if (client == null) {
+            log.warn("Http util was not initialized yet, init with default timeout." );
+
+            init(DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT, DEFAULT_WRITE_TIMEOUT);
+        }
+
         log.info("Start Http request:[{}:{}:{}]", url, JsonUtils.toJSONString(queryMap), JsonUtils.toJSONString(body));
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
@@ -66,11 +96,10 @@ public class HttpUtil {
             Request request = requestBuilder.build();
 
             Response response = client.newCall(request).execute();
+            checkHttpStatusCode(response);
             responseString = response.body().string();
-        } catch (IOException e) {
-            log.error("Http request failed:Req:[{}], body:[{}]",
-                    newUrl, JsonUtils.toJSONString(body), e);
-            // TODO.
+        } catch (Exception e) {
+            throw e;
         } finally {
             log.info("Req:[{}], body:[{}], response:[{}]", newUrl, JsonUtils.toJSONString(body), responseString);
         }
@@ -78,17 +107,40 @@ public class HttpUtil {
 
     }
 
-    public static String post(String url, Object body) {
+    public static String post(String url, Object body) throws Exception {
         return post(url, null, body);
     }
 
 
-    public static String get(String url) {
+    public static String get(String url) throws Exception {
         return get(url, null);
 
     }
 
-    public static String get(String url, Map<String, String> queryMap) {
+    public static String get(String url, Map<String, String> queryMap) throws Exception {
         return post(url, queryMap, null);
+    }
+
+    /**
+     * Check http status code.
+     *
+     * @param response
+     */
+    public static void checkHttpStatusCode(Response response){
+        if (response == null){
+            throw RemoteCallException.build(ReqStatusEnum.EMPTY_RESPONSE_ERROR);
+        }
+        switch (response.code()){
+            case 200:
+                return;
+            case 404:
+                throw RemoteCallException.build(ReqStatusEnum._404_NOT_FOUND_ERROR);
+
+            case 500:
+                throw RemoteCallException.build(ReqStatusEnum._500_SERVER_ERROR);
+
+            default:
+                throw RemoteCallException.build(ReqStatusEnum.OTHER_CODE_ERROR, String.valueOf(response.code()));
+        }
     }
 }

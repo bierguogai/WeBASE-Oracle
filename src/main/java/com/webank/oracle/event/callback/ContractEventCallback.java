@@ -16,8 +16,10 @@
 
 package com.webank.oracle.event.callback;
 
-import com.webank.oracle.base.utils.CommonUtils;
-import com.webank.oracle.transaction.OracleService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
@@ -29,33 +31,42 @@ import org.fisco.bcos.web3j.utils.Numeric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.webank.oracle.base.enums.OracleVersionEnum;
+import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.utils.CommonUtils;
+import com.webank.oracle.repository.ReqHistoryRepository;
+import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.transaction.OracleService;
 
 /**
  * 从callback中获取事件推送过来的请求地址，再请求该地址获取数据上链。
  */
 public class ContractEventCallback extends EventLogPushWithDecodeCallback {
+
     private static final String LOG_ID = "cid";
     private static final String LOG_ARG = "arg";
     private static final String LOG_SENDER = "sender";
+    private static final String LOG_TIMESTAMP = "sender";
+    private static final String LOG_DATASOURCE = "sender";
 
     private static final Logger logger =
             LoggerFactory.getLogger(ContractEventCallback.class);
 
     private OracleService oracleService;
+    private ReqHistoryRepository reqHistoryRepository;
 
     private int chainId;
     private int groupId;
 
 
-    public ContractEventCallback(OracleService oracleService, TransactionDecoder decoder, int chainId, int groupId) {
+    public ContractEventCallback(OracleService oracleService, ReqHistoryRepository reqHistoryRepository,
+                                 TransactionDecoder decoder, int chainId, int groupId) {
         // onPush will call father class's decoder, init EventLogPushWithDecodeCallback's decoder
         this.setDecoder(decoder);
         this.oracleService = oracleService;
         this.chainId = chainId;
         this.groupId = groupId;
+        this.reqHistoryRepository = reqHistoryRepository;
     }
 
 
@@ -79,24 +90,35 @@ public class ContractEventCallback extends EventLogPushWithDecodeCallback {
                 cidStr = Numeric.toHexString(cid.getValue());
                 String argValue = CommonUtils.getStringFromEventLog(log.getLogParams(), LOG_ARG);
                 String contractAddress = CommonUtils.getStringFromEventLog(log.getLogParams(), LOG_SENDER);
+                String timestamp = CommonUtils.getStringFromEventLog(log.getLogParams(), LOG_TIMESTAMP);
+                String datasource = CommonUtils.getStringFromEventLog(log.getLogParams(), LOG_DATASOURCE);
                 int len = contractAddress.length();
-                contractAddress = contractAddress.substring(1,len-1);
+                contractAddress = contractAddress.substring(1, len - 1);
                 logger.info("==========cidStr:{} arg:{} contractAddress:{} ", cidStr, argValue, contractAddress);
 
-                if(argValue.startsWith("\"")) {
+                if (argValue.startsWith("\"")) {
                     int len1 = argValue.length();
-                    argValue =argValue.substring(1,len1-1);
+                    argValue = argValue.substring(1, len1 - 1);
                 }
                 int left = argValue.indexOf("(");
                 int right = argValue.indexOf(")");
-                String format = argValue.substring(0,left);
-                String url = argValue.substring(left+1,right);
+                String format = argValue.substring(0, left);
+                String url = argValue.substring(left + 1, right);
                 List<String> httpResultIndexList = subFiledValueForHttpResultIndex(argValue);
+
+                String reqQuery = "";
+
+                ReqHistory reqHistory = ReqHistory.build(cidStr, contractAddress, OracleVersionEnum._0, SourceTypeEnum.URL, reqQuery);
+                // save request to db
+                logger.info("Save request:[{}:{}:{}] to db.", cidStr, contractAddress, reqQuery);
+                this.reqHistoryRepository.save(reqHistory);
+
                 //get data from url and update blockChain
-                oracleService.getDataFromUrlAndUpChain(contractAddress, cid.getValue(), url, format,httpResultIndexList,chainId, groupId);
-                logger.info("cid:{} callback success",cidStr);
+                oracleService.getDataFromUrlAndUpChain(contractAddress, cid.getValue(), url, format, httpResultIndexList, chainId, groupId);
+
+                logger.info("cid:{} callback success", cidStr);
             } catch (Exception ex) {
-                logger.error("onPushEventLog exception, cidStr:{}",cidStr,ex);
+                logger.error("onPushEventLog exception, cidStr:{}", cidStr, ex);
             }
         }
     }
@@ -125,8 +147,8 @@ public class ContractEventCallback extends EventLogPushWithDecodeCallback {
         }
         int left = argValue.indexOf("(");
         int right = argValue.indexOf(")");
-        String header = argValue.substring(0,left);
-        String url = argValue.substring(left,right);
+        String header = argValue.substring(0, left);
+        String url = argValue.substring(left, right);
 
         return url;
     }

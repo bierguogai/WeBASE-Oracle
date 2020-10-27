@@ -64,3 +64,23 @@ logging:
 constant:
   transMaxWait: 30
   restTemplateMaxWait: 30
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/webaseoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "defaultAccount"
+    password: "defaultPassword"
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    openInView: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      session:
+        events:
+          log: false
+    properties:
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
