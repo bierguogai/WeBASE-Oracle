@@ -1,4 +1,18 @@
 /*
+-- open MySQL client
+mysql -u root -p xxxx
+
+-- Creates the new database
+create database db_example;
+
+-- Creates the user( replace springuser and ThePassword)
+create user 'springuser'@'%' identified by 'ThePassword';
+
+-- Gives all privileges to the new user on the newly created database
+grant all on db_example.* to 'springuser'@'%';
+*/
+
+/*
  Navicat Premium Data Transfer
 
  Source Server         : localhost
@@ -35,6 +49,7 @@ CREATE TABLE `req_history` (
   `error` varchar(512) DEFAULT NULL COMMENT '请求失败时的错误信息',
   `proof_type` int(10) unsigned DEFAULT '0' COMMENT '证明类型, 0. 无证明；1. 签名认证。默认0',
   `proof` varchar(255) DEFAULT NULL COMMENT '证明内容',
+  `service_id_list` varchar(256) DEFAULT NULL COMMENT '处理请求的 service id 列表',
   `create_time` datetime DEFAULT NULL COMMENT '请求创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '请求上次修改时间',
   PRIMARY KEY (`id`),

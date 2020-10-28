@@ -151,8 +151,7 @@ public class HttpService {
             JsonNode jsonNode1 = (JsonNode) jsonNode;
             return jsonNode1.get(key);
         } catch (Exception ex) {
-            // TODO. throws ??
-            return jsonNode;
+            throw RemoteCallException.build(ReqStatusEnum.PARSE_RESULT_ERROR, String.valueOf(jsonNode), key);
         }
     }
 

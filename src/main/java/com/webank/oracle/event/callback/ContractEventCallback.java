@@ -108,7 +108,7 @@ public class ContractEventCallback extends EventLogPushWithDecodeCallback {
 
                 String reqQuery = "";
 
-                ReqHistory reqHistory = ReqHistory.build(cidStr, contractAddress, OracleVersionEnum._0, SourceTypeEnum.URL, reqQuery);
+                ReqHistory reqHistory = ReqHistory.build(cidStr, contractAddress, OracleVersionEnum._0, SourceTypeEnum.URL, reqQuery, null);
                 // save request to db
                 logger.info("Save request:[{}:{}:{}] to db.", cidStr, contractAddress, reqQuery);
                 this.reqHistoryRepository.save(reqHistory);
