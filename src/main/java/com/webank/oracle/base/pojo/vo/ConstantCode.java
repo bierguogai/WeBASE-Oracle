@@ -38,9 +38,11 @@ public class ConstantCode {
 
     public static final RetCode GROUP_ID_NOT_EXIST = RetCode.mark(205002, "group id not exist");
 
+    public static final RetCode DATA_SIGN_ERROR = RetCode.mark(205003, "data sign error");
+
     public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
 
-    public static final RetCode DATA_SIGN_ERROR = RetCode.mark(205003, "data sign error");
+    public static final RetCode DATA_NOT_EXISTS = RetCode.mark(205005, "Data not exists");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

@@ -116,7 +116,14 @@ public class ReqHistory {
     /**
      * 证明
      */
+    @Column(length = 256)
     private String proof;
+
+    /**
+     * 处理请求的 oracle service id 列表
+     */
+    @Column(length = 256)
+    private String serviceIdList;
 
     @CreationTimestamp
     private LocalDateTime createTime;
@@ -128,13 +135,17 @@ public class ReqHistory {
      * @return
      */
     public static ReqHistory build(String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum, String reqQuery) {
+                                   OracleVersionEnum oracleVersionEnum,
+                                   SourceTypeEnum sourceTypeEnum,
+                                   String reqQuery,
+                                   String serviceIdList) {
         ReqHistory reqHistory = new ReqHistory();
         reqHistory.setReqId(reqId);
         reqHistory.setOracleVersion(oracleVersionEnum.getId());
         reqHistory.setUserContract(userContract);
         reqHistory.setSourceType(sourceTypeEnum.getId());
         reqHistory.setReqQuery(reqQuery);
+        reqHistory.setServiceIdList(serviceIdList);
         return reqHistory;
     }
 }
