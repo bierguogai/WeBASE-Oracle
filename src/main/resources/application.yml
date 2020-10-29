@@ -5,8 +5,8 @@ server:
     context-path: /Oracle-Service
 
 ### TODO. optimization
-group-channel-connections-configs:
-  configs:
+#group-channel-connections-configs:
+#  configs:
 #    - caCert: classpath:ca.crt
 #      sslCert: classpath:node.crt
 #      sslKey: classpath:node.key
