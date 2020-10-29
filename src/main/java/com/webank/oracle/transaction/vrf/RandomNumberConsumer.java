@@ -1,4 +1,4 @@
-package org.fisco.bcos.temp;
+package com.webank.oracle.transaction.vrf;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -63,7 +63,7 @@ public class RandomNumberConsumer extends Contract {
     public RemoteCall<TransactionReceipt> getRandomNumber(BigInteger userProvidedSeed) {
         final Function function = new Function(
                 FUNC_GETRANDOMNUMBER, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(userProvidedSeed)), 
+                Arrays.<Type>asList(new Uint256(userProvidedSeed)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -71,7 +71,7 @@ public class RandomNumberConsumer extends Contract {
     public void getRandomNumber(BigInteger userProvidedSeed, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_GETRANDOMNUMBER, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(userProvidedSeed)), 
+                Arrays.<Type>asList(new Uint256(userProvidedSeed)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -79,7 +79,7 @@ public class RandomNumberConsumer extends Contract {
     public String getRandomNumberSeq(BigInteger userProvidedSeed) {
         final Function function = new Function(
                 FUNC_GETRANDOMNUMBER, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(userProvidedSeed)), 
+                Arrays.<Type>asList(new Uint256(userProvidedSeed)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -119,7 +119,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(randomness)), 
+                new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -128,7 +128,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(randomness)), 
+                new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -137,7 +137,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(randomness)), 
+                new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -146,7 +146,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_REQUESTRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_seed)), 
+                new Uint256(_seed)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -155,7 +155,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_REQUESTRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_seed)), 
+                new Uint256(_seed)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -164,7 +164,7 @@ public class RandomNumberConsumer extends Contract {
         final Function function = new Function(
                 FUNC_REQUESTRANDOMNESS, 
                 Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_seed)), 
+                new Uint256(_seed)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }

@@ -7,12 +7,13 @@ contract RandomNumberConsumer is VRFConsumerBase {
     bytes32 internal keyHash;
     uint256 public randomResult;
 
-    constructor()
+    constructor(address _coordinator, bytes32 _keyHash)
         VRFConsumerBase(
-            0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9 // VRF Coordinator
+            _coordinator // VRF Coordinator
         ) public
     {
-        keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
+         // keyHash = 0xeedf1a9c68b3f4a8b1a1032b2b5ad5c4795c026514f8317c7a215e218dccd6cf;
+          keyHash = _keyHash;
     }
 
     /**

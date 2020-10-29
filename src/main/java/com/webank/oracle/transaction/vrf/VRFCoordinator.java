@@ -1,4 +1,4 @@
-package org.fisco.bcos.temp;
+package com.webank.oracle.transaction.vrf;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -94,9 +94,9 @@ public class VRFCoordinator extends Contract {
     }
 
     public List<RandomnessRequestEventResponse> getRandomnessRequestEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUEST_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUEST_EVENT, transactionReceipt);
         ArrayList<RandomnessRequestEventResponse> responses = new ArrayList<RandomnessRequestEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             RandomnessRequestEventResponse typedResponse = new RandomnessRequestEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.keyHash = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
@@ -121,9 +121,9 @@ public class VRFCoordinator extends Contract {
     }
 
     public List<RandomnessRequestFulfilledEventResponse> getRandomnessRequestFulfilledEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUESTFULFILLED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(RANDOMNESSREQUESTFULFILLED_EVENT, transactionReceipt);
         ArrayList<RandomnessRequestFulfilledEventResponse> responses = new ArrayList<RandomnessRequestFulfilledEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             RandomnessRequestFulfilledEventResponse typedResponse = new RandomnessRequestFulfilledEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.requestId = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
@@ -144,9 +144,9 @@ public class VRFCoordinator extends Contract {
     }
 
     public List<TestRandomEventResponse> getTestRandomEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(TESTRANDOM_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(TESTRANDOM_EVENT, transactionReceipt);
         ArrayList<TestRandomEventResponse> responses = new ArrayList<TestRandomEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             TestRandomEventResponse typedResponse = new TestRandomEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.pk = (List<BigInteger>) eventValues.getNonIndexedValues().get(0).getValue();
@@ -245,7 +245,7 @@ public class VRFCoordinator extends Contract {
 
     public RemoteCall<Tuple2<String, byte[]>> callbacks(byte[] param0) {
         final Function function = new Function(FUNC_CALLBACKS, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(param0)), 
+                Arrays.<Type>asList(new Bytes32(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Bytes32>() {}));
         return new RemoteCall<Tuple2<String, byte[]>>(
                 new Callable<Tuple2<String, byte[]>>() {
@@ -310,8 +310,8 @@ public class VRFCoordinator extends Contract {
     public RemoteCall<TransactionReceipt> hashOfKey(List<BigInteger> _publicKey) {
         final Function function = new Function(
                 FUNC_HASHOFKEY, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
+                Arrays.<Type>asList(new StaticArray2<Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -319,8 +319,8 @@ public class VRFCoordinator extends Contract {
     public void hashOfKey(List<BigInteger> _publicKey, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_HASHOFKEY, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
+                Arrays.<Type>asList(new StaticArray2<Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -328,8 +328,8 @@ public class VRFCoordinator extends Contract {
     public String hashOfKeySeq(List<BigInteger> _publicKey) {
         final Function function = new Function(
                 FUNC_HASHOFKEY, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
+                Arrays.<Type>asList(new StaticArray2<Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -361,9 +361,9 @@ public class VRFCoordinator extends Contract {
     public RemoteCall<TransactionReceipt> randomnessRequest(byte[] _keyHash, BigInteger _consumerSeed, String _sender) {
         final Function function = new Function(
                 FUNC_RANDOMNESSREQUEST, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
-                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
+                Arrays.<Type>asList(new Bytes32(_keyHash),
+                new Uint256(_consumerSeed),
+                new Address(_sender)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -371,9 +371,9 @@ public class VRFCoordinator extends Contract {
     public void randomnessRequest(byte[] _keyHash, BigInteger _consumerSeed, String _sender, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_RANDOMNESSREQUEST, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
-                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
+                Arrays.<Type>asList(new Bytes32(_keyHash),
+                new Uint256(_consumerSeed),
+                new Address(_sender)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -381,9 +381,9 @@ public class VRFCoordinator extends Contract {
     public String randomnessRequestSeq(byte[] _keyHash, BigInteger _consumerSeed, String _sender) {
         final Function function = new Function(
                 FUNC_RANDOMNESSREQUEST, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_keyHash), 
-                new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(_consumerSeed), 
-                new org.fisco.bcos.web3j.abi.datatypes.Address(_sender)), 
+                Arrays.<Type>asList(new Bytes32(_keyHash),
+                new Uint256(_consumerSeed),
+                new Address(_sender)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }

@@ -5,11 +5,18 @@ pragma solidity 0.6.6;
 import  "./SafeMath.sol";
 import "./VRFRequestIDBase.sol";
 import "./VRF.sol";
-import "./VRFConsumerBase.sol";
+//import "./VRFConsumerBase.sol";
 /**
  * @title VRFCoordinator coordinates on-chain verifiable-randomness requests
  * @title with off-chain responses
  */
+
+ interface VRFConsumerBaseInterface  {
+
+  function rawFulfillRandomness(bytes32 requestId, uint256 randomness) external ;
+
+}
+
 contract VRFCoordinator is VRF, VRFRequestIDBase {
 
   using SafeMath for uint256;
@@ -51,7 +58,8 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     uint256 seed,
     uint256 blockNumber,
     address sender,
-    bytes32 requestID);
+    bytes32 requestID,
+    bytes32  seedAndBlockNum);
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
 
@@ -99,7 +107,7 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     callbacks[requestId].seedAndBlockNum = keccak256(abi.encodePacked(
       preSeed, block.number));
     emit RandomnessRequest(_keyHash, preSeed, block.number,
-      _sender, requestId);
+      _sender, requestId,callbacks[requestId].seedAndBlockNum);
     nonces[_keyHash][_sender] = nonces[_keyHash][_sender].add(1);
   }
 
@@ -121,6 +129,7 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
    * @dev block.
    */
   function fulfillRandomnessRequest(bytes memory _proof) public {
+
     (bytes32 currentKeyHash, Callback memory callback, bytes32 requestId,
      uint256 randomness) = getRandomnessFromProof(_proof);
 
@@ -137,14 +146,17 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     address consumerContract) internal {
     // Dummy variable; allows access to method selector in next line. See
     // https://github.com/ethereum/solidity/issues/3506#issuecomment-553727797
-    VRFConsumerBase v;
+      bytes4 s = 0x94985ddd;
     // todo 固定值
     bytes memory resp = abi.encodeWithSelector(
-      v.rawFulfillRandomness.selector, requestId, randomness);
+      s, requestId, randomness);
     (bool success,) = consumerContract.call(resp);
     // Avoid unused-local-variable warning. (success is only present to prevent
     // a warning that the return value of consumerContract.call is unused.)
-    (success);
+   (success);
+
+  //  VRFConsumerBaseInterface(consumerContract).rawFulfillRandomness(requestId, randomness);
+
   }
 
   function getRandomnessFromProof(bytes memory _proof)
@@ -167,9 +179,9 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     currentKeyHash = hashOfKey(publicKey);
     requestId = makeRequestId(currentKeyHash, preSeed);
     callback = callbacks[requestId];
-//    require(callback.callbackContract != address(0), "no corresponding request");
-//    require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
-//      blockNum)), "wrong preSeed or block num");
+    require(callback.callbackContract != address(0), "no corresponding request");
+    require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
+      blockNum)), "wrong preSeed or block num");
 
     bytes32 blockHash = blockhash(blockNum);
 //    if (blockHash == bytes32(0)) {
@@ -189,16 +201,16 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
 
 
  function getRandomnessFromProof1(bytes memory _proof)
-    internal view returns (bytes32 currentKeyHash, Callback memory callback,
-      bytes32 requestId, uint256 randomness) {
+    public view returns (bytes32 currentKeyHash,
+      bytes32 requestId, uint256 randomness, uint256[2] memory publicKey,uint256 preSeed) {
     // blockNum follows proof, which follows length word (only direct-number
     // constants are allowed in assembly, so have to compute this in code)
     uint256 BLOCKNUM_OFFSET = 0x20 + PROOF_LENGTH;
     // _proof.length skips the initial length word, so not including the
     // blocknum in this length check balances out.
     require(_proof.length == BLOCKNUM_OFFSET, "wrong proof length");
-    uint256[2] memory publicKey;
-    uint256 preSeed;
+//    uint256[2] memory publicKey;
+//    uint256 preSeed;
     uint256 blockNum;
     assembly { // solhint-disable-line no-inline-assembly
       publicKey := add(_proof, PUBLIC_KEY_OFFSET)
@@ -207,10 +219,10 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     }
     currentKeyHash = hashOfKey(publicKey);
     requestId = makeRequestId(currentKeyHash, preSeed);
-    callback = callbacks[requestId];
-    require(callback.callbackContract != address(0), "no corresponding request");
-    require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
-      blockNum)), "wrong preSeed or block num");
+   Callback memory callback = callbacks[requestId];
+//    require(callback.callbackContract != address(0), "no corresponding request");
+//    require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
+//      blockNum)), "wrong preSeed or block num");
 
     bytes32 blockHash = blockhash(blockNum);
 //    if (blockHash == bytes32(0)) {

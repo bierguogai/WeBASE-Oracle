@@ -1,4 +1,4 @@
-package org.fisco.bcos.temp;
+package com.webank.oracle.transaction.vrf;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -69,9 +69,9 @@ public class VRF extends Contract {
     }
 
     public List<TestRandomEventResponse> getTestRandomEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(TESTRANDOM_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(TESTRANDOM_EVENT, transactionReceipt);
         ArrayList<TestRandomEventResponse> responses = new ArrayList<TestRandomEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             TestRandomEventResponse typedResponse = new TestRandomEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.pk = (List<BigInteger>) eventValues.getNonIndexedValues().get(0).getValue();

@@ -26,7 +26,7 @@ abstract contract VRFConsumerBase  {
   function requestRandomness(bytes32 _keyHash, uint256 _seed)
     public returns (bytes32 requestId)
   {
-    //todo
+
    // LINK.transferAndCall(vrfCoordinator, _fee, abi.encode(_keyHash, _seed));
    //todo
     VRFCoordinator(vrfCoordinator).randomnessRequest(_keyHash, _seed, address(this));
