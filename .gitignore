@@ -11,3 +11,4 @@ log/
 *.crt
 *.key
 out
+*.DS_Store
