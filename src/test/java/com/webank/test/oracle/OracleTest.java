@@ -2,6 +2,7 @@ package com.webank.test.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
+import static com.webank.test.oracle.VRF.VRFTest.bytesToHex;
 
 import java.math.BigInteger;
 import java.security.KeyManagementException;
@@ -11,7 +12,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.webank.oracle.base.utils.CryptoUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.gm.sm3.Util;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,7 +33,30 @@ public class OracleTest {
         System.out.println(y);
         BigInteger z = new BigInteger("22108724849966695483138513023527230203911536283199945193882728796528949515038");
         System.out.println(z.toString(16));
+
+
+        Credentials user = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
+        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
+        System.out.println(user.getAddress());
+        System.out.println(user.getEcKeyPair().getPublicKey());
+        String pk = user.getEcKeyPair().getPublicKey().toString(16);
+        System.out.println(pk);
+        System.out.println(pk.length());
+        int len = pk.length();
+        String pkx = pk.substring(0,len/2);
+        String pky = pk.substring(len/2);
+        BigInteger Bx = new BigInteger(pkx,16);
+        BigInteger By = new BigInteger(pky,16);
+        System.out.println(new BigInteger(pkx,16));
+        System.out.println(new BigInteger(pky,16));
+        System.out.println(bytesToHex(CryptoUtil.soliditySha3(Bx,By)));
+
     }
+
+
+
+
     @Test
     public void stringTest(){
 

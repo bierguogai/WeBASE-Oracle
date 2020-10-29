@@ -9,7 +9,6 @@ import com.webank.oracle.transaction.vrf.VRFCoordinator;
 import com.webank.test.oracle.base.BaseTest;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.crypto.Sign;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
@@ -18,6 +17,8 @@ import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VRFTest extends BaseTest {
 
@@ -84,6 +85,36 @@ public class VRFTest extends BaseTest {
 
     }
 
+    @Test
+    public void testCalculateTheKeyHash() throws Exception {
+
+        Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
+        Credentials user = Credentials.create("2");
+        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
+        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
+        System.out.println(user.getAddress());
+        System.out.println(user.getEcKeyPair().getPublicKey());
+        String pk = user.getEcKeyPair().getPublicKey().toString(16);
+        System.out.println(pk);
+        int len = pk.length();
+        String pkx = pk.substring(0,len/2);
+        String pky = pk.substring(len/2);
+        BigInteger Bx = new BigInteger(pkx,16);
+        BigInteger By = new BigInteger(pky,16);
+        System.out.println("*** "+ Bx);
+        System.out.println("*** " +By);
+        System.out.println("offline: " +bytesToHex(CryptoUtil.soliditySha3(Bx,By)));
+
+        VRFCoordinator vrfCoordinator = VRFCoordinator.deploy(web3j, credentials, contractGasProvider).send();
+
+         List ilist = new ArrayList<BigInteger>();
+         ilist.add(Bx);
+         ilist.add(By);
+
+        TransactionReceipt r1 = (TransactionReceipt) vrfCoordinator.hashOfKey(ilist).send();
+        System.out.println("online hash of key: "+ r1.getOutput());
+    }
+
 
 
     // notice!!!
@@ -94,11 +125,12 @@ public class VRFTest extends BaseTest {
         System.out.println("deploy vrf coordinator");
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
 
-       VRFCoordinator vrfCoordinator = VRFCoordinator.deploy(web3j, credentials, contractGasProvider).send();
+        VRFCoordinator vrfCoordinator = VRFCoordinator.deploy(web3j, credentials, contractGasProvider).send();
       // interface VRFCoordinator vrfCoordinator = VRFCoordinator.load("0xcfdaa4a02061d0ccb4357dcf1a607b8fac9b57c0",web3j, credentials, contractGasProvider);
         System.out.println("coordinate address : " + vrfCoordinator.getContractAddress());
-        String keyhash = "eedf1a9c68b3f4a8b1a1032b2b5ad5c4795c026514f8317c7a215e218dccd6cf";
-        byte[] keyhashbyte = hexStringtoBytes(keyhash);
+//        String keyhash = "1398E8BAD6043BA497B9679E148947262EC5E21739FE3A931C29E8B84EE34A0F";
+//        byte[] keyhashbyte = hexStringtoBytes(keyhash);
+        byte[] keyhashbyte  = calculateTheHashOfPK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
         System.out.println("deploy consumer  contract");
 
         RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j,credentials,contractGasProvider,vrfCoordinator.getContractAddress(),keyhashbyte).send();
@@ -145,7 +177,7 @@ public class VRFTest extends BaseTest {
 
      //   System.out.println("credential: " + credentialsBob.getEcKeyPair().getPrivateKey().toString());
 
-        String proof =  LibVRF.INSTANCE.VRFProoFGenerate(credentialsBob.getEcKeyPair().getPrivateKey().toString(),preseed.toString(16));
+        String proof =  LibVRF.INSTANCE.VRFProoFGenerate(credentials.getEcKeyPair().getPrivateKey().toString(16),preseed.toString(16));
 
         Thread.sleep(10);
         byte[] i= Numeric.hexStringToByteArray(proof);
@@ -158,7 +190,7 @@ public class VRFTest extends BaseTest {
         TransactionReceipt t  = vrfCoordinator.fulfillRandomnessRequest(destination).send();
         System.out.println(t.getStatus());
         System.out.println(t.getOutput());
-
+  //         System.out.println(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
         // calc the hashkey of service!
 //         List ilist = new ArrayList<BigInteger>();
 //         ilist.add(new BigInteger("89565891926547004231252920425935692360644145829622209833684329913297188986597"));
@@ -240,5 +272,19 @@ public class VRFTest extends BaseTest {
     }
 
 
+    public byte[] calculateTheHashOfPK(String skhex) {
+        Credentials user = Credentials.create(skhex);
+        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
+        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
+        String pk = user.getEcKeyPair().getPublicKey().toString(16);
+
+        int len = pk.length();
+        String pkx = pk.substring(0,len/2);
+        String pky = pk.substring(len/2);
+        BigInteger Bx = new BigInteger(pkx,16);
+        BigInteger By = new BigInteger(pky,16);
+
+        return CryptoUtil.soliditySha3(Bx,By);
+    }
 
 }
