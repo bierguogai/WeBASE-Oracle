@@ -3,6 +3,7 @@ package com.webank.test.oracle;
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
+import java.math.BigInteger;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -19,6 +20,16 @@ import com.webank.oracle.base.utils.HttpUtil;
 
 public class OracleTest {
 
+
+    @Test
+    public void numberTest(){
+        BigInteger x = new BigInteger("c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",16);
+        BigInteger y = new BigInteger("1ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a",16);
+        System.out.println(x);
+        System.out.println(y);
+        BigInteger z = new BigInteger("22108724849966695483138513023527230203911536283199945193882728796528949515038");
+        System.out.println(z.toString(16));
+    }
     @Test
     public void stringTest(){
 

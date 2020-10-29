@@ -11,3 +11,5 @@ log/
 *.crt
 *.key
 out
+*.DS_Store
+src/main/resources/application-dev.yml
