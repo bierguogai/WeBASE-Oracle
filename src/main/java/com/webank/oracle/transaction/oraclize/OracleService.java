@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.webank.oracle.transaction;
+package com.webank.oracle.transaction.oraclize;
 
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
 import com.webank.oracle.http.HttpService;
 import com.webank.oracle.keystore.KeyStoreService;
@@ -48,8 +47,6 @@ public class OracleService {
     @Autowired
     Map<Integer, Map<Integer, Web3j>> web3jMap;
     @Autowired
-    private EventRegisterProperties properties;
-    @Autowired
     private KeyStoreService keyStoreService;
     @Autowired
     private HttpService httpService;
@@ -61,12 +58,13 @@ public class OracleService {
     /**
      * Get data from url in contractEventLog and upload it to blockChain.
      */
-    public void getDataFromUrlAndUpChain(String contractAddress, byte[] logId, String url, String formate, List<String> httpResultIndexList, int chainId, int groupId) throws Exception {
+    public String getDataFromUrlAndUpChain(String contractAddress, byte[] logId, String url, String formate, List<String> httpResultIndexList, int chainId, int groupId) throws Exception {
         //get data
         Object httpResult = httpService.getObjectByUrlAndKeys(logId,url,formate, httpResultIndexList);
         log.info("url {} https result: {} ", url, toJSONString(httpResult));
         //send transaction
         upBlockChain(contractAddress, logId, toJSONString(httpResult), chainId, groupId);
+        return toJSONString(httpResult);
     }
 
 
@@ -85,8 +83,8 @@ public class OracleService {
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr);
         } catch (OracleException oe) {
-            //todo
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr, oe);
+            throw oe;
         }
     }
 
@@ -108,7 +106,7 @@ public class OracleService {
     public static void dealWithReceipt(TransactionReceipt receipt) {
         // log.info("*********"+ transactionReceipt.getOutput());
         if ("0x16".equals(receipt.getStatus()) && receipt.getOutput().startsWith("0x08c379a0")) {
-            log.error("transaction error", DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
+            log.error("transaction error:[{}]", DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
             throw new OracleException(ConstantCode.SYSTEM_EXCEPTION.getCode(), DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
         }
         if (!"0x0".equals(receipt.getStatus())) {

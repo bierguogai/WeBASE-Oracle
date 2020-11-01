@@ -23,6 +23,7 @@ package com.webank.oracle.base.pojo.vo;
  * Oracle-Service:05 <br/>
  * C: error code <br/>
  */
+// TODO. refactor
 public class ConstantCode {
 
     /* return success */
@@ -43,6 +44,8 @@ public class ConstantCode {
     public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
 
     public static final RetCode DATA_NOT_EXISTS = RetCode.mark(205005, "Data not exists");
+
+    public static final RetCode DECODE_PROOF_ERROR = RetCode.mark(205006, "Decode proof error");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

@@ -10,14 +10,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SourceTypeEnum {
-    URL(0, "url","eg. Fetch value from url"),
+public enum ProofTypeEnum {
+    DEFAULT(0, "Default with no proof"),
 
-    VRF(1, "vrf","eg. Fetch a random value by VRF")
+    SIGN(1, "Sign by private key"),
     ;
 
     private int id;
-    private String type;
     private String description;
 
 

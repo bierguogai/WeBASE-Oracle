@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.webank.oracle.event;
+package com.webank.oracle.event.callback.vrf;
 
-import static com.webank.oracle.transaction.OracleCore.LOG1_EVENT;
+import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.channel.event.filter.EventLogUserParams;
 import org.fisco.bcos.web3j.abi.EventEncoder;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
@@ -30,10 +31,9 @@ import org.springframework.stereotype.Service;
 
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.event.callback.ContractEventCallback;
 import com.webank.oracle.repository.ReqHistoryRepository;
-import com.webank.oracle.transaction.OracleCore;
-import com.webank.oracle.transaction.OracleService;
+import com.webank.oracle.transaction.vrf.VRFCoordinator;
+import com.webank.oracle.transaction.vrf.VRFService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,14 +45,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class EventService {
+public class VRFEventService {
 
-    @Autowired
-    Map<Integer, Map<Integer, org.fisco.bcos.channel.client.Service>> serviceMapWithChainId;
-    @Autowired
-    private OracleService oracleService;
-    @Autowired
-    private EventRegisterProperties eventRegisterProperties;
+    @Autowired Map<Integer, Map<Integer, org.fisco.bcos.channel.client.Service>> serviceMapWithChainId;
+
+    @Autowired private VRFService vrfService;
+
+    @Autowired private EventRegisterProperties eventRegisterProperties;
 
     @Autowired private ReqHistoryRepository reqHistoryRepository;
 
@@ -64,21 +63,20 @@ public class EventService {
     public void registerContractEvent() {
         List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
         for (int i = 0; i < eventRegisterList.size(); i++) {
-            String contractAddress;
             EventRegister eventRegister = eventRegisterList.get(i);
-            if (eventRegister.getContractAddress() == null || eventRegister.getContractAddress().equals("")) {
-                contractAddress = oracleService.deployOracleCore(eventRegister.getChainId(), eventRegister.getGroup());
-                log.info("chain {} group {} oracle-core has been deployed and  address is : {}", eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
+            if (StringUtils.isBlank(eventRegister.getContractAddress())) {
+                String contractAddress = vrfService.deployVRF(eventRegister.getChainId(), eventRegister.getGroup());
+                log.info("chain {} group {} vrf has been deployed and  address is : {}", eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
                 eventRegister.setContractAddress(contractAddress);
             }
 
             // 传入abi作decoder:
-            TransactionDecoder decoder = new TransactionDecoder(OracleCore.ABI);
+            TransactionDecoder decoder = new TransactionDecoder(VRFCoordinator.ABI);
 
             // init EventLogUserParams for register
             EventLogUserParams params = initSingleEventLogUserParams(eventRegister);
-            ContractEventCallback callBack = new ContractEventCallback(oracleService, reqHistoryRepository, decoder, eventRegister.getChainId(), eventRegister.getGroup());
-            log.debug("&&&&&&registerContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), OracleCore.ABI, params);
+            VRFContractEventCallback callBack = new VRFContractEventCallback(vrfService, reqHistoryRepository, decoder, eventRegister.getChainId(), eventRegister.getGroup());
+            log.debug("&&&&&&registerContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), VRFCoordinator.ABI, params);
             org.fisco.bcos.channel.client.Service service = serviceMapWithChainId.get(eventRegister.getChainId()).get(eventRegister.getGroup());
             service.registerEventLogFilter(params, callBack);
         }
@@ -100,7 +98,7 @@ public class EventService {
         addresses.add(eventRegister.getContractAddress());
         params.setAddresses(addresses);
         List<Object> topics = new ArrayList<>();
-        topics.add(EventEncoder.encode(LOG1_EVENT));
+        topics.add(EventEncoder.encode(RANDOMNESSREQUEST_EVENT));
         params.setTopics(topics);
 
         return params;
