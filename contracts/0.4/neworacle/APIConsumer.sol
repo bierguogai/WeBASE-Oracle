@@ -12,9 +12,9 @@ contract APIConsumer is FiscoOracleClient {
     // Multiply the result by 1000000000000000000 to remove decimals
     uint256 private timesAmount  = 10**18;
 
-    mapping(bytes32=>uint256) resultMap;
+    mapping(bytes32=>int256) resultMap;
 
-    uint256 public result;
+    int256 public result;
     string url;
 
     constructor(address oracleAddress) public {
@@ -35,14 +35,14 @@ contract APIConsumer is FiscoOracleClient {
     /**
      * Receive the response in the form of uint256
      */
-    function _callback(bytes32 _requestId, uint256 _result) public override onlyOracleCoreInvoke(_requestId)
+    function __callback(bytes32 _requestId, int256 _result) public override onlyOracleCoreInvoke(_requestId)
     {
         resultMap[_requestId]= _result;
         result = _result ;
     }
 
 
-      function getResult()  public view  returns(uint256){
+      function getResult()  public view  returns(int256){
          return result;
       }
 }
