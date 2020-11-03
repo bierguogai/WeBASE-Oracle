@@ -24,7 +24,7 @@ contract RandomOracle is usingOracleCore {
         public
     {
         require(msg.sender == oracle_cbAddress());
-         require(validIds[_myid], "id must be not used!") ;
+        require(validIds[_myid], "id must be not used!") ;
         temp = _result;
         delete validIds[_myid];
         emit LogNewTempMeasure(temp);
