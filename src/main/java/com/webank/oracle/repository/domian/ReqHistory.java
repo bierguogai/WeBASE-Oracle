@@ -97,13 +97,13 @@ public class ReqHistory {
     /**
      * 请求结果
      */
-    @Column(nullable = true, length = 512)
+    @Column(columnDefinition = "TEXT")
     private String result;
 
     /**
      * 请求失败是错误信息
      */
-    @Column(nullable = true, length = MAX_ERROR_LENGTH)
+    @Column(length = MAX_ERROR_LENGTH)
     private String error;
 
     /**
@@ -116,7 +116,7 @@ public class ReqHistory {
     /**
      * 证明
      */
-    @Column(length = 256)
+    @Column(length = 256, columnDefinition = "TEXT")
     private String proof;
 
     /**

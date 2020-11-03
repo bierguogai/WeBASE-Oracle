@@ -1,12 +1,9 @@
-package com.webank.test.oracle.VRF;
+package com.webank.test.oracle.vrf;
 
-import com.webank.oracle.base.utils.CryptoUtil;
-import com.webank.oracle.base.utils.DecodeOutputUtils;
-import com.webank.oracle.transaction.vrf.LibVRF;
-import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
-import com.webank.oracle.transaction.vrf.VRF;
-import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.test.oracle.base.BaseTest;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -16,9 +13,13 @@ import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import com.webank.oracle.base.utils.CryptoUtil;
+import com.webank.oracle.base.utils.DecodeOutputUtils;
+import com.webank.oracle.transaction.vrf.LibVRF;
+import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
+import com.webank.oracle.transaction.vrf.VRF;
+import com.webank.oracle.transaction.vrf.VRFCoordinator;
+import com.webank.test.oracle.base.BaseTest;
 
 public class VRFTest extends BaseTest {
 
@@ -177,7 +178,8 @@ public class VRFTest extends BaseTest {
 
      //   System.out.println("credential: " + credentialsBob.getEcKeyPair().getPrivateKey().toString());
 
-        String proof =  LibVRF.INSTANCE.VRFProoFGenerate(credentials.getEcKeyPair().getPrivateKey().toString(16),preseed.toString(16));
+        String proof =  LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(credentials.getEcKeyPair().getPrivateKey().toString(16),preseed.toString(16));
+        System.out.println("Generate proof :" + proof);
 
         Thread.sleep(10);
         byte[] i= Numeric.hexStringToByteArray(proof);
@@ -190,7 +192,7 @@ public class VRFTest extends BaseTest {
         TransactionReceipt t  = vrfCoordinator.fulfillRandomnessRequest(destination).send();
         System.out.println(t.getStatus());
         System.out.println(t.getOutput());
-  //         System.out.println(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
+//           System.out.println(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
         // calc the hashkey of service!
 //         List ilist = new ArrayList<BigInteger>();
 //         ilist.add(new BigInteger("89565891926547004231252920425935692360644145829622209833684329913297188986597"));
@@ -200,7 +202,7 @@ public class VRFTest extends BaseTest {
 //        System.out.println("hash of key: "+ r1.getOutput());
 
 
-        VRFCoordinator.RandomnessRequestFulfilledEventResponse res =vrfCoordinator.getRandomnessRequestFulfilledEvents(t).get(0);
+        VRFCoordinator.RandomnessRequestFulfilledEventResponse res = vrfCoordinator.getRandomnessRequestFulfilledEvents(t).get(0);
 
         System.out.println("ramdom result: " +res.output);
         System.out.println("requestId: " +bytesToHex(res.requestId));
@@ -229,7 +231,7 @@ public class VRFTest extends BaseTest {
         String seed= "1b";
 
 
-       String result =  LibVRF.INSTANCE.VRFProoFGenerate(sk,seed);
+       String result =  LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(sk,seed);
         System.out.println(result);
     }
 
@@ -272,7 +274,7 @@ public class VRFTest extends BaseTest {
     }
 
 
-    public byte[] calculateTheHashOfPK(String skhex) {
+    public static byte[] calculateTheHashOfPK(String skhex) {
         Credentials user = Credentials.create(skhex);
         // gm address  0x1f609497612656e806512fb90972d720e2e508b5
         //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
