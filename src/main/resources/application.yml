@@ -41,19 +41,11 @@ key-user:
 #event register,
 #fisco-bcos 2.2 or latest
 #https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/java_sdk.html#id14
-#event:
-#  eventRegisters:
-#    - chainId: 2
-#      group: 1
-#      contractAddress: ""
-#      fromBlock: "latest"
-#      toBlock: "latest"
-#
-#    - chainId: 1
-#      group: 1
-#      contractAddress: "0x8fcd8a0db3d335c5ef6fe3a4940875adb13eb789"
-#      fromBlock: "latest"
-#      toBlock: "latest"
+event:
+  eventRegisters:
+    # list of EventRegister objects. Use default value when property not configured.
+    # Oracle contracts will be auto deployed when contractAddress is blank
+    - {chainId: 1, group: 1, contractAddress: ""}
 
 #log config
 logging:
@@ -66,5 +58,25 @@ constant:
   restTemplateMaxWait: 30
 
 spring:
-  profiles:
-    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/webaseoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "defaultAccount"
+    password: "defaultPassword"
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    openInView: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      session:
+        events:
+          log: false
+    properties:
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false

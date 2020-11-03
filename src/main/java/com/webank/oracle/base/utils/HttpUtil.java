@@ -128,19 +128,19 @@ public class HttpUtil {
      */
     public static void checkHttpStatusCode(Response response){
         if (response == null){
-            throw RemoteCallException.build(ReqStatusEnum.EMPTY_RESPONSE_ERROR);
+            throw new RemoteCallException(ReqStatusEnum.EMPTY_RESPONSE_ERROR);
         }
         switch (response.code()){
             case 200:
                 return;
             case 404:
-                throw RemoteCallException.build(ReqStatusEnum._404_NOT_FOUND_ERROR);
+                throw new RemoteCallException(ReqStatusEnum._404_NOT_FOUND_ERROR);
 
             case 500:
-                throw RemoteCallException.build(ReqStatusEnum._500_SERVER_ERROR);
+                throw new RemoteCallException(ReqStatusEnum._500_SERVER_ERROR);
 
             default:
-                throw RemoteCallException.build(ReqStatusEnum.OTHER_CODE_ERROR, String.valueOf(response.code()));
+                throw new RemoteCallException(ReqStatusEnum.OTHER_CODE_ERROR, String.valueOf(response.code()));
         }
     }
 }

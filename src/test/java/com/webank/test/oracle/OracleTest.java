@@ -2,7 +2,7 @@ package com.webank.test.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
-import static com.webank.test.oracle.VRF.VRFTest.bytesToHex;
+import static com.webank.test.oracle.vrf.VRFTest.bytesToHex;
 
 import java.math.BigInteger;
 import java.security.KeyManagementException;
@@ -15,7 +15,6 @@ import java.util.List;
 import com.webank.oracle.base.utils.CryptoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.crypto.gm.sm3.Util;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;

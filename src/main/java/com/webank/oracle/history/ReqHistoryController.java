@@ -19,16 +19,20 @@ package com.webank.oracle.history;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webank.oracle.base.pojo.vo.BaseResponse;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.repository.ReqHistoryRepository;
 import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.transaction.vrf.VRFService;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReqHistoryController {
 
     @Autowired private ReqHistoryRepository reqHistoryRepository;
+    @Autowired private VRFService vrfService;
 
     @GetMapping("query/{requestId}")
     public BaseResponse query(@PathVariable("requestId") String requestId) {
@@ -55,5 +60,39 @@ public class ReqHistoryController {
         }
 
         return new BaseResponse(ConstantCode.DATA_NOT_EXISTS, requestId);
+    }
+
+    @GetMapping("random/decode")
+    public BaseResponse decodeProof(
+            @RequestParam(value = "requestId", required = false) String requestId,
+            @RequestParam(value = "proof", required = false) String proof,
+            @RequestParam(value = "chainId", defaultValue = "1") int chainId,
+            @RequestParam(value = "groupId", defaultValue = "1") int groupId) {
+        if (StringUtils.isAllBlank(proof, requestId)) {
+            return new BaseResponse(ConstantCode.PARAM_EXCEPTION);
+        }
+
+        String proofToDecode = proof;
+        try {
+            if (StringUtils.isNotBlank(requestId)) {
+                Optional<ReqHistory> reqHistory = reqHistoryRepository.findByReqId(requestId);
+                if (reqHistory.isPresent() && StringUtils.isNotBlank(reqHistory.get().getProof())) {
+                    proofToDecode = reqHistory.get().getProof();
+                }
+            }
+            if (StringUtils.isBlank(proofToDecode)) {
+                // no proof to decode
+                return new BaseResponse(ConstantCode.PARAM_EXCEPTION);
+            }
+
+            Pair<String, String> decodeProof = vrfService.decodeProof(chainId, groupId, proofToDecode);
+            if (StringUtils.equalsAnyIgnoreCase(decodeProof.getKey(), "0x0")) {
+                return new BaseResponse(ConstantCode.SUCCESS, decodeProof.getValue());
+            }
+            return new BaseResponse(ConstantCode.DECODE_PROOF_ERROR, decodeProof.getKey());
+        } catch (Exception e) {
+            log.error("Decode proof error:[{}:{}:{}]", chainId, groupId, proofToDecode, e);
+            return new BaseResponse(ConstantCode.DECODE_PROOF_ERROR, ExceptionUtils.getRootCauseMessage(e));
+        }
     }
 }
