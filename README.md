@@ -21,29 +21,29 @@
          
 
    
-   ####1.2 设计方案
+   #### 1.2 设计方案
 
-   ####1.3 快速开发
+   #### 1.3 快速开发
    
    
-###2 功能
-   ####2.1 API数据获取
+### 2 功能
+   #### 2.1 API数据获取
    支持HTTPS的接口访问。
-   ####2.2 VRF随机数生成
+   #### 2.2 VRF随机数生成
    
   采用k1椭圆曲线的VRF算法。链上合约验证Proof。
   用户提供随机数种子，oracle service服务方提供自己私钥，产生VRF的 proof。
   链上合约验证proof。    
    [VRF介绍](./VRF.md)
-   ####2.3 去中心化数据获取（聚合）
+   #### 2.3 去中心化数据获取（聚合）
    支持用户选择多个oracle service帮获取数据。并进行聚合，最终返回给用户合约。
  
    
    
 
-###3 [安装部署](./install.md)  
+### 3 [安装部署](./install.md)  
 
-###4 使用注意事项：
+### 4 使用注意事项：
  1 用户可以参考contracts/RandomOracle.sol合约实现自己的oracle合约。 首先必须集成usingOracleCore合约，并且实现__callback方法,此方法供oracle-service服务回调你的合约，将查询结果写到你的合约里。
   其次在update方法中填入自己要访问的链下API的URL。
  2 目前支持json和text/plain两种访问格式。并且链下API的url必须支持HTTPS访问。
