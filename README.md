@@ -9,36 +9,45 @@
    当智能合约的触发条件是外部信息时（链外），就必须需要预言机来提供数据服务，通过预言机将现实世界的数据输入到区块链上，因为智能合约不支持对外请求。
    也就是说智能合约不能进行 I/O（Input/Output，即输入/输出），所以它是无法主动获取外部数据的，只能通过预言机将数据给到智能合约。
    
+   我们可以通过引入预言机（Oracle）的功能来解决这一问题，预言机可以为智能合约提供与外部世界的连接性。  
    Oracle-Service是fisco链上的预言机服务。此服务作用是负责取相关用户指定的url的数据，并回写到用户的合约上。方便用户在链上访问链下数据。
    并支持连接多链多群组，可同时为不同链和群组提供oracle服务。
    
    Oracle-Service 服务需配合OracleCore（在项目的contracts目录下）合约使用。 服务启动时会部署OracleCore合约或者加载OracleCore合约（如果已配置合约地址），然后监听此合约的事件。
-   如图![oracle流程图](./oracle.png)
+   如图![oracle流程图](img/oracle.png)
    
-   用户只需要参考SampleOracle.sol合约，部署此合约并调用oracle_setNetwork方法并传入oracleCore合约地址，这样Oracle-Service可以回写结果到用户的SampleOracle合约。用户就可以调用自己的SampleOracle合约查询到链下的数据。
-   
-   并支持国密，以及请求状态查询。
+   用户只需要参考ConsumerOracle.sol合约,继承我们提供的合约即可。
+
          
 
    
    #### 1.2 设计方案
 
-   #### 1.3 快速开发
+  WeBASE-Oracle是FISCO BCOS链上的预言机服务，在广泛调研市场上预言机项目的基础上针对联盟链设计的预言机服务。
+  1 支持用户获取链下API数据  
+  2 支持产生VRF随机数  
+  3 支持去中心化部署和结果聚合
+  并且同时支持国密。
+    
+   #### 1.3 快速开发  
+   
+   [快速开发自己的预言机](./develop.md)
    
    
 ### 2 功能
    #### 2.1 API数据获取
    支持HTTPS的接口访问。
    #### 2.2 VRF随机数生成
-   
+   ![VRF随机数生成流程图](img/vrf.png)
   采用k1椭圆曲线的VRF算法。链上合约验证Proof。
   用户提供随机数种子，oracle service服务方提供自己私钥，产生VRF的 proof。
   链上合约验证proof。    
    [VRF介绍](./VRF.md)
    #### 2.3 去中心化数据获取（聚合）
-   支持用户选择多个oracle service帮获取数据。并进行聚合，最终返回给用户合约。
+   支持用户选择多个oracle service帮获取数据。并进行聚合，聚合支持取中位数和平均数，后续支持更多聚合操作，最终将聚合结果返回给用户合约。
+   此外会维护OracleServiceCenter注册中心，所有启动的oracle service节点需要在注册中心注册自己的相关信息，以方便用户选择oracle service服务方。
  
-   
+   ![去中心化oracle原理图](img/distributedOracle.png)
    
 
 ### 3 [安装部署](./install.md)  
