@@ -15,14 +15,19 @@
    Oracle-Service 服务需配合OracleCore（在项目的contracts目录下）合约使用。 服务启动时会部署OracleCore合约或者加载OracleCore合约（如果已配置合约地址），然后监听此合约的事件。
    如图![oracle流程图](./oracle.png)
    
-   用户只需要参考SampleOracle.sol合约，部署此合约并调用oracle_setNetwork方法并传入oracleCore合约地址，这样Oracle-Service可以回写结果到用户的SampleOracle合约。用户就可以调用自己的SampleOracle合约查询到链下的数据。
-   
-   并支持国密，以及请求状态查询。
+   用户只需要参考ConsumerOracle.sol合约,继承我们提供的合约即可。
+
          
 
    
    #### 1.2 设计方案
 
+  WeBASE-Oracle是FISCO BCOS链上的预言机服务，在广泛调研市场上预言机项目的基础上针对联盟链设计的预言机服务。
+  1 支持用户获取链下API数据  
+  2 支持产生VRF随机数  
+  3 支持去中心化部署和结果聚合
+  并且同时支持国密。
+    
    #### 1.3 快速开发
    
    
