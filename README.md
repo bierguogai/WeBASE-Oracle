@@ -14,7 +14,7 @@
    并支持连接多链多群组，可同时为不同链和群组提供oracle服务。
    
    Oracle-Service 服务需配合OracleCore（在项目的contracts目录下）合约使用。 服务启动时会部署OracleCore合约或者加载OracleCore合约（如果已配置合约地址），然后监听此合约的事件。
-   如图![oracle流程图](./oracle.png)
+   如图![oracle流程图](img/oracle.png)
    
    用户只需要参考ConsumerOracle.sol合约,继承我们提供的合约即可。
 
@@ -38,15 +38,16 @@
    #### 2.1 API数据获取
    支持HTTPS的接口访问。
    #### 2.2 VRF随机数生成
-   
+   ![VRF随机数生成流程图](img/vrf.png)
   采用k1椭圆曲线的VRF算法。链上合约验证Proof。
   用户提供随机数种子，oracle service服务方提供自己私钥，产生VRF的 proof。
   链上合约验证proof。    
    [VRF介绍](./VRF.md)
    #### 2.3 去中心化数据获取（聚合）
-   支持用户选择多个oracle service帮获取数据。并进行聚合，最终返回给用户合约。
+   支持用户选择多个oracle service帮获取数据。并进行聚合，聚合支持取中位数和平均数，后续支持更多聚合操作，最终将聚合结果返回给用户合约。
+   此外会维护OracleServiceCenter注册中心，所有启动的oracle service节点需要在注册中心注册自己的相关信息，以方便用户选择oracle service服务方。
  
-   
+   ![去中心化oracle原理图](img/distributedOracle.png)
    
 
 ### 3 [安装部署](./install.md)  
