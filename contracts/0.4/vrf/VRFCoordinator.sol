@@ -219,7 +219,7 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     }
     currentKeyHash = hashOfKey(publicKey);
     requestId = makeRequestId(currentKeyHash, preSeed);
-   Callback memory callback = callbacks[requestId];
+    Callback memory callback = callbacks[requestId];
 //    require(callback.callbackContract != address(0), "no corresponding request");
 //    require(callback.seedAndBlockNum == keccak256(abi.encodePacked(preSeed,
 //      blockNum)), "wrong preSeed or block num");
