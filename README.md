@@ -17,17 +17,28 @@
    如图![oracle流程图](img/oracle.png)
    
    用户只需要参考ConsumerOracle.sol合约,继承我们提供的合约即可。
-
+   目前支持 JSON、后续支持XML、HTML Parser
          
 
    
    #### 1.2 设计方案
 
+   抗攻击：
+   女巫攻击， 复制攻击
   WeBASE-Oracle是FISCO BCOS链上的预言机服务，在广泛调研市场上预言机项目的基础上针对联盟链设计的预言机服务。
   1 支持用户获取链下API数据  
   2 支持产生VRF随机数  
   3 支持去中心化部署和结果聚合
   并且同时支持国密。
+  
+  USER-SC 合约发出数据调用请求；
+  ChainLink-SC 合约为预言者记录请求，并编译到 Core 命令行；
+  Core 通过在合约程序前添加外部 API 来设置适配器，并分配任务；
+  适配器将请求反馈给外部 API；
+  ChainLink 收到预言机服务商的回复，并将其反馈给 Core 命令行；
+  ChainLink Core 将数据报告给反馈给 ChainLink-SC；
+  ChainLink-SC 汇总所有的答案，后反馈给用户端。
+
     
    #### 1.3 快速开发  
    
