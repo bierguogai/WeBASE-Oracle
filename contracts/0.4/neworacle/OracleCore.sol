@@ -24,6 +24,7 @@ contract OracleCore is  Ownable {
     address callbackAddr,
     bytes32 requestId,
     string url,
+    uint256  expiration,
     uint256 _timesAmount
   );
 
@@ -61,6 +62,7 @@ contract OracleCore is  Ownable {
       _callbackAddress,
       requestId,
       _url,
+      expiration,
      _timesAmount);
     return true;
   }

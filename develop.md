@@ -99,4 +99,14 @@ contract RandomNumberConsumer is VRFConsumerBase {
   
 ### 去中心化部署获取聚合结果
 
-  ......
+
+
+  latestAnswer()最新的聚合结果
+  
+  latestTimestamp() 最新一次聚合的时间戳
+  
+  latestRound()最新一次聚合的轮次号
+  
+  getAnswer(uint256 roundId) 通过轮次号获取历史结果
+  
+  getTimestamp(uint256 roundId)通过轮次号获取历史时间戳

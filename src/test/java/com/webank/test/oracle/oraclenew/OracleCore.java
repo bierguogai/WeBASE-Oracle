@@ -1,10 +1,21 @@
 package com.webank.test.oracle.oraclenew;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
+import org.fisco.bcos.web3j.abi.FunctionReturnDecoder;
 import org.fisco.bcos.web3j.abi.TypeReference;
-import org.fisco.bcos.web3j.abi.datatypes.*;
+import org.fisco.bcos.web3j.abi.datatypes.Address;
+import org.fisco.bcos.web3j.abi.datatypes.Bool;
+import org.fisco.bcos.web3j.abi.datatypes.Event;
+import org.fisco.bcos.web3j.abi.datatypes.Function;
+import org.fisco.bcos.web3j.abi.datatypes.Type;
+import org.fisco.bcos.web3j.abi.datatypes.Utf8String;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Uint256;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -12,15 +23,12 @@ import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.RemoteCall;
 import org.fisco.bcos.web3j.protocol.core.methods.response.Log;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.tuples.generated.Tuple1;
+import org.fisco.bcos.web3j.tuples.generated.Tuple4;
 import org.fisco.bcos.web3j.tx.Contract;
 import org.fisco.bcos.web3j.tx.TransactionManager;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
 
 /**
  * <p>Auto generated code.
@@ -33,9 +41,15 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public class OracleCore extends Contract {
-    public static String BINARY = "608060405263e8d0a0d260e01b600260006101000a81548163ffffffff021916908360e01c021790555034801561003557600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3610b6a806101016000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c80634b602282146100675780638da5cb5b146100855780638f32d59b146100cf578063f105f2a0146100f1578063f2fde38b1461016b578063fab4cace146101af575b600080fd5b61006f610274565b6040518082815260200191505060405180910390f35b61008d61027a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100d76102a3565b604051808215151515815260200191505060405180910390f35b6101516004803603608081101561010757600080fd5b8101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190803590602001909291905050506102fa565b604051808215151515815260200191505060405180910390f35b6101ad6004803603602081101561018157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610660565b005b61025a600480360360808110156101c557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291908035906020019064010000000081111561020c57600080fd5b82018360208201111561021e57600080fd5b8035906020019184600183028401116401000000008311171561024057600080fd5b9091929391929390803590602001909291905050506106e6565b604051808215151515815260200191505060405180910390f35b61025881565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b600061030461027a565b73ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610387576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602a815260200180610b0b602a913960400191505060405180910390fd5b846000801b60016000838152602001908152602001600020541415610414576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601b8152602001807f4d757374206861766520612076616c696420726571756573744964000000000081525060200191505060405180910390fd5b60008585604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200192505050604051602081830303815290604052805190602001209050806001600089815260200190815260200160002054146104fe576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601e8152602001807f506172616d7320646f206e6f74206d617463682072657175657374204944000081525060200191505060405180910390fd5b600160008881526020019081526020016000206000905560008673ffffffffffffffffffffffffffffffffffffffff16600260009054906101000a900460e01b89876040516024018083815260200182815260200192505050604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506040518082805190602001908083835b602083106105e757805182526020820191506020810190506020830392506105c4565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d8060008114610649576040519150601f19603f3d011682016040523d82523d6000602084013e61064e565b606091505b50509050809350505050949350505050565b6106686102a3565b6106da576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260208152602001807f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657281525060200191505060405180910390fd5b6106e381610918565b50565b6000808686604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b8152601401828152602001925050506040516020818303038152906040528051906020012090506000801b6001600083815260200190815260200160002054146107d4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260148152602001807f4d75737420757365206120756e6971756520494400000000000000000000000081525060200191505060405180910390fd5b60006107eb61025842610a5c90919063ffffffff16565b90508781604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b8152601401828152602001925050506040516020818303038152906040528051906020012060016000848152602001908152602001600020819055507f1ced7cb179518c5626be5b844708b97156f8697d776f7494929702a531d9a80e8883888888604051808673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001858152602001806020018381526020018281038252858582818152602001925080828437600081840152601f19601f820116905080830192505050965050505050505060405180910390a160019250505095945050505050565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141561099e576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401808060200182810382526026815260200180610ae56026913960400191505060405180910390fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b600080828401905083811015610ada576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601b8152602001807f536166654d6174683a206164646974696f6e206f766572666c6f77000000000081525060200191505060405180910390fd5b809150509291505056fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734e6f7420616e20617574686f72697a6564206e6f646520746f2066756c66696c6c207265717565737473a264697066735822122031ab6663b6de44952a52a23c591d36e063e8702cbdaf5e659a45d2bfc4a044e064736f6c63430006060033";
+    public static final String[] BINARY_ARRAY = {"608060405263e8d0a0d260e01b600260006101000a81548163ffffffff021916908360e01c021790555034801561003557600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3610b72806101016000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c80634b602282146100675780638da5cb5b146100855780638f32d59b146100cf578063f105f2a0146100f1578063f2fde38b1461016b578063fab4cace146101af575b600080fd5b61006f610274565b6040518082815260200191505060405180910390f35b61008d61027a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100d76102a3565b604051808215151515815260200191505060405180910390f35b6101516004803603608081101561010757600080fd5b8101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190803590602001909291905050506102fa565b604051808215151515815260200191505060405180910390f35b6101ad6004803603602081101561018157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610660565b005b61025a600480360360808110156101c557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291908035906020019064010000000081111561020c57600080fd5b82018360208201111561021e57600080fd5b8035906020019184600183028401116401000000008311171561024057600080fd5b9091929391929390803590602001909291905050506106e6565b604051808215151515815260200191505060405180910390f35b61025881565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b600061030461027a565b73ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610387576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602a815260200180610b13602a913960400191505060405180910390fd5b846000801b60016000838152602001908152602001600020541415610414576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601b8152602001807f4d757374206861766520612076616c696420726571756573744964000000000081525060200191505060405180910390fd5b60008585604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200192505050604051602081830303815290604052805190602001209050806001600089815260200190815260200160002054146104fe576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601e8152602001807f506172616d7320646f206e6f74206d617463682072657175657374204944000081525060200191505060405180910390fd5b600160008881526020019081526020016000206000905560008673ffffffffffffffffffffffffffffffffffffffff16600260009054906101000a900460e01b89876040516024018083815260200182815260200192505050604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506040518082805190602001908083835b602083106105e757805182526020820191506020810190506020830392506105c4565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d8060008114610649576040519150601f19603f3d011682016040523d82523d6000602084013e61064e565b606091505b50509050809350505050949350505050565b6106686102a3565b6106da576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260208152602001807f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657281525060200191505060405180910390fd5b6106e381610920565b50565b6000808686604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b8152601401828152602001925050506040516020818303038152906040528051906020012090506000801b6001600083815260200190815260200160002054146107d4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260148152602001807f4d75737420757365206120756e6971756520494400000000000000000000000081525060200191505060405180910390fd5b60006107eb61025842610a6490919063ffffffff16565b90508781604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b8152601401828152602001925050506040516020818303038152906040528051906020012060016000848152602001908152602001600020819055507f298287761676dcd2a230f3437ce1225c708bbc2c386b09f5586d663e12c2eb5f888388888589604051808773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001868152602001806020018481526020018381526020018281038252868682818152602001925080828437600081840152601f19601f82011690508083019250505097505050505050505060405180910390a160019250505095945050505050565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156109a6576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401808060200182810382526026815260200180610aed6026913960400191505060405180910390fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b600080828401905083811015610ae2576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601b8152602001807f536166654d6174683a206164646974696f6e206f766572666c6f77000000000081525060200191505060405180910390fd5b809150509291505056fe4f776e61626c653a206e6577206f776e657220697320746865207a65726f20616464726573734e6f7420616e20617574686f72697a6564206e6f646520746f2066756c66696c6c207265717565737473a26469706673582212204961af071701bef21419cfaf36264858ae890de8d1ace3ba492be985ebc12a1a64736f6c63430006060033"};
 
-    public static final String ABI = "[{\"inputs\": [], \"stateMutability\": \"nonpayable\", \"type\": \"constructor\"}, {\"anonymous\": false, \"inputs\": [{\"indexed\": false, \"internalType\": \"address\", \"name\": \"callbackAddr\", \"type\": \"address\"}, {\"indexed\": false, \"internalType\": \"bytes32\", \"name\": \"requestId\", \"type\": \"bytes32\"}, {\"indexed\": false, \"internalType\": \"string\", \"name\": \"url\", \"type\": \"string\"}, {\"indexed\": false, \"internalType\": \"uint256\", \"name\": \"_timesAmount\", \"type\": \"uint256\"}], \"name\": \"OracleRequest\", \"type\": \"event\"}, {\"anonymous\": false, \"inputs\": [{\"indexed\": true, \"internalType\": \"address\", \"name\": \"previousOwner\", \"type\": \"address\"}, {\"indexed\": true, \"internalType\": \"address\", \"name\": \"newOwner\", \"type\": \"address\"}], \"name\": \"OwnershipTransferred\", \"type\": \"event\"}, {\"inputs\": [], \"name\": \"EXPIRY_TIME\", \"outputs\": [{\"internalType\": \"uint256\", \"name\": \"\", \"type\": \"uint256\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"bytes32\", \"name\": \"_requestId\", \"type\": \"bytes32\"}, {\"internalType\": \"address\", \"name\": \"_callbackAddress\", \"type\": \"address\"}, {\"internalType\": \"uint256\", \"name\": \"_expiration\", \"type\": \"uint256\"}, {\"internalType\": \"uint256\", \"name\": \"_data\", \"type\": \"uint256\"}], \"name\": \"fulfillRequest\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}, {\"inputs\": [], \"name\": \"isOwner\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [], \"name\": \"owner\", \"outputs\": [{\"internalType\": \"address\", \"name\": \"\", \"type\": \"address\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"address\", \"name\": \"_callbackAddress\", \"type\": \"address\"}, {\"internalType\": \"uint256\", \"name\": \"_nonce\", \"type\": \"uint256\"}, {\"internalType\": \"string\", \"name\": \"_url\", \"type\": \"string\"}, {\"internalType\": \"uint256\", \"name\": \"_timesAmount\", \"type\": \"uint256\"}], \"name\": \"query\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"address\", \"name\": \"newOwner\", \"type\": \"address\"}], \"name\": \"transferOwnership\", \"outputs\": [], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}]";
+    public static final String BINARY = String.join("", BINARY_ARRAY);
+
+    public static final String[] ABI_ARRAY = {"[{\"inputs\": [], \"stateMutability\": \"nonpayable\", \"type\": \"constructor\"}, {\"anonymous\": false, \"inputs\": [{\"indexed\": false, \"internalType\": \"address\", \"name\": \"callbackAddr\", \"type\": \"address\"}, {\"indexed\": false, \"internalType\": \"bytes32\", \"name\": \"requestId\", \"type\": \"bytes32\"}, {\"indexed\": false, \"internalType\": \"string\", \"name\": \"url\", \"type\": \"string\"}, {\"indexed\": false, \"internalType\": \"uint256\", \"name\": \"expiration\", \"type\": \"uint256\"}, {\"indexed\": false, \"internalType\": \"uint256\", \"name\": \"_timesAmount\", \"type\": \"uint256\"}], \"name\": \"OracleRequest\", \"type\": \"event\"}, {\"anonymous\": false, \"inputs\": [{\"indexed\": true, \"internalType\": \"address\", \"name\": \"previousOwner\", \"type\": \"address\"}, {\"indexed\": true, \"internalType\": \"address\", \"name\": \"newOwner\", \"type\": \"address\"}], \"name\": \"OwnershipTransferred\", \"type\": \"event\"}, {\"inputs\": [], \"name\": \"EXPIRY_TIME\", \"outputs\": [{\"internalType\": \"uint256\", \"name\": \"\", \"type\": \"uint256\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"bytes32\", \"name\": \"_requestId\", \"type\": \"bytes32\"}, {\"internalType\": \"address\", \"name\": \"_callbackAddress\", \"type\": \"address\"}, {\"internalType\": \"uint256\", \"name\": \"_expiration\", \"type\": \"uint256\"}, {\"internalType\": \"uint256\", \"name\": \"_data\", \"type\": \"uint256\"}], \"name\": \"fulfillRequest\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}, {\"inputs\": [], \"name\": \"isOwner\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [], \"name\": \"owner\", \"outputs\": [{\"internalType\": \"address\", \"name\": \"\", \"type\": \"address\"}], \"stateMutability\": \"view\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"address\", \"name\": \"_callbackAddress\", \"type\": \"address\"}, {\"internalType\": \"uint256\", \"name\": \"_nonce\", \"type\": \"uint256\"}, {\"internalType\": \"string\", \"name\": \"_url\", \"type\": \"string\"}, {\"internalType\": \"uint256\", \"name\": \"_timesAmount\", \"type\": \"uint256\"}], \"name\": \"query\", \"outputs\": [{\"internalType\": \"bool\", \"name\": \"\", \"type\": \"bool\"}], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}, {\"inputs\": [{\"internalType\": \"address\", \"name\": \"newOwner\", \"type\": \"address\"}], \"name\": \"transferOwnership\", \"outputs\": [], \"stateMutability\": \"nonpayable\", \"type\": \"function\"}]"};
+
+    public static final String ABI = String.join("", ABI_ARRAY);
+
+    public static final TransactionDecoder transactionDecoder = new TransactionDecoder(ABI, BINARY);
 
     public static final String FUNC_EXPIRY_TIME = "EXPIRY_TIME";
 
@@ -50,7 +64,7 @@ public class OracleCore extends Contract {
     public static final String FUNC_TRANSFEROWNERSHIP = "transferOwnership";
 
     public static final Event ORACLEREQUEST_EVENT = new Event("OracleRequest", 
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}));
+            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
     ;
 
     public static final Event OWNERSHIPTRANSFERRED_EVENT = new Event("OwnershipTransferred", 
@@ -75,6 +89,10 @@ public class OracleCore extends Contract {
         super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
+    public static TransactionDecoder getTransactionDecoder() {
+        return transactionDecoder;
+    }
+
     public List<OracleRequestEventResponse> getOracleRequestEvents(TransactionReceipt transactionReceipt) {
         List<EventValuesWithLog> valueList = extractEventParametersWithLog(ORACLEREQUEST_EVENT, transactionReceipt);
         ArrayList<OracleRequestEventResponse> responses = new ArrayList<OracleRequestEventResponse>(valueList.size());
@@ -84,7 +102,8 @@ public class OracleCore extends Contract {
             typedResponse.callbackAddr = (String) eventValues.getNonIndexedValues().get(0).getValue();
             typedResponse.requestId = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
             typedResponse.url = (String) eventValues.getNonIndexedValues().get(2).getValue();
-            typedResponse._timesAmount = (BigInteger) eventValues.getNonIndexedValues().get(3).getValue();
+            typedResponse.expiration = (BigInteger) eventValues.getNonIndexedValues().get(3).getValue();
+            typedResponse._timesAmount = (BigInteger) eventValues.getNonIndexedValues().get(4).getValue();
             responses.add(typedResponse);
         }
         return responses;
@@ -147,6 +166,18 @@ public class OracleCore extends Contract {
         return createTransactionSeq(function);
     }
 
+    public Tuple1<BigInteger> getEXPIRY_TIMEOutput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_EXPIRY_TIME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<BigInteger>(
+
+                (BigInteger) results.get(0).getValue()
+                );
+    }
+
     public RemoteCall<TransactionReceipt> fulfillRequest(byte[] _requestId, String _callbackAddress, BigInteger _expiration, BigInteger _data) {
         final Function function = new Function(
                 FUNC_FULFILLREQUEST, 
@@ -180,6 +211,33 @@ public class OracleCore extends Contract {
         return createTransactionSeq(function);
     }
 
+    public Tuple4<byte[], String, BigInteger, BigInteger> getFulfillRequestInput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getInput().substring(10);
+        final Function function = new Function(FUNC_FULFILLREQUEST, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple4<byte[], String, BigInteger, BigInteger>(
+
+                (byte[]) results.get(0).getValue(), 
+                (String) results.get(1).getValue(), 
+                (BigInteger) results.get(2).getValue(), 
+                (BigInteger) results.get(3).getValue()
+                );
+    }
+
+    public Tuple1<Boolean> getFulfillRequestOutput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_FULFILLREQUEST, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<Boolean>(
+
+                (Boolean) results.get(0).getValue()
+                );
+    }
+
     public RemoteCall<TransactionReceipt> isOwner() {
         final Function function = new Function(
                 FUNC_ISOWNER, 
@@ -204,6 +262,18 @@ public class OracleCore extends Contract {
         return createTransactionSeq(function);
     }
 
+    public Tuple1<Boolean> getIsOwnerOutput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_ISOWNER, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<Boolean>(
+
+                (Boolean) results.get(0).getValue()
+                );
+    }
+
     public RemoteCall<TransactionReceipt> owner() {
         final Function function = new Function(
                 FUNC_OWNER, 
@@ -226,6 +296,18 @@ public class OracleCore extends Contract {
                 Arrays.<Type>asList(), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
+    }
+
+    public Tuple1<String> getOwnerOutput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_OWNER, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<String>(
+
+                (String) results.get(0).getValue()
+                );
     }
 
     public RemoteCall<TransactionReceipt> query(String _callbackAddress, BigInteger _nonce, String _url, BigInteger _timesAmount) {
@@ -261,6 +343,33 @@ public class OracleCore extends Contract {
         return createTransactionSeq(function);
     }
 
+    public Tuple4<String, BigInteger, String, BigInteger> getQueryInput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getInput().substring(10);
+        final Function function = new Function(FUNC_QUERY, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple4<String, BigInteger, String, BigInteger>(
+
+                (String) results.get(0).getValue(), 
+                (BigInteger) results.get(1).getValue(), 
+                (String) results.get(2).getValue(), 
+                (BigInteger) results.get(3).getValue()
+                );
+    }
+
+    public Tuple1<Boolean> getQueryOutput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getOutput();
+        final Function function = new Function(FUNC_QUERY, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<Boolean>(
+
+                (Boolean) results.get(0).getValue()
+                );
+    }
+
     public RemoteCall<TransactionReceipt> transferOwnership(String newOwner) {
         final Function function = new Function(
                 FUNC_TRANSFEROWNERSHIP, 
@@ -283,6 +392,18 @@ public class OracleCore extends Contract {
                 Arrays.<Type>asList(new Address(newOwner)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
+    }
+
+    public Tuple1<String> getTransferOwnershipInput(TransactionReceipt transactionReceipt) {
+        String data = transactionReceipt.getInput().substring(10);
+        final Function function = new Function(FUNC_TRANSFEROWNERSHIP, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        List<Type> results = FunctionReturnDecoder.decode(data, function.getOutputParameters());;
+        return new Tuple1<String>(
+
+                (String) results.get(0).getValue()
+                );
     }
 
     @Deprecated
@@ -329,6 +450,8 @@ public class OracleCore extends Contract {
         public byte[] requestId;
 
         public String url;
+
+        public BigInteger expiration;
 
         public BigInteger _timesAmount;
     }
