@@ -2,6 +2,7 @@ package com.webank.oracle.event.vo.oraclize;
 
 import java.math.BigInteger;
 
+import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
@@ -51,7 +52,6 @@ public class OraclizeLogResult extends BaseLogResult {
 
     @Override
     public ReqHistory convert(OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        // TODO. save timesAmount??
-        return ReqHistory.build(requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url);
+        return ReqHistory.build(requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, Hex.encodeHexString(timesAmount.toByteArray()));
     }
 }

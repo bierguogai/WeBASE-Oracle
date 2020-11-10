@@ -50,6 +50,6 @@ public class VRFLogResult extends BaseLogResult {
 
     @Override
     public ReqHistory convert(OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(requestId, sender,oracleVersionEnum,sourceTypeEnum , seedAndBlockNum, null);
+        return ReqHistory.build(requestId, sender,oracleVersionEnum,sourceTypeEnum , seedAndBlockNum, null,null);
     }
 }

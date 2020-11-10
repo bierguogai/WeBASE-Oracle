@@ -34,7 +34,6 @@ import lombok.ToString;
 @Entity
 //@DynamicUpdate
 @Table(name = "req_history", schema = "webaseoracle")
-
 public class ReqHistory {
 
     /**
@@ -101,6 +100,12 @@ public class ReqHistory {
     private String result;
 
     /**
+     * 放大倍数，防止出现小数。
+     */
+    @Column(columnDefinition = "TEXT")
+    private String timesAmount;
+
+    /**
      * 请求失败是错误信息
      */
     @Column(length = MAX_ERROR_LENGTH)
@@ -131,29 +136,19 @@ public class ReqHistory {
     private LocalDateTime modifyTime;
 
 
-    /**
-     * @return
-     */
     public static ReqHistory build(String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
-                                   SourceTypeEnum sourceTypeEnum,
-                                   String reqQuery) {
-        ReqHistory reqHistory = new ReqHistory();
-        reqHistory.setReqId(reqId);
-        reqHistory.setOracleVersion(oracleVersionEnum.getId());
-        reqHistory.setUserContract(userContract);
-        reqHistory.setSourceType(sourceTypeEnum.getId());
-        reqHistory.setReqQuery(reqQuery);
-        return reqHistory;
+                                           OracleVersionEnum oracleVersionEnum,
+                                           SourceTypeEnum sourceTypeEnum,
+                                           String reqQuery, String timesAmount) {
+        return build(reqId,userContract,oracleVersionEnum,sourceTypeEnum,reqQuery,null,timesAmount);
     }
-    /**
-     * @return
-     */
+
     public static ReqHistory build(String reqId, String userContract,
-                                   OracleVersionEnum oracleVersionEnum,
-                                   SourceTypeEnum sourceTypeEnum,
-                                   String reqQuery,
-                                   String serviceIdList) {
+                                           OracleVersionEnum oracleVersionEnum,
+                                           SourceTypeEnum sourceTypeEnum,
+                                           String reqQuery,
+                                           String serviceIdList,
+                                   String timesAmount) {
         ReqHistory reqHistory = new ReqHistory();
         reqHistory.setReqId(reqId);
         reqHistory.setOracleVersion(oracleVersionEnum.getId());
@@ -161,6 +156,7 @@ public class ReqHistory {
         reqHistory.setSourceType(sourceTypeEnum.getId());
         reqHistory.setReqQuery(reqQuery);
         reqHistory.setServiceIdList(serviceIdList);
+        reqHistory.setTimesAmount(timesAmount);
         return reqHistory;
     }
 }

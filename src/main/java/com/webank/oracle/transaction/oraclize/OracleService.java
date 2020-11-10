@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -46,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OracleService extends AbstractCoreService {
 
-    private final static Map<String,  String> ORACLIZE_CONTRACT_ADDRESS_MAP = new ConcurrentHashMap<>();
+    private final static Map<String, String> ORACLIZE_CONTRACT_ADDRESS_MAP = new ConcurrentHashMap<>();
 
     @Override
     public String deployContract(int chainId, int group) {
@@ -59,7 +60,7 @@ public class OracleService extends AbstractCoreService {
         } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
-        ORACLIZE_CONTRACT_ADDRESS_MAP.put(getKey(chainId,group),oraliceCore.getContractAddress());
+        ORACLIZE_CONTRACT_ADDRESS_MAP.put(getKey(chainId, group), oraliceCore.getContractAddress());
         return oraliceCore.getContractAddress();
     }
 
@@ -97,8 +98,12 @@ public class OracleService extends AbstractCoreService {
         //send transaction
         OraclizeLogResult oraclizeLogResult = (OraclizeLogResult) baseLogResult;
         String requestId = oraclizeLogResult.getRequestId();
-        log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result );
+        log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result);
+
+        BigInteger afterTimesAmount = ((BigInteger) result).multiply(oraclizeLogResult.getTimesAmount());
+        log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
         try {
+
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
             String oraclizeAddress = ORACLIZE_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
@@ -108,12 +113,12 @@ public class OracleService extends AbstractCoreService {
             OracleCore templateOracle = OracleCore.load(oraclizeAddress, web3j, credentials, contractGasProvider);
             TransactionReceipt receipt = templateOracle.fulfillRequest(Numeric.hexStringToByteArray(requestId),
                     // TODO. safe convert ????? biginteger
-                    oraclizeLogResult.getCallbackAddress(), oraclizeLogResult.getExpiration(), (BigInteger) result).send();
+                    oraclizeLogResult.getCallbackAddress(), oraclizeLogResult.getExpiration(), afterTimesAmount).send();
             log.info("Write data to chain:[{}]", receipt.getStatus());
             dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId);
+            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
         } catch (Exception oe) {
-            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId, oe);
+            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId, oe);
             throw oe;
         }
     }
