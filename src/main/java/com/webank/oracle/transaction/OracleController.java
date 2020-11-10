@@ -22,7 +22,7 @@ public class OracleController {
                                        @RequestParam(defaultValue = "1") int groupId) {
         EventRegister eventRegister = eventRegisterProperties.getEventRegisters().stream().filter(x -> x.getChainId() == (chainId) && x.getGroup() == groupId).findAny().get();
         if (eventRegister != null) {
-            return eventRegister.getContractAddress();
+            return String.format("Oraclize:%s\nVRF:%s",eventRegister.getOraclizeContractAddress(),eventRegister.getVrfContractAddress());
         } else
             return null;
     }

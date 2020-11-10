@@ -17,8 +17,8 @@ public class OracleTestbak extends BaseTest {
         //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getContractAddress(), web3j,credentials, contractGasProvider);
+        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
+        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset
@@ -43,8 +43,8 @@ public class OracleTestbak extends BaseTest {
         //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(1).getContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(1).getContractAddress(), web3j,credentials, contractGasProvider);
+        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(1).getOraclizeContractAddress());
+        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(1).getOraclizeContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset

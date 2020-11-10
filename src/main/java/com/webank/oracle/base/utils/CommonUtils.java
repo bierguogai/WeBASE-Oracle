@@ -21,6 +21,7 @@ import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.crypto.Sign.SignatureData;
 import org.fisco.bcos.web3j.tx.txdecode.EventResultEntity;
@@ -71,7 +72,10 @@ public class CommonUtils {
      * @return Field value
      */
     public static String getStringFromEventLog(List<EventResultEntity> params, String fieldName) {
-        return getDataFromEventLog(params, fieldName, String.class);
+        String result = getDataFromEventLog(params, fieldName, String.class);
+        result = StringUtils.removeStart(result,"\"");
+        result = StringUtils.removeEnd(result,"\"");
+        return result;
     }
 
 

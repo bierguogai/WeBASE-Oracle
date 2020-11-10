@@ -25,13 +25,13 @@ public class VRFEventTest extends BaseTest {
     public void testVRFGetFromContract() {
         try {
             Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
-            log.info("VRFCoordinator address " + eventRegisterProperties.getEventRegisters().get(0).getContractAddress());
+            log.info("VRFCoordinator address " + eventRegisterProperties.getEventRegisters().get(0).getVrfContractAddress());
 
             // 获取部署 coordinate 合约的密钥对
             Credentials credential = this.keyStoreService.getCredentials();
 
             // 获取 coordinate 合约的地址
-            String coordinateAddress = VRFCoordinator.load(eventRegisterProperties.getEventRegisters().get(0).getContractAddress(), web3j, credential, contractGasProvider).getContractAddress();
+            String coordinateAddress = VRFCoordinator.load(eventRegisterProperties.getEventRegisters().get(0).getVrfContractAddress(), web3j, credential, contractGasProvider).getContractAddress();
 
             // 获取部署 coordinate 合约的公钥 hash
             byte[] keyhashbyte = VRFTest.calculateTheHashOfPK(credential.getEcKeyPair().getPrivateKey().toString(16));

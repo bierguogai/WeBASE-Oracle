@@ -147,17 +147,17 @@ public class VRFTest extends BaseTest {
 
         System.out.println("coordinate listen to the event .........");
         VRFCoordinator.RandomnessRequestEventResponse randomevent =vrfCoordinator.getRandomnessRequestEvents(randomT).get(0);
-       // vrfCoordinator.callbacks(randomevent.requestID);
+       // vrfCoordinator.callbacks(randomevent.requestId);
 
         System.out.println("hash:" + bytesToHex(randomevent.keyHash));
         System.out.println("preseed " + randomevent.seed);
         System.out.println("blocknumber: " + randomevent.blockNumber);
 
         System.out.println("sender: "+ randomevent.sender);
-        System.out.println("requestId: " +bytesToHex(randomevent.requestID));
+        System.out.println("requestId: " +bytesToHex(randomevent.requestId));
         System.out.println("seedAndBlock:        " +bytesToHex(randomevent.seedAndBlockNum));
 
-//        Tuple2<String, byte[]> callback =  vrfCoordinator.callbacks(randomevent.requestID).send();
+//        Tuple2<String, byte[]> callback =  vrfCoordinator.callbacks(randomevent.requestId).send();
 //        System.out.println("callback add: "+ callback.getValue1());
 //        System.out.println("callback seedandblock: "+ bytesToHex(callback.getValue2()));
 //        byte[] seedAndBlock  = CryptoUtil.soliditySha3( randomevent.seed, randomevent.blockNumber);

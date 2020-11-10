@@ -137,6 +137,21 @@ public class ReqHistory {
     public static ReqHistory build(String reqId, String userContract,
                                    OracleVersionEnum oracleVersionEnum,
                                    SourceTypeEnum sourceTypeEnum,
+                                   String reqQuery) {
+        ReqHistory reqHistory = new ReqHistory();
+        reqHistory.setReqId(reqId);
+        reqHistory.setOracleVersion(oracleVersionEnum.getId());
+        reqHistory.setUserContract(userContract);
+        reqHistory.setSourceType(sourceTypeEnum.getId());
+        reqHistory.setReqQuery(reqQuery);
+        return reqHistory;
+    }
+    /**
+     * @return
+     */
+    public static ReqHistory build(String reqId, String userContract,
+                                   OracleVersionEnum oracleVersionEnum,
+                                   SourceTypeEnum sourceTypeEnum,
                                    String reqQuery,
                                    String serviceIdList) {
         ReqHistory reqHistory = new ReqHistory();

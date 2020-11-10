@@ -17,23 +17,25 @@ package com.webank.oracle.transaction.oraclize;
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
-import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.fisco.bcos.web3j.utils.Numeric;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
-import com.webank.oracle.base.utils.DecodeOutputUtils;
-import com.webank.oracle.http.HttpService;
-import com.webank.oracle.keystore.KeyStoreService;
+import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.event.service.AbstractCoreService;
+import com.webank.oracle.event.vo.BaseLogResult;
+import com.webank.oracle.event.vo.oraclize.OraclizeLogResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,80 +44,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class OracleService {
+public class OracleService extends AbstractCoreService {
 
-    @Autowired
-    Map<Integer, Map<Integer, Web3j>> web3jMap;
-    @Autowired
-    private KeyStoreService keyStoreService;
-    @Autowired
-    private HttpService httpService;
-    private BigInteger gasPrice = new BigInteger("1");
-    private BigInteger gasLimit = new BigInteger("2100000000");
-    private ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
+    private final static Map<String,  String> ORACLIZE_CONTRACT_ADDRESS_MAP = new ConcurrentHashMap<>();
 
-
-    /**
-     * Get data from url in contractEventLog and upload it to blockChain.
-     */
-    public String getDataFromUrlAndUpChain(String contractAddress, byte[] logId, String url, String formate, List<String> httpResultIndexList, int chainId, int groupId) throws Exception {
-        //get data
-        Object httpResult = httpService.getObjectByUrlAndKeys(logId,url,formate, httpResultIndexList);
-        log.info("url {} https result: {} ", url, toJSONString(httpResult));
-        //send transaction
-        upBlockChain(contractAddress, logId, toJSONString(httpResult), chainId, groupId);
-        return toJSONString(httpResult);
-    }
-
-
-    /**
-     * 将数据上链.
-     */
-    public void upBlockChain(String contractAddress, byte[] cid, String data, int chainId, int groupId) throws Exception {
-        String cidStr = Numeric.toHexString(cid);
-        log.debug("upBlockChain start. contractAddress:{} data:{} cid:{}", contractAddress, data, cidStr);
-        try {
-            Web3j web3j = getWeb3j(chainId, groupId);
-            Credentials credentials = keyStoreService.getCredentials();
-            TemplateOracle templateOracle = TemplateOracle.load(contractAddress, web3j, credentials, contractGasProvider);
-            TransactionReceipt receipt = templateOracle.__callback(cid, data).send();
-            log.info("&&&&&" + receipt.getStatus());
-            dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr);
-        } catch (OracleException oe) {
-            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, contractAddress, data, cidStr, oe);
-            throw oe;
-        }
-    }
-
-
-    /**
-     * get web3j by groupId.
-     */
-    private Web3j getWeb3j(int chainId, int groupId) {
-        Web3j web3j = web3jMap.get(chainId).get(groupId);
-        if (web3j == null) {
-            new OracleException(ConstantCode.GROUP_ID_NOT_EXIST);
-        }
-        return web3j;
-    }
-
-    /**
-     * @param receipt
-     */
-    public static void dealWithReceipt(TransactionReceipt receipt) {
-        // log.info("*********"+ transactionReceipt.getOutput());
-        if ("0x16".equals(receipt.getStatus()) && receipt.getOutput().startsWith("0x08c379a0")) {
-            log.error("transaction error:[{}]", DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
-            throw new OracleException(ConstantCode.SYSTEM_EXCEPTION.getCode(), DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
-        }
-        if (!"0x0".equals(receipt.getStatus())) {
-            log.error("transaction error, status:{} output:{}", receipt.getStatus(), receipt.getOutput());
-            throw new OracleException(ConstantCode.SYSTEM_EXCEPTION.getCode(), DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
-        }
-    }
-
-    public String deployOracleCore(int chainId, int group) {
+    @Override
+    public String deployContract(int chainId, int group) {
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {
@@ -125,7 +59,98 @@ public class OracleService {
         } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
-        String orcleAddress = oraliceCore.getContractAddress();
-        return orcleAddress;
+        ORACLIZE_CONTRACT_ADDRESS_MAP.put(getKey(chainId,group),oraliceCore.getContractAddress());
+        return oraliceCore.getContractAddress();
     }
+
+    @Override
+    public String getResult(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
+        // TODO. convert check ?
+        OraclizeLogResult oraclizeLogResult = (OraclizeLogResult) baseLogResult;
+
+        // TODO. optimize
+        String url = oraclizeLogResult.getUrl();
+        if (url.startsWith("\"")) {
+            int len1 = url.length();
+            url = url.substring(1, len1 - 1);
+        }
+        int left = url.indexOf("(");
+        int right = url.indexOf(")");
+        String format = url.substring(0, left);
+        url = url.substring(left + 1, right);
+        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(url);
+
+        //get data
+        BigInteger httpResult = httpService.getObjectByUrlAndKeys(url,
+                format, httpResultIndexList);
+        log.info("url {} https result: {} ", oraclizeLogResult.getUrl(), toJSONString(httpResult));
+
+        this.fill(chainId, groupId, oraclizeLogResult.getCallbackAddress(), oraclizeLogResult, httpResult);
+        return toJSONString(httpResult);
+    }
+
+    /**
+     * 将数据上链.
+     */
+    @Override
+    public void fill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
+        //send transaction
+        OraclizeLogResult oraclizeLogResult = (OraclizeLogResult) baseLogResult;
+        String requestId = oraclizeLogResult.getRequestId();
+        log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result );
+        try {
+            Web3j web3j = getWeb3j(chainId, groupId);
+            Credentials credentials = keyStoreService.getCredentials();
+            String oraclizeAddress = ORACLIZE_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
+            if (StringUtils.isBlank(oraclizeAddress)) {
+                // TODO. throw exception
+            }
+            OracleCore templateOracle = OracleCore.load(oraclizeAddress, web3j, credentials, contractGasProvider);
+            TransactionReceipt receipt = templateOracle.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+                    // TODO. safe convert ????? biginteger
+                    oraclizeLogResult.getCallbackAddress(), oraclizeLogResult.getExpiration(), (BigInteger) result).send();
+            log.info("Write data to chain:[{}]", receipt.getStatus());
+            dealWithReceipt(receipt);
+            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId);
+        } catch (Exception oe) {
+            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, result, requestId, oe);
+            throw oe;
+        }
+    }
+
+    /**
+     * @param argValue
+     * @return
+     */
+    private String subFiledValueForUrl(String argValue) {
+        if (StringUtils.isBlank(argValue)) {
+            log.warn("argValue is empty");
+            return argValue;
+        }
+        int left = argValue.indexOf("(");
+        int right = argValue.indexOf(")");
+        String header = argValue.substring(0, left);
+        String url = argValue.substring(left, right);
+        return url;
+    }
+
+
+    /**
+     * @param argValue
+     * @return
+     */
+    private List<String> subFiledValueForHttpResultIndex(String argValue) {
+        if (StringUtils.isBlank(argValue) || argValue.endsWith(")")) {
+            log.warn("argValue is:{} ,return empty list", argValue);
+            return Collections.EMPTY_LIST;
+        }
+
+        String resultIndex = argValue.substring(argValue.indexOf(").") + 2);
+
+        String[] resultIndexArr = resultIndex.split("\\.");//.replaceAll("\\.", ",").split(",")
+        List resultList = new ArrayList<>(resultIndexArr.length);
+        Collections.addAll(resultList, resultIndexArr);
+        return resultList;
+    }
+
 }
