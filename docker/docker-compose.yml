@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  webase-oracle:
+    image: fiscoorg/webase-oracle:v0.4
+    container_name: webase-oracle
+    restart: "no"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+    volumes:
+      - ./log/:/dist/log
+      - ./application-docker.yml:/dist/conf/application-docker.yml
+      - .conf/sdk/ca.crt:/dist/conf/ca.crt
+      - .conf/sdk/node.crt:/dist/conf/node.crt
+      - .conf/sdk/node.key:/dist/conf/node.key
+    network_mode: "host"
