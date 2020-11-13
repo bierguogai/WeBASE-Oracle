@@ -22,6 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,6 +63,40 @@ public class ReqHistoryController {
         }
 
         return new BaseResponse(ConstantCode.DATA_NOT_EXISTS, requestId);
+    }
+
+    @GetMapping("list")
+    public BaseResponse list(
+            @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumberParam,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSizeParam,
+            @RequestParam(value = "hideResult", defaultValue = "true") boolean hideResult
+    ) {
+
+        // 默认从第 1 页开始
+        int pageNumber = pageNumberParam <= 0 ? 0 : pageNumberParam - 1;
+        // 默认一页 10 条，不能超过 20 条每页
+        int pageSize = pageSizeParam <= 0 || pageSizeParam > 20 ? 10 : pageSizeParam;
+
+        // sort desc
+        Sort.TypedSort<ReqHistory> sortType = Sort.sort(ReqHistory.class);
+        Sort sort = sortType.by(ReqHistory::getModifyTime).descending();
+
+        // page
+        PageRequest page = PageRequest.of(pageNumber, pageSize, sort);
+
+        long count = reqHistoryRepository.count();
+        if (count > 0) {
+            Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findAll(page);
+            if (hideResult) {
+                reqHistoryPage.getContent().forEach((history) -> {
+                    history.setResult("");
+                    history.setProof("");
+                });
+            }
+            return BaseResponse.pageResponse(ConstantCode.SUCCESS, reqHistoryPage.getContent(), count);
+        } else {
+            return BaseResponse.emptyPageResponse(ConstantCode.SUCCESS);
+        }
     }
 
     @GetMapping("random/decode")
