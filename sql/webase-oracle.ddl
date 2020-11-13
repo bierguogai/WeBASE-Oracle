@@ -46,6 +46,7 @@ CREATE TABLE `req_history` (
   `user_contract` varchar(128) NOT NULL DEFAULT '0' COMMENT '调用合约地址',
   `process_time` int(11) NOT NULL DEFAULT '0' COMMENT '请求处理时长，默认 0',
   `result` text DEFAULT NULL COMMENT '请求结果',
+  `times_amount` text DEFAULT NULL COMMENT '防止出现小数',
   `error` varchar(512) DEFAULT NULL COMMENT '请求失败时的错误信息',
   `proof_type` int(10) unsigned DEFAULT '0' COMMENT '证明类型, 0. 无证明；1. 签名认证。默认0',
   `proof` text DEFAULT NULL COMMENT '证明内容',

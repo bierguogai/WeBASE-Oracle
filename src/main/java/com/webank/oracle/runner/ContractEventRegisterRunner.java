@@ -1,32 +1,48 @@
 package com.webank.oracle.runner;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import com.webank.oracle.event.callback.oraclize.OraclizeEventService;
-import com.webank.oracle.event.callback.vrf.VRFEventService;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.event.callback.oraclize.OraclizeEventCallback;
+import com.webank.oracle.event.callback.vrf.VRFContractEventCallback;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Register contract event.
- */
-@Order(2)
-@Component
 @Slf4j
-public class ContractEventRegisterRunner implements ApplicationRunner {
+@Component
+public class ContractEventRegisterRunner {
 
-    @Autowired private OraclizeEventService oraclizeEventService;
-    @Autowired private VRFEventService vrfEventService;
+    @Autowired private EventRegisterProperties eventRegisterProperties;
+    @Autowired private ApplicationContext ctx;
 
-    @Override
-    public void run(ApplicationArguments args) {
+
+    /**
+     * 注册回调
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void init( ) {
         try{
-//            oraclizeEventService.registerContractEvent();
-            vrfEventService.registerContractEvent();
+            log.info("Register event listener call back...");
+            List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
+            for (int i = 0; i < eventRegisterList.size(); i++) {
+                EventRegister eventRegister = eventRegisterList.get(i);
+                // init Oraclize on this chain and group
+                OraclizeEventCallback oraclizeEventCallback = ctx.getBean(OraclizeEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
+                oraclizeEventCallback.init(eventRegister);
+                log.info("Deploy oraclize contract:[{}]", eventRegister.getOraclizeContractAddress());
+
+                // init VRF on this chain and group
+                VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
+                vrfContractEventCallback.init(eventRegister);
+                log.info("Deploy vrf contract:[{}]", eventRegister.getVrfContractAddress());
+            }
         }catch (Exception ex){
             log.error("ContractEventRegisterRunner exception",ex);
             System.exit(0);

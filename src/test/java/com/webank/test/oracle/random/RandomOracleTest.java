@@ -27,9 +27,9 @@ public class RandomOracleTest extends BaseTest {
             //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getContractAddress());
+            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
 
-            OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getContractAddress(), web3j, credentials, contractGasProvider);
+            OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress(), web3j, credentials, contractGasProvider);
             String oracleAddress = oraliceCore.getContractAddress();
 
             // asset

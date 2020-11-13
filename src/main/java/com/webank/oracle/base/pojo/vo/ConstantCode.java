@@ -47,6 +47,8 @@ public class ConstantCode {
 
     public static final RetCode DECODE_PROOF_ERROR = RetCode.mark(205006, "Decode proof error");
 
+    public static final RetCode VRF_CONTRACT_ADDRESS_ERROR = RetCode.mark(205007, "VRF contract address is empty.");
+
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");
 

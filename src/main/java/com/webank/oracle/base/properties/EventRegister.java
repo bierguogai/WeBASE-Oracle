@@ -1,7 +1,5 @@
 package com.webank.oracle.base.properties;
 
-import java.util.List;
-
 import lombok.Data;
 
 /**
@@ -10,10 +8,9 @@ import lombok.Data;
 @Data
 public class EventRegister {
     private int chainId = 1;
-    private Integer group = 1;
-    private String contractAddress;
+    private int group = 1;
+    private String oraclizeContractAddress;
+    private String vrfContractAddress;
     private String fromBlock = "latest";
     private String toBlock = "latest";
-    private String abiFile;
-    private List<String> topicList;
 }

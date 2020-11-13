@@ -118,7 +118,7 @@ public class RandomNumberConsumer extends Contract {
     public RemoteCall<TransactionReceipt> rawFulfillRandomness(byte[] requestId, BigInteger randomness) {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId),
                 new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
@@ -127,7 +127,7 @@ public class RandomNumberConsumer extends Contract {
     public void rawFulfillRandomness(byte[] requestId, BigInteger randomness, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId),
                 new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
@@ -136,7 +136,7 @@ public class RandomNumberConsumer extends Contract {
     public String rawFulfillRandomnessSeq(byte[] requestId, BigInteger randomness) {
         final Function function = new Function(
                 FUNC_RAWFULFILLRANDOMNESS, 
-                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId), 
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(requestId),
                 new Uint256(randomness)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);

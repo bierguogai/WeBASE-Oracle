@@ -3,6 +3,7 @@ package com.webank.oracle.http;
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,16 +41,17 @@ public class HttpService {
     /**
      * get result by url,and get value from the result by keyList.
      *
-     * @param logId
      * @param url
+     * @param format
      * @param resultKeyList
      * @return
+     * @throws Exception
      */
-    public Object getObjectByUrlAndKeys(byte[] logId, String url, String format, List<String> resultKeyList) throws Exception {
+    public BigInteger getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
         try {
             //get data
             String result = HttpUtil.get(url);
-            Object value = null;
+            BigInteger value = BigInteger.valueOf(0L);
 
             // fetch value from result by format
             switch (StringUtils.lowerCase(format)) {
@@ -58,10 +60,12 @@ public class HttpService {
                     if (jsonNode == null) {
                         throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
-                    value = getValueByKeys(jsonNode, resultKeyList);
+                    // TODO. exception
+                    value = new BigInteger(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
+
                     break;
                 default:
-                    value = result.split("\n")[0];
+                    value = new BigInteger(result.split("\n")[0]);
             }
             return value;
         } catch (Exception e) {
