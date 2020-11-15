@@ -47,7 +47,7 @@ public enum ReqStatusEnum {
      * @param args
      * @return
      */
-    public String format(String ... args){
+    public String format(Object ... args){
         try {
             return String.format(this.format, args );
         }catch (Exception e){

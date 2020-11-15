@@ -162,6 +162,7 @@ public class Web3Config {
      */
     @Bean
     @DependsOn("encryptType")
+    @SuppressWarnings("deprecation")
     public Map<Integer,Map<Integer, Web3j>> web3jMap(Map<Integer,Map<Integer, Service>> serviceMapWithChainId) throws IOException {
 //        Map web3jMapWithChainId = new ConcurrentHashMap<String,Map<Integer, Web3j>>();
         Map web3jMapWithChainId = new ConcurrentHashMap<Integer, Map<Integer, Web3j>>(serviceMapWithChainId.size());

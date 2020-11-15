@@ -5,6 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.webank.oracle.base.enums.ReqStatusEnum;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,11 +14,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class BaseException extends RuntimeException {
     private int status;
     private String detailMessage;
 
-    public BaseException(ReqStatusEnum reqStatusEnum, String ... paramArray){
+    public BaseException(ReqStatusEnum reqStatusEnum, Object ... paramArray){
         status = reqStatusEnum.getStatus();
         if (ArrayUtils.isNotEmpty(paramArray)){
             detailMessage = reqStatusEnum.format(paramArray);

@@ -21,6 +21,12 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
      */
     Optional<ReqHistory> findByReqId(String reqId);
 
+    /**
+     *
+     * @return
+     */
+    long count();
+
 
 //    List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
 //
