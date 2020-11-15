@@ -68,7 +68,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
 
         //get data from url and update blockChain
-        return vrfService.getResult(chainId, groupId, vrfLogResult);
+        return vrfService.getResultAndUpTochain(chainId, groupId, vrfLogResult);
     }
 
     @Override

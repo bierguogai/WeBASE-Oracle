@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.oracle.event.callback.oraclize;
+package com.webank.oracle.event.callback.oracle;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
-import com.webank.oracle.event.vo.oraclize.OraclizeLogResult;
+import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
 import com.webank.oracle.transaction.oraclize.OracleCore;
 import com.webank.oracle.transaction.oraclize.OracleService;
 
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Scope("prototype")
 @Slf4j
-public class OraclizeEventCallback extends AbstractEventCallback {
+public class OracleCoreEventCallback extends AbstractEventCallback {
 
     @Autowired private OracleService oracleService;
 
@@ -46,7 +46,7 @@ public class OraclizeEventCallback extends AbstractEventCallback {
      * @param chainId
      * @param groupId
      */
-    public OraclizeEventCallback(int chainId, int groupId) {
+    public OracleCoreEventCallback(int chainId, int groupId) {
         super(OracleCore.ABI, OracleCore.ORACLEREQUEST_EVENT, chainId, groupId);
     }
 
@@ -57,16 +57,16 @@ public class OraclizeEventCallback extends AbstractEventCallback {
 
     @Override
     public String processLog(int status, LogResult logResult) throws Exception {
-        OraclizeLogResult oraclizeLogResult = new OraclizeLogResult(logResult);
+        OracleCoreLogResult oracleCoreLogResult = new OracleCoreLogResult(logResult);
 
-        log.info("Process log event:[{}]", oraclizeLogResult);
+        log.info("Process log event:[{}]", oracleCoreLogResult);
 
-        this.reqHistoryRepository.save(oraclizeLogResult.convert(OracleVersionEnum.ORACLIZE_10000, SourceTypeEnum.URL));
-        log.info("Save request:[{}:{}:{}] to db.", oraclizeLogResult.getCallbackAddress(),
-                oraclizeLogResult.getRequestId(), oraclizeLogResult.getUrl());
+        this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_10000, SourceTypeEnum.URL));
+        log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
+                oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 
         //get data from url and update blockChain
-        return oracleService.getResult(chainId, groupId, oraclizeLogResult);
+        return oracleService.getResultAndUpTochain(chainId, groupId, oracleCoreLogResult);
     }
 
     @Override

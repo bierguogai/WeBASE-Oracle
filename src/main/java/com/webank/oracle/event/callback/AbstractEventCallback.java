@@ -107,6 +107,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         log.info("ContractEventCallback onPushEventLog  params: {}, status: {}, logs: {}, start:{}",
                 getFilter().getParams(), status, logs, start);
 
+        //get(0)
         for (LogResult logResult : logs) {
             // request and result
             String requestId = "";
@@ -132,7 +133,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 error = e.getDetailMessage();
                 log.error("NativeCallException: requestId:[{}], error:[{}]", requestId, error, e);
             } catch (Exception e) {
-                // other exception
+                // other exception (db)
                 reqStatus = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.getStatus();
                 error = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.format(ExceptionUtils.getRootCauseMessage(e));
                 log.error("Exception: requestId:[{}], error:[{}]", requestId, error, e);

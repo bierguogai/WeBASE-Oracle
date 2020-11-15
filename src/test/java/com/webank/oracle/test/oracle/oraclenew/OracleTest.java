@@ -48,7 +48,7 @@ public class OracleTest extends BaseTest {
 
             Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
 
-            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
+            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
 
 
             OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();

@@ -36,7 +36,7 @@ import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.event.vo.oraclize.OraclizeLogResult;
+import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,12 +65,12 @@ public class OracleService extends AbstractCoreService {
     }
 
     @Override
-    public String getResult(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
+    public String getResultAndUpTochain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
         // TODO. convert check ?
-        OraclizeLogResult oraclizeLogResult = (OraclizeLogResult) baseLogResult;
+        OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
 
         // TODO. optimize
-        String url = oraclizeLogResult.getUrl();
+        String url = oracleCoreLogResult.getUrl();
         if (url.startsWith("\"")) {
             int len1 = url.length();
             url = url.substring(1, len1 - 1);
@@ -84,9 +84,9 @@ public class OracleService extends AbstractCoreService {
         //get data
         BigInteger httpResult = httpService.getObjectByUrlAndKeys(url,
                 format, httpResultIndexList);
-        log.info("url {} https result: {} ", oraclizeLogResult.getUrl(), toJSONString(httpResult));
+        log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(httpResult));
 
-        this.fill(chainId, groupId, oraclizeLogResult.getCallbackAddress(), oraclizeLogResult, httpResult);
+        this.fulfill(chainId, groupId, oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult, httpResult);
         return toJSONString(httpResult);
     }
 
@@ -94,26 +94,26 @@ public class OracleService extends AbstractCoreService {
      * 将数据上链.
      */
     @Override
-    public void fill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
+    public void fulfill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
         //send transaction
-        OraclizeLogResult oraclizeLogResult = (OraclizeLogResult) baseLogResult;
-        String requestId = oraclizeLogResult.getRequestId();
+        OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
+        String requestId = oracleCoreLogResult.getRequestId();
         log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result);
 
-        BigInteger afterTimesAmount = ((BigInteger) result).multiply(oraclizeLogResult.getTimesAmount());
+        BigInteger afterTimesAmount = ((BigInteger) result).multiply(oracleCoreLogResult.getTimesAmount());
         log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
         try {
 
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oraclizeAddress = ORACLIZE_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
-            if (StringUtils.isBlank(oraclizeAddress)) {
+            String oracleCoreAddress = ORACLIZE_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
+            if (StringUtils.isBlank(oracleCoreAddress)) {
                 // TODO. throw exception
             }
-            OracleCore templateOracle = OracleCore.load(oraclizeAddress, web3j, credentials, contractGasProvider);
-            TransactionReceipt receipt = templateOracle.fulfillRequest(Numeric.hexStringToByteArray(requestId),
+            OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, contractGasProvider);
+            TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
                     // TODO. safe convert ????? biginteger
-                    oraclizeLogResult.getCallbackAddress(), oraclizeLogResult.getExpiration(), afterTimesAmount).send();
+                    oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount).send();
             log.info("Write data to chain:[{}]", receipt.getStatus());
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);

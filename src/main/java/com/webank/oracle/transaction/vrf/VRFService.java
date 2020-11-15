@@ -62,7 +62,7 @@ public class VRFService extends AbstractCoreService {
     }
 
     @Override
-    public String getResult(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
+    public String getResultAndUpTochain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
         // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
@@ -79,7 +79,7 @@ public class VRFService extends AbstractCoreService {
         String proof = LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(servicePrivateKey, seed.toString(16));
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 
-        this.fill(chainId, groupId, sender, baseLogResult, proof);
+        this.fulfill(chainId, groupId, sender, baseLogResult, proof);
         return proof;
     }
 
@@ -87,7 +87,7 @@ public class VRFService extends AbstractCoreService {
      * 将数据上链.
      */
     @Override
-    public void fill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
+    public void fulfill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
         // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
