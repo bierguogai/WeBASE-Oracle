@@ -1,4 +1,4 @@
-package com.webank.oracle.transaction.oraclize;
+package com.webank.oracle.transaction.oracle;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

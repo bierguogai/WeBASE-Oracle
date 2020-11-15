@@ -52,7 +52,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
 
     @Override
-    public String deployContract(int chainId, int group) {
+    public String deployOrLoadContract(int chainId, int group, String coreContractAddress, String oracleCoreContractAddress) {
         return vrfService.deployContract(chainId,group);
     }
 

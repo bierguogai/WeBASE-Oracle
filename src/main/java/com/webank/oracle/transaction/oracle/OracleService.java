@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.webank.oracle.transaction.oraclize;
+package com.webank.oracle.transaction.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 

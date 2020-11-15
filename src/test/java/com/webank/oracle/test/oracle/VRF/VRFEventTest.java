@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import com.webank.oracle.test.oracle.base.BaseTest;
 import com.webank.oracle.test.oracle.oraclenew.APIConsumer;
-import com.webank.oracle.transaction.oraclize.OracleCore;
+import com.webank.oracle.transaction.oracle.OracleCore;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;

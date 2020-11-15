@@ -9,7 +9,7 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.webank.oracle.transaction.oraclize.OracleCore;
+import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -26,8 +26,8 @@ import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
-import com.webank.oracle.transaction.oraclize.OracleCore;
-import com.webank.oracle.transaction.oraclize.OracleService;
+import com.webank.oracle.transaction.oracle.OracleCore;
+import com.webank.oracle.transaction.oracle.OracleService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +51,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
     }
 
     @Override
-    public String deployContract(int chainId, int group) {
+    public String deployOrLoadContract(int chainId, int group, String coreContractAddress, String oracleCoreContractAddress) {
         return oracleService.deployContract(chainId,group);
     }
 
