@@ -41,11 +41,11 @@ public abstract class AbstractCoreService {
     public abstract String deployContract(int chainId, int group);
 
     /**
-     * 获取结果
+     * 获取结果并上链
      *
      * @return
      */
-    public abstract String getResult(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception;
+    public abstract String getResultAndUpTochain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception;
 
     /**
      * @param chainId
@@ -55,7 +55,7 @@ public abstract class AbstractCoreService {
      * @param result
      * @return
      */
-    public abstract void fill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception;
+    public abstract void fulfill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception;
 
 
     /**

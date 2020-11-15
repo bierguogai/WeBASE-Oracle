@@ -69,11 +69,12 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
 
     /**
      * 部署合约
-     *
      * @param chainId
      * @param group
+     * @param coreContractAddress
+     * @param vrfContractAddress
      */
-    public abstract String deployContract(int chainId, int group);
+    public abstract String deployOrLoadContract(int chainId, int group, String coreContractAddress, String vrfContractAddress);
 
     /**
      * 解析日志
@@ -107,6 +108,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         log.info("ContractEventCallback onPushEventLog  params: {}, status: {}, logs: {}, start:{}",
                 getFilter().getParams(), status, logs, start);
 
+        //get(0)
         for (LogResult logResult : logs) {
             // request and result
             String requestId = "";
@@ -132,7 +134,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 error = e.getDetailMessage();
                 log.error("NativeCallException: requestId:[{}], error:[{}]", requestId, error, e);
             } catch (Exception e) {
-                // other exception
+                // other exception (db)
                 reqStatus = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.getStatus();
                 error = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.format(ExceptionUtils.getRootCauseMessage(e));
                 log.error("Exception: requestId:[{}], error:[{}]", requestId, error, e);
@@ -180,8 +182,9 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         // set decoder
         TransactionDecoder decoder = new TransactionDecoder(abi);
         setDecoder(decoder);
-        // TODO. deploy????
-        String contractAddress = this.deployContract(eventRegister.getChainId(), eventRegister.getGroup());
+        // TODO. deploy and load
+
+        String contractAddress = this.deployOrLoadContract(eventRegister.getChainId(), eventRegister.getGroup(),eventRegister.getOracleCoreContractAddress(),eventRegister.getVrfContractAddress());
         if (StringUtils.isBlank(contractAddress)) {
             log.error("Deploy contract error");
             return;

@@ -1,4 +1,4 @@
-package com.webank.test.util;
+package com.webank.oracle.test.util;
 
 import java.net.SocketTimeoutException;
 import java.util.Map;

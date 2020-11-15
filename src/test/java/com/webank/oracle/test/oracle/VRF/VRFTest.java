@@ -1,9 +1,10 @@
-package com.webank.test.oracle.vrf;
+package com.webank.oracle.test.oracle.VRF;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -19,7 +20,6 @@ import com.webank.oracle.transaction.vrf.LibVRF;
 import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
 import com.webank.oracle.transaction.vrf.VRF;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.test.oracle.base.BaseTest;
 
 public class VRFTest extends BaseTest {
 

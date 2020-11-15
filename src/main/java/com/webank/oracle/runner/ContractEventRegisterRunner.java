@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.event.callback.oraclize.OraclizeEventCallback;
+import com.webank.oracle.event.callback.oracle.OracleCoreEventCallback;
 import com.webank.oracle.event.callback.vrf.VRFContractEventCallback;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ContractEventRegisterRunner {
 
-    @Autowired private EventRegisterProperties eventRegisterProperties;
-    @Autowired private ApplicationContext ctx;
+    @Autowired
+    private EventRegisterProperties eventRegisterProperties;
+    @Autowired
+    private ApplicationContext ctx;
 
 
     /**
@@ -33,10 +35,10 @@ public class ContractEventRegisterRunner {
             List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
             for (int i = 0; i < eventRegisterList.size(); i++) {
                 EventRegister eventRegister = eventRegisterList.get(i);
-                // init Oraclize on this chain and group
-                OraclizeEventCallback oraclizeEventCallback = ctx.getBean(OraclizeEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
-                oraclizeEventCallback.init(eventRegister);
-                log.info("Deploy oraclize contract:[{}]", eventRegister.getOraclizeContractAddress());
+                // init OracleCore on this chain and group
+                OracleCoreEventCallback oracleCoreEventCallback = ctx.getBean(OracleCoreEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
+                oracleCoreEventCallback.init(eventRegister);
+                log.info("Deploy oracleCore contract:[{}]", eventRegister.getOracleCoreContractAddress());
 
                 // init VRF on this chain and group
                 VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());

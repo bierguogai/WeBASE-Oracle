@@ -1,13 +1,13 @@
-package com.webank.test.oracle.random;
+package com.webank.oracle.test.oracle.random;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.webank.test.oracle.OraclizeCore;
-import com.webank.test.oracle.base.BaseTest;
+import com.webank.oracle.test.oracle.old.OraclizeCore;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,9 +27,9 @@ public class RandomOracleTest extends BaseTest {
             //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
+            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
 
-            OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress(), web3j, credentials, contractGasProvider);
+            OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress(), web3j, credentials, contractGasProvider);
             String oracleAddress = oraliceCore.getContractAddress();
 
             // asset

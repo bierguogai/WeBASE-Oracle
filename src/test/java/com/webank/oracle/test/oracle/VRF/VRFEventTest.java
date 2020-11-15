@@ -1,7 +1,11 @@
-package com.webank.test.oracle.vrf;
+package com.webank.oracle.test.oracle.VRF;
 
 import java.math.BigInteger;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.oracle.oraclenew.APIConsumer;
+import com.webank.oracle.transaction.oracle.OracleCore;
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -10,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,4 +64,40 @@ public class VRFEventTest extends BaseTest {
             Assertions.fail();
         }
     }
+
+    @Test
+    public void testNewOracleCoreRandomGet() {
+        try {
+
+            Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
+
+            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
+
+
+            OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();
+            String oracleAddress = oracleCore.getContractAddress();
+            log.info("oracleCore address: [{}]", oracleAddress);
+            // asset
+            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCore.getContractAddress()).send();
+            String apiConsumerAddress = apiConsumer.getContractAddress();
+            log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
+
+            TransactionReceipt t1 = apiConsumer.request().send();
+            log.info("Generate random receipt: [{}:{}]", t1.getStatus(), t1.getOutput());
+
+            Thread.sleep(5000);
+
+            TransactionReceipt random = apiConsumer.getResult().send();
+            log.info("Random:[{}]", random.getOutput());
+
+            Assertions.assertTrue(StringUtils.isNotBlank(random.getOutput()));
+            BigInteger result = new BigInteger(random.getOutput().substring(2),16);
+            Assertions.assertTrue(result.compareTo(BigInteger.ZERO) != 0);
+            log.info("Random result:[{}]", result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assertions.fail();
+        }
+    }
+
 }

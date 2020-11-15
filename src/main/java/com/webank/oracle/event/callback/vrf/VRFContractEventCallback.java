@@ -52,7 +52,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
 
     @Override
-    public String deployContract(int chainId, int group) {
+    public String deployOrLoadContract(int chainId, int group, String coreContractAddress, String oracleCoreContractAddress) {
         return vrfService.deployContract(chainId,group);
     }
 
@@ -68,7 +68,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
 
         //get data from url and update blockChain
-        return vrfService.getResult(chainId, groupId, vrfLogResult);
+        return vrfService.getResultAndUpTochain(chainId, groupId, vrfLogResult);
     }
 
     @Override

@@ -1,8 +1,8 @@
-package com.webank.test.oracle;
+package com.webank.oracle.test.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
-import static com.webank.test.oracle.vrf.VRFTest.bytesToHex;
+import static com.webank.oracle.test.oracle.VRF.VRFTest.bytesToHex;
 
 import java.math.BigInteger;
 import java.security.KeyManagementException;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.webank.oracle.base.utils.HttpUtil;
 
-public class OracleTest {
+public class UtileTest {
 
 
     @Test

@@ -1,4 +1,4 @@
-package com.webank.test.oracle.oraclenew;
+package com.webank.oracle.test.oracle.oraclenew;
 
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;

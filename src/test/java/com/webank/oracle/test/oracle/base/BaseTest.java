@@ -1,4 +1,4 @@
-package com.webank.test.oracle.base;
+package com.webank.oracle.test.oracle.base;
 
 import java.math.BigInteger;
 import java.util.Map;
