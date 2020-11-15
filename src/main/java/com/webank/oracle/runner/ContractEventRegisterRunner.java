@@ -19,8 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ContractEventRegisterRunner {
 
-    @Autowired private EventRegisterProperties eventRegisterProperties;
-    @Autowired private ApplicationContext ctx;
+    @Autowired
+    private EventRegisterProperties eventRegisterProperties;
+    @Autowired
+    private ApplicationContext ctx;
 
 
     /**
@@ -33,10 +35,10 @@ public class ContractEventRegisterRunner {
             List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
             for (int i = 0; i < eventRegisterList.size(); i++) {
                 EventRegister eventRegister = eventRegisterList.get(i);
-                // init Oraclize on this chain and group
+                // init OracleCore on this chain and group
                 OraclizeEventCallback oraclizeEventCallback = ctx.getBean(OraclizeEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
                 oraclizeEventCallback.init(eventRegister);
-                log.info("Deploy oraclize contract:[{}]", eventRegister.getOraclizeContractAddress());
+                log.info("Deploy oracleCore contract:[{}]", eventRegister.getOracleCoreContractAddress());
 
                 // init VRF on this chain and group
                 VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());

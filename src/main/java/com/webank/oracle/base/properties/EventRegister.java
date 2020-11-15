@@ -9,7 +9,7 @@ import lombok.Data;
 public class EventRegister {
     private int chainId = 1;
     private int group = 1;
-    private String oraclizeContractAddress;
+    private String oracleCoreContractAddress;
     private String vrfContractAddress;
     private String fromBlock = "latest";
     private String toBlock = "latest";

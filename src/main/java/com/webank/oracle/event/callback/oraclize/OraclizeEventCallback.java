@@ -71,12 +71,12 @@ public class OraclizeEventCallback extends AbstractEventCallback {
 
     @Override
     public void setContractAddress(EventRegister eventRegister, String contractAddress) {
-        eventRegister.setOraclizeContractAddress(contractAddress);
+        eventRegister.setOracleCoreContractAddress(contractAddress);
     }
 
     @Override
     public String getContractAddress(EventRegister eventRegister){
-        return eventRegister.getOraclizeContractAddress();
+        return eventRegister.getOracleCoreContractAddress();
     }
 
 //    /**

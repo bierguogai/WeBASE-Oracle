@@ -1,11 +1,10 @@
-package com.webank.test.oracle;
+package com.webank.oracle.test.oracle.old;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.oracle.random.RandomOracle;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Test;
-
-import com.webank.test.oracle.base.BaseTest;
-import com.webank.test.oracle.random.RandomOracle;
 
 public class OracleTestbak extends BaseTest {
 
@@ -17,8 +16,8 @@ public class OracleTestbak extends BaseTest {
         //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress(), web3j,credentials, contractGasProvider);
+        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
+        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset
@@ -43,8 +42,8 @@ public class OracleTestbak extends BaseTest {
         //fist  secretRegistty
 //        com.webank.test.oracle.OraclizeCore oraliceCore = com.webank.test.oracle.OraclizeCore.deploy(web3j, credentials, contractGasProvider).send();
 //        String orcleAddress = oraliceCore.getContractAddress();
-        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(1).getOraclizeContractAddress());
-        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(1).getOraclizeContractAddress(), web3j,credentials, contractGasProvider);
+        System.out.println("oracle core address " + eventRegisterProperties.getEventRegisters().get(1).getOracleCoreContractAddress());
+        OraclizeCore oraliceCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(1).getOracleCoreContractAddress(), web3j,credentials, contractGasProvider);
         String orcleAddress = oraliceCore.getContractAddress();
        // System.out.println("oracleAddress: " + orcleAddress);
         // asset

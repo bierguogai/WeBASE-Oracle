@@ -1,7 +1,8 @@
-package com.webank.test.oracle.vrf;
+package com.webank.oracle.test.oracle.VRF;
 
 import java.math.BigInteger;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 

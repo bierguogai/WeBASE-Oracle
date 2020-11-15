@@ -1,7 +1,8 @@
-package com.webank.test.oracle.oraclenew;
+package com.webank.oracle.test.oracle.oraclenew;
 
 import java.math.BigInteger;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.transaction.oraclize.OracleCore;
-import com.webank.test.oracle.OraclizeCore;
-import com.webank.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,18 +50,19 @@ public class OracleTest extends BaseTest {
 
             log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress());
 
-            OraclizeCore oralizeCore = OraclizeCore.load(eventRegisterProperties.getEventRegisters().get(0).getOraclizeContractAddress(), web3j, credentials, contractGasProvider);
-            String oracleAddress = oralizeCore.getContractAddress();
 
+            OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();
+            String oracleAddress = oracleCore.getContractAddress();
+            log.info("oracleCore address: [{}]", oracleAddress);
             // asset
-            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oralizeCore.getContractAddress()).send();
+            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCore.getContractAddress()).send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
 
             TransactionReceipt t1 = apiConsumer.request().send();
             log.info("Generate random receipt: [{}:{}]", t1.getStatus(), t1.getOutput());
 
-            Thread.sleep(10000);
+            Thread.sleep(5000);
 
             TransactionReceipt random = apiConsumer.getResult().send();
             log.info("Random:[{}]", random.getOutput());

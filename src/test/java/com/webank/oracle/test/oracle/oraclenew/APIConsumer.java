@@ -1,4 +1,4 @@
-package com.webank.test.oracle.oraclenew;
+package com.webank.oracle.test.oracle.oraclenew;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

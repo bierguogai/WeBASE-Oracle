@@ -45,7 +45,7 @@ event:
   eventRegisters:
     # list of EventRegister objects. Use default value when property not configured.
     # Oracle contracts will be auto deployed when contractAddress is blank
-    - {chainId: 1, group: 1, contractAddress: ""}
+    - {chainId: 1, group: 1, oracleCoreContractAddress: ""}
 
 #log config
 logging:

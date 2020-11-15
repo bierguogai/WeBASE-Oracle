@@ -1,7 +1,8 @@
-package com.webank.test.repository;
+package com.webank.oracle.test.repository;
 
 import java.util.Optional;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.webank.oracle.repository.ReqHistoryRepository;
 import com.webank.oracle.repository.domian.ReqHistory;
-import com.webank.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 
