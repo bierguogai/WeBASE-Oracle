@@ -70,7 +70,6 @@ public class VRFService extends AbstractCoreService {
 
     @Override
     public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
-        // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
         String requestId = vrfLogResult.getRequestId();
@@ -83,6 +82,7 @@ public class VRFService extends AbstractCoreService {
         Credentials credentials = keyStoreService.getCredentials();
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
 
+        log.info("Call vrf lib:[{}].", requestId);
         String proof = LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(servicePrivateKey, seed.toString(16));
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 

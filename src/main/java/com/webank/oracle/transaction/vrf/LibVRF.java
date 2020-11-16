@@ -1,14 +1,29 @@
 package com.webank.oracle.transaction.vrf;
 
-import org.springframework.core.io.ClassPathResource;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_LIB_FILE_NOT_EXISTS;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_LIB_LOAD_ERROR;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.webank.oracle.base.exception.NativeCallException;
 
 public interface LibVRF extends Library {
 
+    static Logger logger = LoggerFactory.getLogger(LibVRF.class);
+
+    static final String[] LIB_LOCATION = new String[]{
+            ".",
+            "./conf",
+            "src/main/resources"
+    };
+
     /**
-     *
      * @param sk
      * @param preseed
      * @return
@@ -29,9 +44,29 @@ public interface LibVRF extends Library {
                 libExtension = "so";
             }
 
-            String lib = "./libvrf." + libExtension;
+            String libFile = null;
+            for (String location : LIB_LOCATION) {
+                logger.info("Try to load vrf lib from:[{}]", location);
 
-            instance = Native.loadLibrary(new ClassPathResource(lib).getPath(), LibVRF.class);
+                String libFilePath = getFilePath(String.format("%s/libvrf.%s", location, libExtension));
+                if (Files.notExists(Paths.get((libFilePath)))) {
+                    continue;
+                }
+                libFile = libFilePath;
+                break;
+            }
+            if (Files.notExists(Paths.get(libFile))) {
+                throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
+            }
+
+            logger.info("Load vrf lib from:[{}]", libFile);
+            instance = Native.loadLibrary(libFile, LibVRF.class);
+            if (instance == null) {
+                throw new NativeCallException(VRF_LIB_LOAD_ERROR);
+            }
+        }
+        public static String getFilePath(String file){
+            return LibVRF.class.getClassLoader().getResource(file).getPath();
         }
 
         public static LibVRF getInstance() {
