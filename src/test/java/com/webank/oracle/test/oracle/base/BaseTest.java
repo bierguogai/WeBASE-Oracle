@@ -15,7 +15,7 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.keystore.KeyStoreService;
-import com.webank.oracle.repository.ContractDeployRepository;
+import com.webank.oracle.contract.ContractDeployRepository;
 
 /**
  *

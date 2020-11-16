@@ -4,7 +4,7 @@ import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.history.ReqHistory;
 
 /**
  *

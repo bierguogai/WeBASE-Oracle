@@ -19,8 +19,8 @@ import com.webank.oracle.base.utils.DecodeOutputUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.http.HttpService;
 import com.webank.oracle.keystore.KeyStoreService;
-import com.webank.oracle.repository.ContractDeployRepository;
-import com.webank.oracle.repository.domian.ContractDeploy;
+import com.webank.oracle.contract.ContractDeployRepository;
+import com.webank.oracle.contract.ContractDeploy;
 
 import lombok.extern.slf4j.Slf4j;
 
