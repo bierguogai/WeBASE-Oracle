@@ -27,7 +27,7 @@ import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
 import com.webank.oracle.transaction.oracle.OracleCore;
-import com.webank.oracle.transaction.oracle.OracleService;
+import com.webank.oracle.event.service.oracle.OracleService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,8 +51,8 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
     }
 
     @Override
-    public String deployOrLoadContract(int chainId, int group, String coreContractAddress, String oracleCoreContractAddress) {
-        return oracleService.deployContract(chainId,group);
+    public String loadOrDeployContract(int chainId, int group) {
+        return oracleService.loadContractAddress(chainId,group);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
                 oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 
         //get data from url and update blockChain
-        return oracleService.getResultAndUpTochain(chainId, groupId, oracleCoreLogResult);
+        return oracleService.getResultAndUpToChain(chainId, groupId, oracleCoreLogResult);
     }
 
     @Override

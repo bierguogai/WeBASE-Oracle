@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.random;
+package com.webank.oracle.test.oracle.random.contract;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

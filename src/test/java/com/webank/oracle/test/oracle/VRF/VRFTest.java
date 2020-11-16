@@ -4,37 +4,22 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.webank.oracle.test.oracle.base.BaseTest;
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
-import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
+import com.webank.oracle.test.oracle.VRF.contract.RandomNumberConsumer;
+import com.webank.oracle.test.oracle.base.BaseTest;
 import com.webank.oracle.transaction.vrf.LibVRF;
-import com.webank.oracle.transaction.vrf.RandomNumberConsumer;
 import com.webank.oracle.transaction.vrf.VRF;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
 
 public class VRFTest extends BaseTest {
-
-    BigInteger gasPrice = new BigInteger("1");
-    BigInteger gasLimit = new BigInteger("2100000000");
-    ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
-    //根据私钥导入账户
-    Credentials credentials = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
-    Credentials credentialsBob = Credentials.create("2");
-    // 生成随机私钥使用下面方法；
-    // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());
-    String Bob = "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
-    String Owner = "0x148947262ec5e21739fe3a931c29e8b84ee34a0f";
-
-    String Alice = "0x1abc9fd9845cd5a0acefa72e4f40bcfd4136f864";
 
     @Test
     public void testVRF() throws Exception {
@@ -83,12 +68,10 @@ public class VRFTest extends BaseTest {
         System.out.println(t.getStatus());
         System.out.println(t.getOutput());
         System.out.println(DecodeOutputUtils.decodeOutputReturnString0x16(t.getOutput()));
-
     }
 
     @Test
     public void testCalculateTheKeyHash() throws Exception {
-
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
         Credentials user = Credentials.create("2");
         // gm address  0x1f609497612656e806512fb90972d720e2e508b5

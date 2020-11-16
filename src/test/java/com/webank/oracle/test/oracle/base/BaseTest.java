@@ -35,6 +35,7 @@ public class BaseTest {
 
     //根据私钥导入账户
     protected Credentials credentials = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+    protected Credentials credentialsBob = Credentials.create("2");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());

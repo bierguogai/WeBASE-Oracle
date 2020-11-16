@@ -2,19 +2,20 @@ package com.webank.oracle.test.oracle.oraclenew;
 
 import java.math.BigInteger;
 
-import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.oracle.oraclenew.contract.APIConsumer;
 import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class OracleTest extends BaseTest {
+public class ApiConsumerTest extends BaseTest {
 
     @Test
     public void testOracleChain1() throws Exception {
@@ -43,19 +44,16 @@ public class OracleTest extends BaseTest {
     }
 
     @Test
-    public void testNewOraclizeRandomGet() {
+    public void testApiConsumer() {
         try {
 
             Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
 
-            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
+            String oracleCoreAddress = eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress();
+            log.info("oracle core address " + oracleCoreAddress);
 
-
-            OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();
-            String oracleAddress = oracleCore.getContractAddress();
-            log.info("oracleCore address: [{}]", oracleAddress);
             // asset
-            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCore.getContractAddress()).send();
+            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCoreAddress).send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
 

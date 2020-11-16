@@ -2,7 +2,6 @@ package com.webank.oracle.test.repository;
 
 import java.util.Optional;
 
-import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.webank.oracle.repository.ReqHistoryRepository;
 import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,6 @@ public class ReqHistoryRepositoryTest extends BaseTest {
     public static final String REQ_QUERY = "reqQuery-0000000000000001";
     public static final String USER_CONTRACT = "userContract-0xdafssafdsadf";
     public static final String USER_CONTRACT_NEW = USER_CONTRACT + "-new";
-
 
 
     @Test
