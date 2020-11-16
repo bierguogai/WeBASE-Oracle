@@ -1,10 +1,10 @@
-package com.webank.oracle.repository;
+package com.webank.oracle.history;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.history.ReqHistory;
 
 /**
  *

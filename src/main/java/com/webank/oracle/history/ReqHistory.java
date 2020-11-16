@@ -1,4 +1,4 @@
-package com.webank.oracle.repository.domian;
+package com.webank.oracle.history;
 
 import static com.webank.oracle.base.properties.ConstantProperties.MAX_ERROR_LENGTH;
 

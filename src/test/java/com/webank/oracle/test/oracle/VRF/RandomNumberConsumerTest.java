@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.repository.domian.ContractDeploy;
+import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.oracle.VRF.contract.RandomNumberConsumer;
 import com.webank.oracle.test.oracle.base.BaseTest;
 

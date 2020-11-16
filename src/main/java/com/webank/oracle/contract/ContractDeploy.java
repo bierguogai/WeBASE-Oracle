@@ -1,4 +1,4 @@
-package com.webank.oracle.repository.domian;
+package com.webank.oracle.contract;
 
 import java.time.LocalDateTime;
 

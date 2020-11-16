@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.oracle.event.callback.oracle;
+package com.webank.oracle.transaction.oracle;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,6 @@ import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
-import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
-import com.webank.oracle.transaction.oracle.OracleCore;
-import com.webank.oracle.event.service.oracle.OracleService;
 
 import lombok.extern.slf4j.Slf4j;
 

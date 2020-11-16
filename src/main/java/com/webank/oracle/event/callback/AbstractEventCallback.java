@@ -29,8 +29,8 @@ import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.keystore.KeyStoreService;
-import com.webank.oracle.repository.ReqHistoryRepository;
-import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.history.ReqHistory;
 
 import lombok.extern.slf4j.Slf4j;
 

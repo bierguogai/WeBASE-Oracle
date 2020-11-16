@@ -1,4 +1,4 @@
-package com.webank.oracle.event.vo.vrf;
+package com.webank.oracle.transaction.vrf;
 
 import java.math.BigInteger;
 
@@ -8,7 +8,7 @@ import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.history.ReqHistory;
 
 import lombok.Getter;
 import lombok.Setter;

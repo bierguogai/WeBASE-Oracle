@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.webank.oracle.event.service.oracle;
+package com.webank.oracle.transaction.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
@@ -35,8 +35,6 @@ import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
-import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
 

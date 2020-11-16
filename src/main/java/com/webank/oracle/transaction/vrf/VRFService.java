@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.webank.oracle.event.service.vrf;
+package com.webank.oracle.transaction.vrf;
 
 import static com.webank.oracle.base.pojo.vo.ConstantCode.VRF_CONTRACT_ADDRESS_ERROR;
 
@@ -31,9 +31,6 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.event.vo.vrf.VRFLogResult;
-import com.webank.oracle.transaction.vrf.LibVRF;
-import com.webank.oracle.transaction.vrf.VRFCoordinator;
 
 import lombok.extern.slf4j.Slf4j;
 

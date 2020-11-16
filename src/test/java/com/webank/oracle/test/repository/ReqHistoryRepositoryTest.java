@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.webank.oracle.repository.ReqHistoryRepository;
-import com.webank.oracle.repository.domian.ReqHistory;
+import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.test.oracle.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;

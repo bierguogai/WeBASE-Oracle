@@ -1,10 +1,8 @@
-package com.webank.oracle.repository;
+package com.webank.oracle.contract;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.webank.oracle.repository.domian.ContractDeploy;
 
 /**
  *

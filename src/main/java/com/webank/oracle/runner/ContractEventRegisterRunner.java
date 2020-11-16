@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.event.callback.oracle.OracleCoreEventCallback;
-import com.webank.oracle.event.callback.vrf.VRFContractEventCallback;
+import com.webank.oracle.transaction.oracle.OracleCoreEventCallback;
+import com.webank.oracle.transaction.vrf.VRFContractEventCallback;
 
 import lombok.extern.slf4j.Slf4j;
 
