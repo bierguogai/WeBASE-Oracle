@@ -1,6 +1,7 @@
 package com.webank.oracle.test.oracle.VRF;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -8,6 +9,9 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.repository.domian.ContractDeploy;
 import com.webank.oracle.test.oracle.VRF.contract.RandomNumberConsumer;
 import com.webank.oracle.test.oracle.base.BaseTest;
 
@@ -20,11 +24,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RandomNumberConsumerTest extends BaseTest {
 
+
     @Test
     public void testVRFGetFromContract() {
         try {
-            Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
-            String coordinatorAddress = eventRegisterProperties.getEventRegisters().get(0).getVrfContractAddress();
+            EventRegister eventRegister = eventRegisterProperties.getEventRegisters().get(0);
+
+            int chainId = eventRegister.getChainId();
+            int groupId = eventRegister.getGroup();
+
+            Optional<ContractDeploy> deployOptional =
+                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.VRF.getId());
+            if (!deployOptional.isPresent()) {
+                Assertions.fail();
+                return;
+            }
+
+            String coordinatorAddress = deployOptional.get().getContractAddress();
             log.info("VRFCoordinator address " + coordinatorAddress);
 
             // 获取部署 coordinate 合约的密钥对
@@ -35,6 +51,8 @@ public class RandomNumberConsumerTest extends BaseTest {
 
             // 部署随机数调用合约
             // keyhashbyte: 必须要用部署 coordinate 合约的公钥
+
+            Web3j web3j = getWeb3j(chainId, groupId);
             RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j, credential, contractGasProvider, coordinatorAddress, keyhashbyte).send();
             String consumerContractAddress = randomNumberConsumer.getContractAddress();
             System.out.println("consumer address: " + consumerContractAddress);
