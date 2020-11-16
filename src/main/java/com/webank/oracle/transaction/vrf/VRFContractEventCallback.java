@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.webank.oracle.event.callback.vrf;
+package com.webank.oracle.transaction.vrf;
 
 import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
@@ -27,9 +27,6 @@ import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
-import com.webank.oracle.event.vo.vrf.VRFLogResult;
-import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.oracle.event.service.vrf.VRFService;
 
 import lombok.extern.slf4j.Slf4j;
 
