@@ -22,15 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.webank.oracle.base.enums.ProofTypeEnum;
 import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.exception.NativeCallException;
 import com.webank.oracle.base.exception.OracleException;
+import com.webank.oracle.base.exception.event.EventBaseException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
 import com.webank.oracle.event.vo.BaseLogResult;
-import com.webank.oracle.keystore.KeyStoreService;
-import com.webank.oracle.history.ReqHistoryRepository;
 import com.webank.oracle.history.ReqHistory;
+import com.webank.oracle.history.ReqHistoryRepository;
+import com.webank.oracle.keystore.KeyStoreService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,6 +69,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
 
     /**
      * 部署合约
+     *
      * @param chainId
      * @param group
      */
@@ -80,14 +81,13 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
     public abstract String processLog(int status, LogResult logResult) throws Exception;
 
     /**
-     *
      * @param eventRegister
      * @return
      * @throws Exception
      */
-    public abstract void setContractAddress(EventRegister eventRegister,String contractAddress);
+    public abstract void setContractAddress(EventRegister eventRegister, String contractAddress);
+
     /**
-     *
      * @param eventRegister
      * @return
      * @throws Exception
@@ -126,11 +126,11 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 reqStatus = oe.getCodeAndMsg().getCode();
                 error = String.format("%s,%s", oe.getCodeAndMsg().getMessage(), ExceptionUtils.getRootCauseMessage(oe));
                 log.error("OracleException: requestId:[{}], error:[{}]", requestId, error, oe);
-            } catch (NativeCallException e) {
+            } catch (EventBaseException be) {
                 // response error
-                reqStatus = e.getStatus();
-                error = e.getDetailMessage();
-                log.error("NativeCallException: requestId:[{}], error:[{}]", requestId, error, e);
+                reqStatus = be.getStatus();
+                error = be.getDetailMessage();
+                log.error("BaseException: type:[{}],requestId:[{}], error:[{}]", be.getClass().getSimpleName(), requestId, error, be);
             } catch (Exception e) {
                 // other exception (db)
                 reqStatus = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.getStatus();
@@ -187,11 +187,11 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
             return;
         }
         log.info("Deploy contract on group of chain:[{}:{}:{}],", eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
-        this.setContractAddress(eventRegister,contractAddress);
+        this.setContractAddress(eventRegister, contractAddress);
 
         // init EventLogUserParams for register
         EventLogUserParams params = this.initSingleEventLogUserParams(eventRegister.getFromBlock(),
-                eventRegister.getToBlock(),getContractAddress(eventRegister));
+                eventRegister.getToBlock(), getContractAddress(eventRegister));
         log.info("RegisterContractEvent chainId: {} groupId:{},abi:{},params:{}", eventRegister.getChainId(), eventRegister.getGroup(), abi, params);
         org.fisco.bcos.channel.client.Service service = serviceMapWithChainId.get(eventRegister.getChainId()).get(eventRegister.getGroup());
         service.registerEventLogFilter(params, this);
@@ -202,7 +202,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
      *
      * @return
      */
-    public EventLogUserParams initSingleEventLogUserParams(String fromBlock,String toBlock,String contractAddress) {
+    public EventLogUserParams initSingleEventLogUserParams(String fromBlock, String toBlock, String contractAddress) {
         EventLogUserParams params = new EventLogUserParams();
         params.setFromBlock(fromBlock);
         params.setToBlock(toBlock);

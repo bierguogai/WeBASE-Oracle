@@ -16,6 +16,8 @@
 
 package com.webank.oracle.transaction.oracle;
 
+import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
+
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.exception.event.PushEventLogExceptionEvent;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 
@@ -57,15 +60,15 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
         OracleCoreLogResult oracleCoreLogResult = new OracleCoreLogResult(logResult);
 
         log.info("Process log event:[{}]", oracleCoreLogResult);
-
-        if (! this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
-            this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_10000, SourceTypeEnum.URL));
-            log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
+        if ( this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
+            log.error("Request already exists:[{}:{}:{}].", oracleCoreLogResult.getCallbackAddress(),
                     oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
-        }else{
-            log.warn("Request already exists:[{}:{}:{}].", oracleCoreLogResult.getCallbackAddress(),
-                    oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
+            throw new PushEventLogExceptionEvent(REQ_ALREADY_EXISTS, oracleCoreLogResult.getRequestId());
         }
+
+        this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
+        log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
+                oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 
         //get data from url and update blockChain
         return oracleService.getResultAndUpToChain(chainId, groupId, oracleCoreLogResult);

@@ -16,6 +16,7 @@
 
 package com.webank.oracle.transaction.vrf;
 
+import static com.webank.oracle.base.enums.ReqStatusEnum.REQ_ALREADY_EXISTS;
 import static com.webank.oracle.transaction.vrf.VRFCoordinator.RANDOMNESSREQUEST_EVENT;
 
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
+import com.webank.oracle.base.exception.event.PushEventLogExceptionEvent;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 
@@ -59,14 +61,16 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
         log.info("Process log event:[{}]", vrfLogResult);
 
-        if (! this.reqHistoryRepository.findByReqId(vrfLogResult.getRequestId()).isPresent()) {
-            this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_20000, SourceTypeEnum.VRF));
-            // save request to db
-            log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
-        }else{
-            log.warn("Request already exists:[{}:{}:{}].",
+        if (this.reqHistoryRepository.findByReqId(vrfLogResult.getRequestId()).isPresent()) {
+            log.error("Request already exists:[{}:{}:{}].",
                     vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+            throw new PushEventLogExceptionEvent(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
+
+        this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
+        // save request to db
+        log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+
 
         //get data from url and update blockChain
         return vrfService.getResultAndUpToChain(chainId, groupId, vrfLogResult);

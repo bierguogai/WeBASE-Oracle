@@ -14,7 +14,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReqStatusEnum {
     SUCCESS(0, "success"),
+
+    // base exception
     UNEXPECTED_EXCEPTION_ERROR(205101, "Unknown unexpected exception:[%s]."),
+    REQ_ALREADY_EXISTS(205102, "Req already exists error:[%s]."),
 
     // call go lib error
     VRF_LIB_FILE_NOT_EXISTS(205111, "VRF lib file not exists."),

@@ -99,16 +99,16 @@ public class VRFService extends AbstractCoreService {
         String requestId = vrfLogResult.getRequestId();
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
+        String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
+        if (StringUtils.isBlank(vrfCoordinatorAddress)) {
+            throw new OracleException(VRF_CONTRACT_ADDRESS_ERROR);
+        }
+
         String sender = vrfLogResult.getSender();
-        log.debug("upBlockChain start. contractAddress:{} data:{} requsetId:{}", sender, proof, requestId);
+        log.debug("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requsetId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
         try {
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-
-            String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
-            if (StringUtils.isBlank(vrfCoordinatorAddress)) {
-                throw new OracleException(VRF_CONTRACT_ADDRESS_ERROR);
-            }
 
             VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, contractGasProvider);
 
@@ -121,9 +121,9 @@ public class VRFService extends AbstractCoreService {
             TransactionReceipt receipt = vrfCoordinator.fulfillRandomnessRequest(destination).send();
             log.info("&&&&&" + receipt.getStatus());
             dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId);
+            log.info("upBlockChain success chainId: {}  groupId: {} . sender:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId);
         } catch (OracleException oe) {
-            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId, oe);
+            log.error("upBlockChain exception chainId: {}  groupId: {} . sender:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId, oe);
             throw oe;
         }
 

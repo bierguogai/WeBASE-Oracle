@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.webank.oracle.base.exception.NativeCallException;
+import com.webank.oracle.base.exception.event.NativeCallExceptionEvent;
 
 public interface LibVRF extends Library {
 
@@ -40,13 +40,13 @@ public interface LibVRF extends Library {
 
             String libFilePath = getFilePath(String.format("libvrf.%s", libExtension));
             if (Files.notExists(Paths.get((libFilePath)))) {
-                throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
+                throw new NativeCallExceptionEvent(VRF_LIB_FILE_NOT_EXISTS);
             }
 
             logger.info("Load vrf lib from:[{}]", libFilePath);
             instance = Native.loadLibrary(libFilePath, LibVRF.class);
             if (instance == null) {
-                throw new NativeCallException(VRF_LIB_LOAD_ERROR);
+                throw new NativeCallExceptionEvent(VRF_LIB_LOAD_ERROR);
             }
         }
         public static String getFilePath(String file){
