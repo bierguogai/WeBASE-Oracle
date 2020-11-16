@@ -1,20 +1,25 @@
 package com.webank.oracle.test.oracle.oraclenew;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
-import com.webank.oracle.test.oracle.base.BaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.repository.domian.ContractDeploy;
+import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.oracle.oraclenew.contract.APIConsumer;
 import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class OracleTest extends BaseTest {
+public class ApiConsumerTest extends BaseTest {
 
     @Test
     public void testOracleChain1() throws Exception {
@@ -43,19 +48,26 @@ public class OracleTest extends BaseTest {
     }
 
     @Test
-    public void testNewOraclizeRandomGet() {
+    public void testApiConsumer() {
         try {
+            EventRegister eventRegister = eventRegisterProperties.getEventRegisters().get(0);
 
-            Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
+            int chainId = eventRegister.getChainId();
+            int groupId = eventRegister.getGroup();
 
-            log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
+            Optional<ContractDeploy> deployOptional =
+                    this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId());
+            if (!deployOptional.isPresent()) {
+                Assertions.fail();
+                return;
+            }
 
+            String oracleCoreAddress = deployOptional.get().getContractAddress();
+            log.info("oracle core address " + oracleCoreAddress);
 
-            OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();
-            String oracleAddress = oracleCore.getContractAddress();
-            log.info("oracleCore address: [{}]", oracleAddress);
             // asset
-            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCore.getContractAddress()).send();
+            Web3j web3j = getWeb3j(chainId, groupId);
+            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCoreAddress).send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
 

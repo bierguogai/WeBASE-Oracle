@@ -35,7 +35,7 @@ import com.webank.oracle.base.pojo.vo.BaseResponse;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.repository.ReqHistoryRepository;
 import com.webank.oracle.repository.domian.ReqHistory;
-import com.webank.oracle.transaction.vrf.VRFService;
+import com.webank.oracle.event.service.vrf.VRFService;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

@@ -12,14 +12,13 @@
  * the License.
  */
 
-package com.webank.oracle.transaction.vrf;
+package com.webank.oracle.event.service.vrf;
 
 import static com.webank.oracle.base.pojo.vo.ConstantCode.VRF_CONTRACT_ADDRESS_ERROR;
 
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -27,11 +26,14 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.stereotype.Service;
 
+import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.event.vo.vrf.VRFLogResult;
+import com.webank.oracle.transaction.vrf.LibVRF;
+import com.webank.oracle.transaction.vrf.VRFCoordinator;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,27 +44,32 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class VRFService extends AbstractCoreService {
 
-    private final static Map<String, Pair<String, String>> VRF_CONTRACT_ADDRESS_MAP = new ConcurrentHashMap<>();
-
     @Override
-    public String deployContract(int chainId, int group) {
+    public ContractTypeEnum getContractType() {
+        return ContractTypeEnum.VRF;
+    }
+
+    /**
+     * @param chainId
+     * @param groupId
+     * @return
+     */
+    @Override
+    protected String deployContract(int chainId, int groupId) {
         Credentials credentials = keyStoreService.getCredentials();
         VRFCoordinator vrfCoordinator = null;
-        VRF vrf = null;
         try {
-            vrfCoordinator = VRFCoordinator.deploy(getWeb3j(chainId, group), credentials, contractGasProvider).send();
-            vrf = VRF.deploy(getWeb3j(chainId, group), credentials, contractGasProvider).send();
+            vrfCoordinator = VRFCoordinator.deploy(getWeb3j(chainId, groupId), credentials, contractGasProvider).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
-        VRF_CONTRACT_ADDRESS_MAP.put(getKey(chainId,group),Pair.of(vrfCoordinator.getContractAddress(),vrf.getContractAddress()));
         return vrfCoordinator.getContractAddress();
     }
 
     @Override
-    public String getResultAndUpTochain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
+    public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
         // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
@@ -101,13 +108,12 @@ public class VRFService extends AbstractCoreService {
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
 
-            // TODO. move to a function
-            Pair<String, String> addressMap = VRF_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
-            if (addressMap == null){
+            String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
+            if (StringUtils.isBlank(vrfCoordinatorAddress)) {
                 throw new OracleException(VRF_CONTRACT_ADDRESS_ERROR);
             }
 
-            VRFCoordinator vrfCoordinator = VRFCoordinator.load(addressMap.getKey(), web3j, credentials, contractGasProvider);
+            VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, contractGasProvider);
 
             byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
             byte[] i = Numeric.hexStringToByteArray(proof);
@@ -127,7 +133,7 @@ public class VRFService extends AbstractCoreService {
     }
 
     /**
-     * TODO. check tt.getStatus()
+     * TODO. Use go lib or java implementation
      *
      * @param chainId
      * @param group
@@ -135,20 +141,22 @@ public class VRFService extends AbstractCoreService {
      * @return
      */
     public Pair<String, String> decodeProof(int chainId, int group, String proof) throws Exception {
-        Pair<String, String> addressMap = VRF_CONTRACT_ADDRESS_MAP.get(getKey(chainId, group));
-        if (addressMap == null){
-            // TODO. throw exception
-            return Pair.of("","");
-        }
-
-        Credentials credentials = keyStoreService.getCredentials();
-        //fist  secretRegistty
-        VRF vrf = VRF.load(addressMap.getValue(), getWeb3j(chainId, group), credentials, contractGasProvider);
-
-        byte[] proofBytes = Numeric.hexStringToByteArray(proof);
-
-        TransactionReceipt tt = vrf.randomValueFromVRFProof(proofBytes).send();
-
-        return Pair.of(tt.getStatus(), tt.getOutput());
+//        Pair<String, String> addressMap = VRF_CONTRACT_ADDRESS_MAP.get(getKey(chainId, group));
+//        if (addressMap == null){
+//            // TODO. throw exception
+//            return Pair.of("","");
+//        }
+//
+//        Credentials credentials = keyStoreService.getCredentials();
+//        //fist  secretRegistty
+//        VRF vrf = VRF.load(addressMap.getValue(), getWeb3j(chainId, group), credentials, contractGasProvider);
+//
+//        byte[] proofBytes = Numeric.hexStringToByteArray(proof);
+//
+//        TransactionReceipt tt = vrf.randomValueFromVRFProof(proofBytes).send();
+//
+//        return Pair.of(tt.getStatus(), tt.getOutput());
+        return Pair.of("0", proof);
     }
 }
+

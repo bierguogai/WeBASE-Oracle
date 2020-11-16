@@ -15,6 +15,7 @@ import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.keystore.KeyStoreService;
+import com.webank.oracle.repository.ContractDeployRepository;
 
 /**
  *
@@ -26,6 +27,7 @@ public class BaseTest {
     @Autowired protected Map<Integer, Map<Integer, Web3j>> web3jMap;
     @Autowired protected EventRegisterProperties eventRegisterProperties;
     @Autowired protected KeyStoreService keyStoreService;
+    @Autowired protected ContractDeployRepository contractDeployRepository;
 
 
     protected BigInteger gasPrice = new BigInteger("1");
@@ -35,6 +37,7 @@ public class BaseTest {
 
     //根据私钥导入账户
     protected Credentials credentials = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+    protected Credentials credentialsBob = Credentials.create("2");
 
     // 生成随机私钥使用下面方法；
     // Credentials credentialsBob =Credentials.create(Keys.createEcKeyPair());

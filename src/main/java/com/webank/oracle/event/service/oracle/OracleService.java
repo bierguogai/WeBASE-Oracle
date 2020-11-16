@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.webank.oracle.transaction.oracle;
+package com.webank.oracle.event.service.oracle;
 
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
@@ -20,8 +20,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -31,12 +29,14 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.utils.Numeric;
 import org.springframework.stereotype.Service;
 
+import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.event.vo.oraclize.OracleCoreLogResult;
+import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,25 +47,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OracleService extends AbstractCoreService {
 
-    private final static Map<String, String> ORACLIZE_CONTRACT_ADDRESS_MAP = new ConcurrentHashMap<>();
+    @Override
+    public ContractTypeEnum getContractType() {
+        return ContractTypeEnum.ORACLE_CORE;
+    }
 
     @Override
-    public String deployContract(int chainId, int group) {
+    protected String deployContract(int chainId, int groupId) {
+        // check deployed ?
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {
-            oraliceCore = OracleCore.deploy(getWeb3j(chainId, group), credentials, contractGasProvider).send();
+            oraliceCore = OracleCore.deploy(getWeb3j(chainId, groupId), credentials, contractGasProvider).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
             throw new OracleException(ConstantCode.DEPLOY_FAILED);
         }
-        ORACLIZE_CONTRACT_ADDRESS_MAP.put(getKey(chainId, group), oraliceCore.getContractAddress());
         return oraliceCore.getContractAddress();
     }
 
     @Override
-    public String getResultAndUpTochain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
+    public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
         // TODO. convert check ?
         OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
 
@@ -106,7 +109,7 @@ public class OracleService extends AbstractCoreService {
 
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oracleCoreAddress = ORACLIZE_CONTRACT_ADDRESS_MAP.get(getKey(chainId, groupId));
+            String oracleCoreAddress = contractAddressMap.get(getKey(chainId, groupId));
             if (StringUtils.isBlank(oracleCoreAddress)) {
                 // TODO. throw exception
             }

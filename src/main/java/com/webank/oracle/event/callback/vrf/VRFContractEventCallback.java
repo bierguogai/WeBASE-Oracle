@@ -29,7 +29,7 @@ import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 import com.webank.oracle.event.vo.vrf.VRFLogResult;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import com.webank.oracle.transaction.vrf.VRFService;
+import com.webank.oracle.event.service.vrf.VRFService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,8 +52,8 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
 
     @Override
-    public String deployOrLoadContract(int chainId, int group, String coreContractAddress, String oracleCoreContractAddress) {
-        return vrfService.deployContract(chainId,group);
+    public String loadOrDeployContract(int chainId, int group) {
+        return vrfService.loadContractAddress(chainId,group);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
         log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
 
         //get data from url and update blockChain
-        return vrfService.getResultAndUpTochain(chainId, groupId, vrfLogResult);
+        return vrfService.getResultAndUpToChain(chainId, groupId, vrfLogResult);
     }
 
     @Override

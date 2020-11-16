@@ -137,17 +137,17 @@ public class ReqHistory {
 
 
     public static ReqHistory build(String reqId, String userContract,
-                                           OracleVersionEnum oracleVersionEnum,
-                                           SourceTypeEnum sourceTypeEnum,
-                                           String reqQuery, String timesAmount) {
-        return build(reqId,userContract,oracleVersionEnum,sourceTypeEnum,reqQuery,null,timesAmount);
+                                   OracleVersionEnum oracleVersionEnum,
+                                   SourceTypeEnum sourceTypeEnum,
+                                   String reqQuery, String timesAmount) {
+        return build(reqId, userContract, oracleVersionEnum, sourceTypeEnum, reqQuery, null, timesAmount);
     }
 
     public static ReqHistory build(String reqId, String userContract,
-                                           OracleVersionEnum oracleVersionEnum,
-                                           SourceTypeEnum sourceTypeEnum,
-                                           String reqQuery,
-                                           String serviceIdList,
+                                   OracleVersionEnum oracleVersionEnum,
+                                   SourceTypeEnum sourceTypeEnum,
+                                   String reqQuery,
+                                   String serviceIdList,
                                    String timesAmount) {
         ReqHistory reqHistory = new ReqHistory();
         reqHistory.setReqId(reqId);

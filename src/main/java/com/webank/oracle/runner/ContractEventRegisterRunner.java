@@ -29,8 +29,8 @@ public class ContractEventRegisterRunner {
      * 注册回调
      */
     @EventListener(ApplicationReadyEvent.class)
-    public void init( ) {
-        try{
+    public void init() {
+        try {
             log.info("Register event listener call back...");
             List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
             for (int i = 0; i < eventRegisterList.size(); i++) {
@@ -38,15 +38,17 @@ public class ContractEventRegisterRunner {
                 // init OracleCore on this chain and group
                 OracleCoreEventCallback oracleCoreEventCallback = ctx.getBean(OracleCoreEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
                 oracleCoreEventCallback.init(eventRegister);
-                log.info("Deploy oracleCore contract:[{}]", eventRegister.getOracleCoreContractAddress());
+                log.info("OracleCore contract address:[{}] of chain:[{}:{}]",
+                        eventRegister.getOracleCoreContractAddress(), eventRegister.getChainId(), eventRegister.getGroup());
 
                 // init VRF on this chain and group
                 VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
                 vrfContractEventCallback.init(eventRegister);
-                log.info("Deploy vrf contract:[{}]", eventRegister.getVrfContractAddress());
+                log.info("Vrf contract address:[{}] of chain:[{}:{}]",
+                        eventRegister.getVrfContractAddress(), eventRegister.getChainId(), eventRegister.getGroup());
             }
-        }catch (Exception ex){
-            log.error("ContractEventRegisterRunner exception",ex);
+        } catch (Exception ex) {
+            log.error("ContractEventRegisterRunner exception", ex);
             System.exit(0);
         }
 
