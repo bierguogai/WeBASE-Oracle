@@ -17,12 +17,6 @@ public interface LibVRF extends Library {
 
     static Logger logger = LoggerFactory.getLogger(LibVRF.class);
 
-    static final String[] LIB_LOCATION = new String[]{
-            ".",
-            "./conf",
-            "src/main/resources"
-    };
-
     /**
      * @param sk
      * @param preseed
@@ -44,23 +38,13 @@ public interface LibVRF extends Library {
                 libExtension = "so";
             }
 
-            String libFile = null;
-            for (String location : LIB_LOCATION) {
-                logger.info("Try to load vrf lib from:[{}]", location);
-
-                String libFilePath = getFilePath(String.format("%s/libvrf.%s", location, libExtension));
-                if (Files.notExists(Paths.get((libFilePath)))) {
-                    continue;
-                }
-                libFile = libFilePath;
-                break;
-            }
-            if (Files.notExists(Paths.get(libFile))) {
+            String libFilePath = getFilePath(String.format("libvrf.%s", libExtension));
+            if (Files.notExists(Paths.get((libFilePath)))) {
                 throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
             }
 
-            logger.info("Load vrf lib from:[{}]", libFile);
-            instance = Native.loadLibrary(libFile, LibVRF.class);
+            logger.info("Load vrf lib from:[{}]", libFilePath);
+            instance = Native.loadLibrary(libFilePath, LibVRF.class);
             if (instance == null) {
                 throw new NativeCallException(VRF_LIB_LOAD_ERROR);
             }

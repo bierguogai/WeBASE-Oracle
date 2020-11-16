@@ -62,10 +62,14 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
         log.info("Process log event:[{}]", vrfLogResult);
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_20000, SourceTypeEnum.VRF));
-
-        // save request to db
-        log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+        if (! this.reqHistoryRepository.findByReqId(vrfLogResult.getRequestId()).isPresent()) {
+            this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_20000, SourceTypeEnum.VRF));
+            // save request to db
+            log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+        }else{
+            log.warn("Request already exists:[{}:{}:{}].",
+                    vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+        }
 
         //get data from url and update blockChain
         return vrfService.getResultAndUpToChain(chainId, groupId, vrfLogResult);

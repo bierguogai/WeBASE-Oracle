@@ -61,9 +61,14 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
 
         log.info("Process log event:[{}]", oracleCoreLogResult);
 
-        this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_10000, SourceTypeEnum.URL));
-        log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
-                oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
+        if (! this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
+            this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_10000, SourceTypeEnum.URL));
+            log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
+                    oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
+        }else{
+            log.warn("Request already exists:[{}:{}:{}].", oracleCoreLogResult.getCallbackAddress(),
+                    oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
+        }
 
         //get data from url and update blockChain
         return oracleService.getResultAndUpToChain(chainId, groupId, oracleCoreLogResult);
