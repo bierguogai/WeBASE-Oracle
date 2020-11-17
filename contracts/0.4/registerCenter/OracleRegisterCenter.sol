@@ -67,7 +67,8 @@ contract OracleRegisterCenter is Owned {
         address oracleServiceAddress;
         // support for vrf
         // TODO. when register : publicKey == msg.sender ???
-        string publicKey;
+        uint256[2] publicKey;
+        bytes32 keyhash;
         string operator;
         string url;
         uint256 createTime;
@@ -85,14 +86,14 @@ contract OracleRegisterCenter is Owned {
 
 
     // register new oracleCore instance
-    event LogNewOracleService   (uint indexed index, address indexed oracleServiceAddress, string publicKey, string operator, string url, uint256 createTime);
+    event LogNewOracleService   (uint indexed index, address indexed oracleServiceAddress, uint256[2] publicKey, bytes32 keyhash, string operator, string url, uint256 createTime);
     // update oracleCore instance
-    event LogUpdateOracleService   (uint indexed index, address indexed oracleServiceAddress, string oldPublicKey, string publicKey, string oldOperator, string operator, string oldUrl, string url);
+    event LogUpdateOracleService   (uint indexed index, uint256[2] oldPublicKey, bytes32 oldKeyhash, uint256[2] publicKey, bytes32 keyhash,string oldOperator, string operator, string oldUrl, string url);
 
 
 
     // register
-    function oracleRegister(string memory _operatorInfo, string memory _url, string memory _publicKey) public returns (bool) {
+    function oracleRegister(string memory _operatorInfo, string memory _url, uint256[2] memory _publicKey) public returns (bool) {
 
         require(!isOracleExist(msg.sender), "OracleService has registerd!");
 
@@ -102,10 +103,10 @@ contract OracleRegisterCenter is Owned {
         // register only not register
         oracleServiceList.push(oracleAddress);
         uint newIndex = oracleServiceList.length - 1;
-
+        bytes32 _keyhash =  keccak256(abi.encodePacked(_publicKey));
         // new service
         OracleService memory service = OracleService({
-            index : newIndex, oracleServiceAddress : oracleAddress, publicKey : _publicKey,
+            index : newIndex, oracleServiceAddress : oracleAddress, publicKey : _publicKey, keyhash : _keyhash,
             operator : _operatorInfo, url : _url, createTime : now, status : true, latestRequstProcessedTime : 0, processedRequestAmount : 0
             });
 
@@ -113,7 +114,7 @@ contract OracleRegisterCenter is Owned {
         oracleServiceMap[oracleAddress] = service;
 
         // event
-        LogNewOracleService(newIndex, oracleAddress, _publicKey, _operatorInfo, _url, service.createTime);
+        LogNewOracleService(newIndex, oracleAddress, _publicKey, _keyhash, _operatorInfo, _url, service.createTime);
         return true;
     }
 
@@ -125,13 +126,13 @@ contract OracleRegisterCenter is Owned {
     }
 
     // get oracleCore instance by address of oracleService
-    function getOracleServiceInfo(address oracleAddress) public view returns (uint, address, string memory, string memory, string memory, uint256, uint256, bool, uint256) {
+    function getOracleServiceInfo(address oracleAddress) public view returns (uint, address, uint256[2] memory  , bytes32 , string memory, string memory, uint256, uint256, bool, uint256) {
         // TODO. use if and return null when not exists???
         require(isOracleExist(oracleAddress), "Oracle service not exists.");
 
         OracleService memory service = oracleServiceMap[oracleAddress];
         return (
-        service.index, service.oracleServiceAddress, service.publicKey, service.operator, service.url,
+        service.index, service.oracleServiceAddress, service.publicKey, service.keyhash, service.operator, service.url,
         service.createTime, service.latestRequstProcessedTime, service.status, service.processedRequestAmount
         );
     }
@@ -166,20 +167,22 @@ contract OracleRegisterCenter is Owned {
 
 
     // update oracleCore instalce
-    function updateOracleInfo(string memory _publicKey, string memory _operator, string memory _url) onlyOwner public returns (bool success)  {
+    function updateOracleInfo(uint256[2] memory _publicKey, string memory _operator, string memory _url) onlyOwner public returns (bool success)  {
         OracleService storage service = oracleServiceMap[msg.sender];
         require(service.oracleServiceAddress == msg.sender, "Oracle service not exists.");
 
 
-        string memory oldPublicKey = service.publicKey;
+        uint256[2] memory oldPublicKey = service.publicKey;
         string memory oldOperator = service.operator;
         string memory oldUrl = service.url;
+        bytes32 oldKeyhash = service.keyhash;
 
         service.publicKey = _publicKey;
         service.operator = _operator;
         service.url = _url;
+        service.keyhash = keccak256(abi.encodePacked(_publicKey));
 
-        LogUpdateOracleService(service.index, msg.sender, oldPublicKey, _publicKey, oldOperator, _operator, oldUrl, _url);
+        LogUpdateOracleService(service.index, oldPublicKey, oldKeyhash,_publicKey, service.keyhash, oldOperator, _operator, oldUrl, _url);
         return true;
     }
 
