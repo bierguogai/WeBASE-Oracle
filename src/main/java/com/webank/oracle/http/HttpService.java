@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.exception.RemoteCallException;
+import com.webank.oracle.event.exception.RemoteCallException;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.HttpUtil;
 

@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   webase-oracle:
-    image: fiscoorg/webase-oracle:v0.4
+    image: fiscoorg/webase-oracle:latest
     container_name: webase-oracle
     restart: "no"
     environment:
@@ -9,7 +9,8 @@ services:
     volumes:
       - ./log/:/dist/log
       - ./application-docker.yml:/dist/conf/application-docker.yml
-      - .conf/sdk/ca.crt:/dist/conf/ca.crt
-      - .conf/sdk/node.crt:/dist/conf/node.crt
-      - .conf/sdk/node.key:/dist/conf/node.key
+      - ./conf/sdk/ca.crt:/dist/conf/ca.crt
+      - ./conf/sdk/node.crt:/dist/conf/node.crt
+      - ./conf/sdk/node.key:/dist/conf/node.key
+      - ./key:/dist/key
     network_mode: "host"

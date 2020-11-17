@@ -65,4 +65,6 @@ func VRFProoFGenerate(sk *C.char, preseed *C.char) *C.char {
 
 
 
+// build command
+// docker run --rm -v "/Users/MoMo/GitRepository/chainlink":/usr/src/myapp -w /usr/src/myapp -e GOOS=linux -e GOARCH=amd64 -e CGO_ENABLED=1 golang:1.15.5-buster go build -x -v  -buildmode=c-shared -o libvrf.so ./main/main.go
 

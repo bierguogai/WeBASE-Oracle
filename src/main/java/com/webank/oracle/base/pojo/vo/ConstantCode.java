@@ -34,20 +34,12 @@ public class ConstantCode {
 
     /*Business exception */
     public static final RetCode NEW_KEY_STORE_FAIL = RetCode.mark(205000, "create keyStore exception");
-
     public static final RetCode SEND_TRANSACTION_FAIL = RetCode.mark(205001, "send transaction exception");
-
     public static final RetCode GROUP_ID_NOT_EXIST = RetCode.mark(205002, "group id not exist");
-
     public static final RetCode DATA_SIGN_ERROR = RetCode.mark(205003, "data sign error");
-
     public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
-
     public static final RetCode DATA_NOT_EXISTS = RetCode.mark(205005, "Data not exists");
-
     public static final RetCode DECODE_PROOF_ERROR = RetCode.mark(205006, "Decode proof error");
-
-    public static final RetCode VRF_CONTRACT_ADDRESS_ERROR = RetCode.mark(205007, "VRF contract address is empty.");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

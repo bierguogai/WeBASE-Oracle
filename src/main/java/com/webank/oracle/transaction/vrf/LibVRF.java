@@ -1,14 +1,23 @@
 package com.webank.oracle.transaction.vrf;
 
-import org.springframework.core.io.ClassPathResource;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_LIB_FILE_NOT_EXISTS;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_LIB_LOAD_ERROR;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.webank.oracle.event.exception.NativeCallException;
 
 public interface LibVRF extends Library {
 
+    static Logger logger = LoggerFactory.getLogger(LibVRF.class);
+
     /**
-     *
      * @param sk
      * @param preseed
      * @return
@@ -29,9 +38,19 @@ public interface LibVRF extends Library {
                 libExtension = "so";
             }
 
-            String lib = "./libvrf." + libExtension;
+            String libFilePath = getFilePath(String.format("libvrf.%s", libExtension));
+            if (Files.notExists(Paths.get((libFilePath)))) {
+                throw new NativeCallException(VRF_LIB_FILE_NOT_EXISTS);
+            }
 
-            instance = Native.loadLibrary(new ClassPathResource(lib).getPath(), LibVRF.class);
+            logger.info("Load vrf lib from:[{}]", libFilePath);
+            instance = Native.loadLibrary(libFilePath, LibVRF.class);
+            if (instance == null) {
+                throw new NativeCallException(VRF_LIB_LOAD_ERROR);
+            }
+        }
+        public static String getFilePath(String file){
+            return LibVRF.class.getClassLoader().getResource(file).getPath();
         }
 
         public static LibVRF getInstance() {
