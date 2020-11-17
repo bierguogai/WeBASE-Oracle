@@ -1,21 +1,16 @@
 package com.webank.oracle.test.oracle.base;
 
-import java.math.BigInteger;
-import java.util.Map;
-
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
-import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.webank.oracle.Application;
-import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegisterProperties;
-import com.webank.oracle.keystore.KeyStoreService;
+import com.webank.oracle.base.service.Web3jMapService;
 import com.webank.oracle.contract.ContractDeployRepository;
+import com.webank.oracle.keystore.KeyStoreService;
+import com.webank.oracle.transaction.register.OracleRegisterCenterService;
 
 /**
  *
@@ -24,16 +19,11 @@ import com.webank.oracle.contract.ContractDeployRepository;
 @SpringBootTest(classes = Application.class)
 //@Transactional
 public class BaseTest {
-    @Autowired protected Map<Integer, Map<Integer, Web3j>> web3jMap;
+    @Autowired protected Web3jMapService web3jMapService;
     @Autowired protected EventRegisterProperties eventRegisterProperties;
     @Autowired protected KeyStoreService keyStoreService;
     @Autowired protected ContractDeployRepository contractDeployRepository;
-
-
-    protected BigInteger gasPrice = new BigInteger("1");
-    protected BigInteger gasLimit = new BigInteger("2100000000");
-
-    protected ContractGasProvider contractGasProvider = new StaticGasProvider(gasPrice, gasLimit);
+    @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
 
     //根据私钥导入账户
     protected Credentials credentials = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
@@ -48,11 +38,7 @@ public class BaseTest {
 
 
     protected Web3j getWeb3j(int chainId, int groupId){
-        Web3j web3j = web3jMap.get(chainId).get(groupId);
-        if (web3j == null) {
-            new OracleException(ConstantCode.GROUP_ID_NOT_EXIST);
-        }
-        return web3j;
+         return web3jMapService.getNotNullWeb3j(chainId,groupId);
     }
 
     protected static String bytesToHex(byte[] bytes) {

@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.pojo.vo.BaseResponse;
+import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 
 @RestController
@@ -17,14 +18,9 @@ public class OracleController {
     @Autowired
     private EventRegisterProperties eventRegisterProperties;
 
-    @GetMapping("/oracle-core-address")
-    public String getOracleCoreAddress(@RequestParam(defaultValue = "1") int chainId,
-                                       @RequestParam(defaultValue = "1") int groupId) {
-        EventRegister eventRegister = eventRegisterProperties.getEventRegisters().stream().filter(x -> x.getChainId() == (chainId) && x.getGroup() == groupId).findAny().get();
-        if (eventRegister != null) {
-            return String.format("Oraclize:%s\nVRF:%s",eventRegister.getOracleCoreContractAddress(),eventRegister.getVrfContractAddress());
-        } else
-            return null;
+    @GetMapping("/address")
+    public BaseResponse getOracleCoreAddress(@RequestParam(defaultValue = "0") int chainId,
+                                             @RequestParam(defaultValue = "0") int groupId) {
+        return new BaseResponse(ConstantCode.SUCCESS, eventRegisterProperties.getByChainIdAndGroupId(chainId,groupId));
     }
-
 }

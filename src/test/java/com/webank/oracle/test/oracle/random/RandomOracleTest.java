@@ -6,6 +6,7 @@ import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.test.oracle.base.BaseTest;
 import com.webank.oracle.test.oracle.random.contract.RandomOracle;
 import com.webank.oracle.transaction.oracle.OracleCore;
@@ -30,11 +31,11 @@ public class RandomOracleTest extends BaseTest {
 //        String orcleAddress = oraliceCore.getContractAddress();
             log.info("oracle core address " + eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress());
 
-            OracleCore oraliceCore = OracleCore.load(eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress(), web3j, credentials, contractGasProvider);
+            OracleCore oraliceCore = OracleCore.load(eventRegisterProperties.getEventRegisters().get(0).getOracleCoreContractAddress(), web3j, credentials, ConstantProperties.GAS_PROVIDER);
             String oracleAddress = oraliceCore.getContractAddress();
 
             // asset
-            RandomOracle temperatureOracle = RandomOracle.deploy(web3j, credentials, contractGasProvider).send();
+            RandomOracle temperatureOracle = RandomOracle.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER).send();
             temperatureOracle.getContractAddress();
 
             TransactionReceipt t = temperatureOracle.oracle_setNetwork(oracleAddress).send();

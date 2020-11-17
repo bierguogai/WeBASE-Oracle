@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.oracle.VRF.contract.RandomNumberConsumer;
@@ -53,7 +54,7 @@ public class RandomNumberConsumerTest extends BaseTest {
             // keyhashbyte: 必须要用部署 coordinate 合约的公钥
 
             Web3j web3j = getWeb3j(chainId, groupId);
-            RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j, credential, contractGasProvider, coordinatorAddress, keyhashbyte).send();
+            RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j, credential, ConstantProperties.GAS_PROVIDER, coordinatorAddress, keyhashbyte).send();
             String consumerContractAddress = randomNumberConsumer.getContractAddress();
             System.out.println("consumer address: " + consumerContractAddress);
 
