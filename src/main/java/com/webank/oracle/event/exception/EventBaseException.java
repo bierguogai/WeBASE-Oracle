@@ -1,4 +1,4 @@
-package com.webank.oracle.base.exception.event;
+package com.webank.oracle.event.exception;
 
 import org.apache.commons.lang.ArrayUtils;
 

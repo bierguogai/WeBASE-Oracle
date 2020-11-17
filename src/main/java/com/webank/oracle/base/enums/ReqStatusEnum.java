@@ -42,6 +42,10 @@ public enum ReqStatusEnum {
     // http unknown error
     REMOTE_CALL_UNEXPECTED_EXCEPTION_ERROR(205151, "Remote call with unexpected exception:[%s]."),
 
+    // full fill error
+    VRF_CONTRACT_ADDRESS_ERROR(205161, "VRF contract address is empty."),
+    ORACLE_CORE_CONTRACT_ADDRESS_ERROR(205162, "Oracle core contract address is empty."),
+    UPLOAD_RESULT_TO_CHAIN_ERROR(205163, "Upload result to chain failed:[%s]."),
 
     ;
 

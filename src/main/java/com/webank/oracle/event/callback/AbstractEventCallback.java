@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.webank.oracle.base.enums.ProofTypeEnum;
 import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.base.exception.event.EventBaseException;
+import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;

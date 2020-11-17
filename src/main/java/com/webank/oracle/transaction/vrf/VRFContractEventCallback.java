@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
-import com.webank.oracle.base.exception.event.PushEventLogExceptionEvent;
+import com.webank.oracle.event.exception.PushEventLogException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.event.callback.AbstractEventCallback;
 
@@ -64,7 +64,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
         if (this.reqHistoryRepository.findByReqId(vrfLogResult.getRequestId()).isPresent()) {
             log.error("Request already exists:[{}:{}:{}].",
                     vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
-            throw new PushEventLogExceptionEvent(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
+            throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
         this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));

@@ -1,11 +1,14 @@
 package com.webank.oracle.base.utils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.exception.event.RemoteCallExceptionEvent;
+import com.webank.oracle.event.exception.RemoteCallException;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -44,7 +47,6 @@ public class HttpUtil {
 
 
     /**
-     *
      * @param connectTimeout
      * @param readTimeout
      * @param writeTimeout
@@ -62,7 +64,6 @@ public class HttpUtil {
     }
 
     /**
-     *
      * @param url
      * @param queryMap
      * @param body
@@ -72,7 +73,7 @@ public class HttpUtil {
     public static String post(String url, Map<String, String> queryMap, Object body) throws Exception {
         // check if client is null
         if (client == null) {
-            log.warn("Http util was not initialized yet, init with default timeout." );
+            log.warn("Http util was not initialized yet, init with default timeout.");
 
             init(DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT, DEFAULT_WRITE_TIMEOUT);
         }
@@ -98,13 +99,15 @@ public class HttpUtil {
             Response response = client.newCall(request).execute();
             checkHttpStatusCode(response);
             responseString = response.body().string();
+        } catch (SocketTimeoutException e) {
+            String errorMsg = ExceptionUtils.getRootCauseMessage(e);
+            throw new RemoteCallException(ReqStatusEnum.getBySocketErrorMsg(errorMsg), url);
         } catch (Exception e) {
             throw e;
         } finally {
             log.info("Req:[{}], body:[{}], response:[{}]", newUrl, JsonUtils.toJSONString(body), responseString);
         }
         return responseString;
-
     }
 
     public static String post(String url, Object body) throws Exception {
@@ -126,21 +129,21 @@ public class HttpUtil {
      *
      * @param response
      */
-    public static void checkHttpStatusCode(Response response){
-        if (response == null){
-            throw new RemoteCallExceptionEvent(ReqStatusEnum.EMPTY_RESPONSE_ERROR);
+    public static void checkHttpStatusCode(Response response) {
+        if (response == null) {
+            throw new RemoteCallException(ReqStatusEnum.EMPTY_RESPONSE_ERROR);
         }
-        switch (response.code()){
+        switch (response.code()) {
             case 200:
                 return;
             case 404:
-                throw new RemoteCallExceptionEvent(ReqStatusEnum._404_NOT_FOUND_ERROR);
+                throw new RemoteCallException(ReqStatusEnum._404_NOT_FOUND_ERROR);
 
             case 500:
-                throw new RemoteCallExceptionEvent(ReqStatusEnum._500_SERVER_ERROR);
+                throw new RemoteCallException(ReqStatusEnum._500_SERVER_ERROR);
 
             default:
-                throw new RemoteCallExceptionEvent(ReqStatusEnum.OTHER_CODE_ERROR, String.valueOf(response.code()));
+                throw new RemoteCallException(ReqStatusEnum.OTHER_CODE_ERROR, String.valueOf(response.code()));
         }
     }
 }

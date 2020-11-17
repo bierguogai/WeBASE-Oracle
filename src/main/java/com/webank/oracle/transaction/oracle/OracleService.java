@@ -14,6 +14,8 @@
 
 package com.webank.oracle.transaction.oracle;
 
+import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_ADDRESS_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
 import java.math.BigInteger;
@@ -33,6 +35,7 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.utils.JsonUtils;
+import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
 
@@ -67,7 +70,6 @@ public class OracleService extends AbstractCoreService {
 
     @Override
     public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
-        // TODO. convert check ?
         OracleCoreLogResult oracleCoreLogResult = (OracleCoreLogResult) baseLogResult;
 
         // TODO. optimize
@@ -109,7 +111,7 @@ public class OracleService extends AbstractCoreService {
             Credentials credentials = keyStoreService.getCredentials();
             String oracleCoreAddress = contractAddressMap.get(getKey(chainId, groupId));
             if (StringUtils.isBlank(oracleCoreAddress)) {
-                // TODO. throw exception
+                throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, contractGasProvider);
             TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
@@ -118,9 +120,9 @@ public class OracleService extends AbstractCoreService {
             log.info("Write data to chain:[{}]", receipt.getStatus());
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
-        } catch (Exception oe) {
+        } catch (OracleException oe) {
             log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId, oe);
-            throw oe;
+            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR, oe.getCodeAndMsg().getMessage());
         }
     }
 

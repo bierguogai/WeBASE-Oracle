@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.base.exception.event.RemoteCallExceptionEvent;
+import com.webank.oracle.event.exception.RemoteCallException;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.HttpUtil;
 
@@ -58,7 +58,7 @@ public class HttpService {
                 case "json":
                     JsonNode jsonNode = stringToJsonNode(result);
                     if (jsonNode == null) {
-                        throw new RemoteCallExceptionEvent(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
+                        throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
                     // TODO. exception
                     value = new BigInteger(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
@@ -107,7 +107,7 @@ public class HttpService {
             JsonNode jsonNode1 = (JsonNode) jsonNode;
             return jsonNode1.get(key);
         } catch (Exception ex) {
-            throw new RemoteCallExceptionEvent(ReqStatusEnum.PARSE_RESULT_ERROR, String.valueOf(jsonNode), key);
+            throw new RemoteCallException(ReqStatusEnum.PARSE_RESULT_ERROR, String.valueOf(jsonNode), key);
         }
     }
 
