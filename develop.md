@@ -1,9 +1,16 @@
 
 
 
-### 获取链下API数据
-用户合约开发只需继承FiscoOracleClient合约即可。必须实现__callback方法，以便oracle-servixce将结果回写。
-
+### 方式一：获取链下API数据
+ 用户可以参考contracts/0.4/oracle/APIConsumer.sol合约实现自己的oracle合约。  
+  必须继承FiscoOracleClient合约即可。实现__callback方法，以便oracle-service将结果回写。  
+  在request方法中填入要获取的链下url。  
+  url格式：  
+     目前支持json和text/plain两种访问格式。并且链下API的url必须支持HTTPS访问。
+   - plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)
+   - json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY
+    
+   合约解析如下：  
 ```
 
 pragma solidity ^0.6.0;
@@ -58,7 +65,7 @@ contract APIConsumer is FiscoOracleClient {
 
 ### VRF获取可验证随机数
   
-  用户合约开发只需继承VRFConsumerBase合约即可。必须实现fulfillRandomness方法，以便oracle-servixce将结果回写。
+  用户合约开发只需继承VRFConsumerBase（contracts/0.4/oracle目录下）合约即可。必须实现fulfillRandomness方法，以便oracle-service将结果回写。
 
 ```
 pragma solidity 0.6.6;
@@ -71,6 +78,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
     bytes32 internal keyHash;
     uint256 public randomResult;
 
+    // 填写 coordinator地址 和 oracleservice 的keyhash
     constructor(address _coordinator, bytes32 _keyHash)
         VRFConsumerBase(
             _coordinator // VRF Coordinator
