@@ -1,3 +1,17 @@
+#FROM gradle:6.4.0-jdk8 as cache
+#LABEL maintainer yuanhongbin9090@gmail.com
+#
+#RUN mkdir -p /home/gradle/cache_home
+#
+#ENV GRADLE_USER_HOME /home/gradle/cache_home
+#
+#WORKDIR /code
+#
+#COPY build.gradle build.gradle
+#
+#RUN gradle clean build -i --stacktrace
+
+
 FROM ubuntu:18.04 as prod
 
 ENV CLASSPATH "/dist/conf/:/dist/apps/*:/dist/lib/*"
@@ -13,7 +27,6 @@ WORKDIR /dist/
 
 COPY lib                  /dist/lib
 COPY conf                 /dist/conf
-#COPY script/deploy        /dist/script/deploy
 COPY apps                 /dist/apps
 
 EXPOSE 5012

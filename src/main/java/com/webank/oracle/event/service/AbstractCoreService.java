@@ -58,7 +58,7 @@ public abstract class AbstractCoreService {
      *
      * @return
      */
-     protected abstract String deployContract(int chainId, int group);
+    protected abstract String deployContract(int chainId, int group);
 
     /**
      * 获取结果并上链
@@ -88,7 +88,7 @@ public abstract class AbstractCoreService {
 
         // load from db
         Optional<ContractDeploy> deployOptional =
-                this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId,contractType.getId());
+                this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, contractType.getId());
         ContractDeploy contractDeploy = null;
         if (deployOptional.isPresent()) {
             contractDeploy = deployOptional.get();
@@ -102,7 +102,7 @@ public abstract class AbstractCoreService {
 
         contractDeploy = ContractDeploy.build(chainId, groupId, contractType);
         // deploy contract
-        String deployedContractAddress = this.deployContract(chainId,groupId);
+        String deployedContractAddress = this.deployContract(chainId, groupId);
         if (StringUtils.isNotBlank(deployedContractAddress)) {
             contractDeploy.setContractAddress(deployedContractAddress);
             contractDeployRepository.save(contractDeploy);
@@ -127,7 +127,7 @@ public abstract class AbstractCoreService {
      * @param receipt
      */
     public void dealWithReceipt(TransactionReceipt receipt) {
-        log.info("*********" + receipt.getOutput());
+        log.info("receipt:[{}]", receipt.getOutput());
         if ("0x16".equals(receipt.getStatus()) && receipt.getOutput().startsWith("0x08c379a0")) {
             log.error("transaction error:[{}]", DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));
             throw new OracleException(ConstantCode.SYSTEM_EXCEPTION.getCode(), DecodeOutputUtils.decodeOutputReturnString0x16(receipt.getOutput()));

@@ -14,7 +14,8 @@
 
 package com.webank.oracle.transaction.vrf;
 
-import static com.webank.oracle.base.pojo.vo.ConstantCode.VRF_CONTRACT_ADDRESS_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
+import static com.webank.oracle.base.enums.ReqStatusEnum.VRF_CONTRACT_ADDRESS_ERROR;
 
 import java.math.BigInteger;
 
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
 
@@ -67,7 +69,6 @@ public class VRFService extends AbstractCoreService {
 
     @Override
     public String getResultAndUpToChain(int chainId, int groupId, BaseLogResult baseLogResult) throws Exception {
-        // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
         String requestId = vrfLogResult.getRequestId();
@@ -80,6 +81,7 @@ public class VRFService extends AbstractCoreService {
         Credentials credentials = keyStoreService.getCredentials();
         String servicePrivateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
 
+        log.info("Call vrf lib:[{}].", requestId);
         String proof = LibVRF.InstanceHolder.getInstance().VRFProoFGenerate(servicePrivateKey, seed.toString(16));
         log.info("Generate proof:[{}] for request:[{}]", proof, requestId);
 
@@ -92,23 +94,22 @@ public class VRFService extends AbstractCoreService {
      */
     @Override
     public void fulfill(int chainId, int groupId, String contractAddress, BaseLogResult baseLogResult, Object result) throws Exception {
-        // TODO.
         VRFLogResult vrfLogResult = (VRFLogResult) baseLogResult;
 
         String proof = String.valueOf(result);
         String requestId = vrfLogResult.getRequestId();
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
+        String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
+        if (StringUtils.isBlank(vrfCoordinatorAddress)) {
+            throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
+        }
+
         String sender = vrfLogResult.getSender();
-        log.debug("upBlockChain start. contractAddress:{} data:{} requsetId:{}", sender, proof, requestId);
+        log.debug("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
         try {
             Web3j web3j = getWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-
-            String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
-            if (StringUtils.isBlank(vrfCoordinatorAddress)) {
-                throw new OracleException(VRF_CONTRACT_ADDRESS_ERROR);
-            }
 
             VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, contractGasProvider);
 
@@ -119,12 +120,12 @@ public class VRFService extends AbstractCoreService {
             System.arraycopy(bnbytes, 0, destination, i.length, 32);
 
             TransactionReceipt receipt = vrfCoordinator.fulfillRandomnessRequest(destination).send();
-            log.info("&&&&&" + receipt.getStatus());
+            log.info("requestId:[{}], receipt status:[{}]", requestId, receipt.getStatus());
             dealWithReceipt(receipt);
-            log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId);
+            log.info("upBlockChain success chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId);
         } catch (OracleException oe) {
-            log.error("upBlockChain exception chainId: {}  groupId: {} . contractAddress:{} data:{} cid:{}", chainId, groupId, sender, proof, requestId, oe);
-            throw oe;
+            log.error("upBlockChain exception chainId: {}  groupId: {}. sender:{} data:{} requestId:{}", chainId, groupId, sender, proof, requestId, oe);
+            throw new FullFillException(UPLOAD_RESULT_TO_CHAIN_ERROR,oe.getCodeAndMsg().getMessage());
         }
 
     }
@@ -138,21 +139,6 @@ public class VRFService extends AbstractCoreService {
      * @return
      */
     public Pair<String, String> decodeProof(int chainId, int group, String proof) throws Exception {
-//        Pair<String, String> addressMap = VRF_CONTRACT_ADDRESS_MAP.get(getKey(chainId, group));
-//        if (addressMap == null){
-//            // TODO. throw exception
-//            return Pair.of("","");
-//        }
-//
-//        Credentials credentials = keyStoreService.getCredentials();
-//        //fist  secretRegistty
-//        VRF vrf = VRF.load(addressMap.getValue(), getWeb3j(chainId, group), credentials, contractGasProvider);
-//
-//        byte[] proofBytes = Numeric.hexStringToByteArray(proof);
-//
-//        TransactionReceipt tt = vrf.randomValueFromVRFProof(proofBytes).send();
-//
-//        return Pair.of(tt.getStatus(), tt.getOutput());
         return Pair.of("0", proof);
     }
 }
