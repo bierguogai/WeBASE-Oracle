@@ -12,7 +12,6 @@
    我们可以通过引入预言机（Oracle）的功能来解决这一问题，预言机可以为智能合约提供与外部世界的连接性。   
    Oracle-Service 分为链上部分和链下部分。
    链上部分主要是oracle相关合约，链下部分主要是java服务，负责监听合约的事件，采集结果并回写到智能合约。  
-   如图![oracle流程图](img/oracle.png)  
    
          
 #### 1.2 作用
@@ -27,7 +26,8 @@
   有三种使用方式：
   也支持去中心化方式获取链下数据，去中心化
     
-  1 支持用户获取链下API数据       
+  1 支持用户获取链下API数据     
+    如图![oracle流程图](img/oracle.png)    
    中心化方式获取链下url数据，目前支持json和text/plain两种访问格式，链下API必须支持HTTPS访问 
    
   2 支持产生VRF随机数  
@@ -43,10 +43,13 @@
    此外会维护OracleServiceCenter注册中心，所有启动的oracle service节点需要在注册中心注册自己的相关信息，以方便用户选择oracle service服务方。  
    ![去中心化oracle原理图](img/distributedOracle.png)
      
-#### 1.4 快速开发  
-   [快速开发自己的预言机](./develop.md)
-   
-### 2 [安装部署](./install.md)  
 
-### 3 使用注意事项：
+   
+### 2  安装部署
+ [Oracle-Service服务安装部署](./install.md)  
+
+### 3  快速开发  
+   [快速开发自己的预言机](./develop.md)
+
+### 4 使用注意事项：
 
