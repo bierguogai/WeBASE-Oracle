@@ -15,10 +15,10 @@
    Oracle-Service是fisco链上的预言机服务。此服务作用是负责取相关用户指定的url的数据，并回写到用户的合约上。方便用户在链上访问链下数据。
    并支持连接多链多群组，可同时为不同链和群组提供oracle服务。
    
-   Oracle-Service 服务需配合OracleCore（在项目的contracts目录下）合约使用。 服务启动时会部署OracleCore合约或者加载OracleCore合约（如果已配置合约地址），然后监听此合约的事件。
+   Oracle-Service 服务需配合OracleCore（在项目的contracts/v0.4/oracle目录下）合约使用，然后监听此合约的事件。
    如图![oracle流程图](img/oracle.png)
    
-   用户只需要参考ConsumerOracle.sol合约,继承我们提供的合约即可。
+   用户只需要参考APIConsumer.sol合约,继承我们提供的合约即可。
    目前支持 JSON、后续支持XML、HTML Parser
          
 #### 1.2 作用
@@ -28,12 +28,6 @@
   
 #### 1.3 设计方案
 
-   抗攻击：
-   
-   女巫攻击:
-   Chainlink 计划通过对高质量的 Oracle 发起背书（认证）的方式，监控验证系统关于 Oracles 的统计数据
-   复制攻击: Freeloading （吃空饷——预言者直接复制之前已提交答案的哈希值的行为）的问题
-   
   WeBASE-Oracle是FISCO BCOS链上的预言机服务，在广泛调研市场上预言机项目的基础上针对联盟链设计的预言机服务。
   1 支持用户获取链下API数据  
   2 支持产生VRF随机数  
