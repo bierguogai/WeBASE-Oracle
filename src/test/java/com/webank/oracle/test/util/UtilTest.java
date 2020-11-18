@@ -2,7 +2,7 @@ package com.webank.oracle.test.util;
 
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
-import static com.webank.oracle.test.oracle.VRF.VRFTest.bytesToHex;
+import static com.webank.oracle.test.transaction.VRF.VRFTest.bytesToHex;
 
 import java.math.BigInteger;
 import java.security.KeyManagementException;

@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.VRF;
+package com.webank.oracle.test.transaction.VRF;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
-import com.webank.oracle.test.oracle.VRF.contract.RandomNumberConsumer;
-import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.transaction.VRF.contract.RandomNumberConsumer;
+import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.vrf.LibVRF;
 import com.webank.oracle.transaction.vrf.VRF;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;

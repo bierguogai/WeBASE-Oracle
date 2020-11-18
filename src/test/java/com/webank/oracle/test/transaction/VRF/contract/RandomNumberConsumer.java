@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.VRF.contract;
+package com.webank.oracle.test.transaction.VRF.contract;
 
 import java.math.BigInteger;
 import java.util.Arrays;

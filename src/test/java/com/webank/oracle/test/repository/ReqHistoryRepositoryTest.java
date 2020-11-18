@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.webank.oracle.history.ReqHistoryRepository;
 import com.webank.oracle.history.ReqHistory;
-import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;
 

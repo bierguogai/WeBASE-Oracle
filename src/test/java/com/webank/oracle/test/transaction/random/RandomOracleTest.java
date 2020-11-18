@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.random;
+package com.webank.oracle.test.transaction.random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.protocol.Web3j;
@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.test.oracle.base.BaseTest;
-import com.webank.oracle.test.oracle.random.contract.RandomOracle;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.test.transaction.random.contract.RandomOracle;
 import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
