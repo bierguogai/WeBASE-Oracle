@@ -121,7 +121,7 @@ public class ReqHistory {
     /**
      * 证明
      */
-    @Column(length = 256, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String proof;
 
     /**
