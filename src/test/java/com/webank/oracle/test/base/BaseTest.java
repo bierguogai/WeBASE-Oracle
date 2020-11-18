@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.base;
+package com.webank.oracle.test.base;
 
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;

@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.register;
+package com.webank.oracle.test.transaction.register;
 
 import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.JsonUtils;
-import com.webank.oracle.test.oracle.base.BaseTest;
+import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.register.OracleRegisterCenter;
 import com.webank.oracle.transaction.register.OracleServiceInfo;
 
