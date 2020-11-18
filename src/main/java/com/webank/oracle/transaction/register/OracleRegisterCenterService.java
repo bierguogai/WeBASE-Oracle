@@ -62,6 +62,7 @@ public class OracleRegisterCenterService {
      *
      */
     private void checkOrDeployOracleRegisterCenterContract(){
+        log.info("Start to check if oracle register center deployed...");
         String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
@@ -116,6 +117,7 @@ public class OracleRegisterCenterService {
      * 在所有链上注册 oracle service
      */
     private void registerServiceToCenter(){
+        log.info("Start to register this service to oracle register center ...");
         String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
