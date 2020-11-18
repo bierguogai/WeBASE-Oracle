@@ -2,6 +2,7 @@ package com.webank.oracle.transaction.register;
 
 import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,8 @@ import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.service.Web3jMapService;
+import com.webank.oracle.base.utils.CredentialUtils;
+import com.webank.oracle.chain.CnsMapService;
 import com.webank.oracle.keystore.KeyStoreService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +40,28 @@ public class OracleRegisterCenterService {
     @Autowired private ConstantProperties constantProperties;
     @Autowired private KeyStoreService keyStoreService;
     @Autowired private Web3jMapService web3jMapService;
+    @Autowired private CnsMapService cnsMapService;
 
     /**
      * TODO. deploy by owner.
+     *
+     * 1. Auto deploy oracle register center contract if not deployed.
+     * 2. Register oracle register center contract address to CNS.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
+        // 如果没有部署 oracle register center 合约，自动部署
+        // 注册到 CNS
+        this.checkOrDeployOracleRegisterCenterContract();
+
+        // 自动注册 Oracle Service 到 oracle register center
+        this.registerServiceToCenter();
+    }
+
+    /**
+     *
+     */
+    private void checkOrDeployOracleRegisterCenterContract(){
         String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
@@ -57,7 +76,7 @@ public class OracleRegisterCenterService {
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
 
             // cns
-            CnsService cnsService = new CnsService(web3j, keyStoreService.getCredentials());
+            CnsService cnsService = cnsMapService.getNotNullCnsService(chainId,groupId);
             String contractAddress = null;
             try {
                 contractAddress = cnsService.getAddressByContractNameAndVersion(nameAndVersion);
@@ -92,6 +111,75 @@ public class OracleRegisterCenterService {
             }
         }
     }
+
+    /**
+     * 在所有链上注册 oracle service
+     */
+    private void registerServiceToCenter(){
+        String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
+        if (StringUtils.isBlank(nameAndVersion)) {
+            log.error("Register center contract name and version not configured.");
+            return;
+        }
+
+        for (EventRegister eventRegister : eventRegisterProperties.getEventRegisters()) {
+            int chainId = eventRegister.getChainId();
+            int groupId = eventRegister.getGroup();
+
+            String operator = eventRegister.getOperator();
+            String url = eventRegister.getUrl();
+            List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(this.keyStoreService.getKeyStoreInfo().getPublicKey());
+
+            // register to center
+            this.registerServiceToCenterOfChainAndGroup(chainId,groupId,operator,url,publicKeyList);
+        }
+    }
+
+
+    /**
+     * 在单链上注册 oracle service
+     *
+     * @param chainId
+     * @param groupId
+     * @param operator
+     * @param url
+     * @param publicKeyList
+     */
+    private void registerServiceToCenterOfChainAndGroup(int chainId, int groupId, String operator, String url, List<BigInteger> publicKeyList){
+        // get web3j
+        Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
+
+        // load oracle register center
+        String registerCenterAddress = null;
+        try {
+            registerCenterAddress = this.getRegisterCenterAddress(chainId, groupId);
+        } catch (Exception e) {
+            log.error("Oracle register center not deploy on this chain and group:[{}:{}]", chainId, groupId);
+            return;
+        }
+        log.info("Oracle register center address:[{}]", registerCenterAddress);
+        OracleRegisterCenter registerCenter = OracleRegisterCenter.load(registerCenterAddress, web3j,
+                this.keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER);
+
+        try {
+            // check if oracle service already register
+            TransactionReceipt serviceExists = registerCenter.isOracleExist(this.keyStoreService.getKeyStoreInfo().getAddress()).send();
+            if (registerCenter.getIsOracleExistOutput(serviceExists).getValue1()){
+                log.info("This service is already register to oracle register center");
+                return;
+            }
+
+            // register
+            TransactionReceipt oracleRegisterReceipt = registerCenter.oracleRegister(operator, url, publicKeyList).send();
+            dealWithReceipt(oracleRegisterReceipt);
+            log.info("This service register to chain:[{}:{}] success, receipt status:[{}]", chainId, groupId, oracleRegisterReceipt.getStatus());
+        } catch (Exception e) {
+            log.error("This service register to chain:[{}:{}] error", chainId, groupId);
+        }
+    }
+
+
+
 
     /**
      * @param chainId
@@ -155,9 +243,7 @@ public class OracleRegisterCenterService {
      * @return
      * @throws Exception
      */
-    public String getRegisterCenterAddress(int chainId, int groupId) throws Exception {
-        Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
-
+    public String getRegisterCenterAddress(int chainId, int groupId){
         String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
@@ -165,7 +251,7 @@ public class OracleRegisterCenterService {
         }
 
         // get oracle register center address by CNS
-        CnsService cnsService = new CnsService(web3j, keyStoreService.getCredentials());
+        CnsService cnsService = cnsMapService.getNotNullCnsService(chainId,groupId);
         return cnsService.getAddressByContractNameAndVersion(nameAndVersion);
     }
 

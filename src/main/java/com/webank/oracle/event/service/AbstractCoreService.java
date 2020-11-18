@@ -12,6 +12,7 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.service.Web3jMapService;
+import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.contract.ContractDeployRepository;
@@ -88,7 +89,7 @@ public abstract class AbstractCoreService {
             String contractAddress = contractDeploy.getContractAddress();
             if (StringUtils.isNotBlank(contractAddress)) {
                 // oracle core already deployed
-                contractAddressMap.put(getKey(chainId, groupId), contractAddress);
+                contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), contractAddress);
                 return contractAddress;
             }
         }
@@ -99,7 +100,7 @@ public abstract class AbstractCoreService {
         if (StringUtils.isNotBlank(deployedContractAddress)) {
             contractDeploy.setContractAddress(deployedContractAddress);
             contractDeployRepository.save(contractDeploy);
-            contractAddressMap.put(getKey(chainId, groupId), deployedContractAddress);
+            contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), deployedContractAddress);
         }
         return deployedContractAddress;
 
@@ -120,14 +121,5 @@ public abstract class AbstractCoreService {
         }
     }
 
-
-    /**
-     * @param chainId
-     * @param groupId
-     * @return
-     */
-    public String getKey(int chainId, int groupId) {
-        return String.format("%s_%s", chainId, groupId);
-    }
 
 }

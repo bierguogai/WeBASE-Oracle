@@ -35,6 +35,7 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
 import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
@@ -111,7 +112,7 @@ public class OracleService extends AbstractCoreService {
 
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oracleCoreAddress = contractAddressMap.get(getKey(chainId, groupId));
+            String oracleCoreAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
             if (StringUtils.isBlank(oracleCoreAddress)) {
                 throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }

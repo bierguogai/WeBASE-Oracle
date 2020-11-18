@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChainController {
     @Autowired private EventRegisterProperties eventRegisterProperties;
 
-    @GetMapping("/goup/list")
+    @GetMapping("/group/list")
     public BaseResponse query() {
         return new BaseResponse(ConstantCode.SUCCESS, eventRegisterProperties.getChainGroupList());
     }

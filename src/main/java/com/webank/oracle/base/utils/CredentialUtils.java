@@ -16,7 +16,14 @@
 
 package com.webank.oracle.base.utils;
 
-import lombok.extern.log4j.Log4j2;
+import static org.fisco.bcos.web3j.crypto.Keys.PUBLIC_KEY_LENGTH_IN_HEX;
+
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.ECKeyPair;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.fisco.bcos.web3j.crypto.Keys;
@@ -26,8 +33,7 @@ import org.fisco.bcos.web3j.crypto.gm.sm2.crypto.asymmetric.SM2PrivateKey;
 import org.fisco.bcos.web3j.crypto.gm.sm2.crypto.asymmetric.SM2PublicKey;
 import org.fisco.bcos.web3j.crypto.gm.sm2.util.encoders.Hex;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class CredentialUtils extends GenCredential {
@@ -45,6 +51,24 @@ public class CredentialUtils extends GenCredential {
         // default use ECDSA
         return createECDSAKeyPair();
     }
+
+    public static List<BigInteger> getPublicKeyList(String publicKey) {
+        if (StringUtils.startsWith(publicKey,"0x")){
+            publicKey = publicKey.substring(2);
+        }
+        if (StringUtils.length(publicKey) != PUBLIC_KEY_LENGTH_IN_HEX) {
+            return null;
+        }
+
+        String prePublicKeyStr = publicKey.substring(0, 64);
+        String postPublicKeyStr = publicKey.substring(64);
+
+        return Arrays.asList(new BigInteger[]{
+            new BigInteger(prePublicKeyStr, 16),
+            new BigInteger(postPublicKeyStr, 16)
+        });
+    }
+
 
     private static ECKeyPair createECDSAKeyPair() {
         try {

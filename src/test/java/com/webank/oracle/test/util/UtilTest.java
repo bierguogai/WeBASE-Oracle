@@ -12,12 +12,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.webank.oracle.base.utils.CredentialUtils;
 import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.base.utils.HttpUtil;
 
@@ -102,6 +106,16 @@ public class UtilTest {
         // Object o =  HttpService.getObjectByUrlAndKeys(url,header,httpResultIndexList);
         String result = HttpUtil.get(url);
         System.out.println(result);
+    }
+
+    @Test
+    public void testGetPublicKeyListFromString() {
+        String publicKey = "0x3e5a96d3f70e010d7e850e500d7a370b2f06a52ca993ddbebfa5018721ab04c1fccf0c9582798ef5f61f612cbb49ca07381b8fcc4e692c2d65b9aeb12480f029";
+        List<BigInteger> publicKeyList = CredentialUtils.getPublicKeyList(publicKey);
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(publicKeyList));
+        for (BigInteger key : publicKeyList) {
+            System.out.println(Hex.encodeHex(key.toByteArray()));
+        }
     }
 
 
