@@ -5,7 +5,7 @@
 | 依赖软件 | 支持版本 |
 | :-: | :-: |
 | Java | JDK8或以上版本 |
-| FISCO-BCOS | V2.x版本 |
+| FISCO-BCOS | V2.5版本 |
 
 **备注：** Java推荐使用[OpenJDK](./appendix.html#java )，建议从[OpenJDK网站](https://jdk.java.net/java-se-ri/11) 自行下载（CentOS的yum仓库的OpenJDK缺少JCE(Java Cryptography Extension)，导致Web3SDK无法正常连接区块链节点）
 
@@ -60,7 +60,17 @@ cd conf
 
 （3）修改配置application.yml文件（根据实际情况修改）：
 
-
+  修改数据库ip地址和用户名和密码。 
+   
+```
+ datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/webaseoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "defaultAccount"
+    password: "defaultPassword"
+```  
+  
+  
   多链多群组配置，注意不同的chain的节点没有任何p2p联系。
 ``` 
    group-channel-connections-configs:
@@ -88,17 +98,8 @@ cd conf
 ```
     event:
       eventRegisters:
-        - chainId: 2
-          group: 1
-          contractAddress: ""  #监听的合约地址
-          fromBlock: "latest"
-          toBlock: "latest"
-    
-        - chainId: 1
-          group: 1
-          contractAddress: "0x8fcd8a0db3d335c5ef6fe3a4940875adb13eb789"
-          fromBlock: "latest"
-          toBlock: "latest"
+        - {chainId: 1, group: 1}
+        - {chainId: 2, group: 1}
 
 ```  
 
