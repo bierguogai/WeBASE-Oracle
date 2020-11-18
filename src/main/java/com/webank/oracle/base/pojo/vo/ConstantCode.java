@@ -40,6 +40,14 @@ public class ConstantCode {
     public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
     public static final RetCode DATA_NOT_EXISTS = RetCode.mark(205005, "Data not exists");
     public static final RetCode DECODE_PROOF_ERROR = RetCode.mark(205006, "Decode proof error");
+    public static final RetCode REGISTER_CONTRACT_NOT_CONFIGURED = RetCode.mark(205007,
+            "Register center contract name and version not configured.");
+    public static final RetCode FETCH_ORACLE_SERVICE_LIST_ERROR = RetCode.mark(205008,
+            "Fetch oracle service list error.");
+    public static final RetCode CHAIN_OR_GROUP_ID_PARAM_ERROR = RetCode.mark(205009,
+            "Chain id and group id should great than 0.");
+    public static final RetCode NO_CNS_SERVICE_ERROR = RetCode.mark(205010,
+            "No cns service error.");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

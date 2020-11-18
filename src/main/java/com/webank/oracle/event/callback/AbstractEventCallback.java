@@ -23,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.webank.oracle.base.enums.ProofTypeEnum;
 import com.webank.oracle.base.enums.ReqStatusEnum;
 import com.webank.oracle.base.exception.OracleException;
-import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.base.utils.CommonUtils;
 import com.webank.oracle.base.utils.ThreadLocalHolder;
+import com.webank.oracle.event.exception.EventBaseException;
 import com.webank.oracle.event.vo.BaseLogResult;
 import com.webank.oracle.history.ReqHistory;
 import com.webank.oracle.history.ReqHistoryRepository;
@@ -137,26 +137,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
                 error = ReqStatusEnum.UNEXPECTED_EXCEPTION_ERROR.format(ExceptionUtils.getRootCauseMessage(e));
                 log.error("Exception: requestId:[{}], error:[{}]", requestId, error, e);
             } finally {
-                // check req history exists
-                Optional<ReqHistory> reqHistoryOptional = this.reqHistoryRepository.findByReqId(requestId);
-                if (reqHistoryOptional.isPresent()) {
-                    // update req history record
-                    ReqHistory reqHistory = reqHistoryOptional.get();
-                    reqHistory.setReqStatus(reqStatus);
-                    if (StringUtils.isNotBlank(error)) {
-                        reqHistory.setError(StringUtils.length(error) > MAX_ERROR_LENGTH ?
-                                StringUtils.substring(error, 0, MAX_ERROR_LENGTH) : error);
-                    }
-                    reqHistory.setProcessTime(System.currentTimeMillis() - ThreadLocalHolder.getStartTime());
-                    reqHistory.setResult(result);
-                    reqHistory.setProof(result);
-                    reqHistory.setProofType(ProofTypeEnum.SIGN.getId());
-
-                    // save
-                    this.reqHistoryRepository.save(reqHistory);
-                } else {
-                    log.error("No request history:[{}] inserted!!!", requestId);
-                }
+                this.updateReqHistory(requestId,reqStatus,error,result);
             }
         }
     }
@@ -216,5 +197,42 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
         params.setTopics(topics);
 
         return params;
+    }
+
+    /**
+     *  处理完成后，更新 ReqHistory 请求状态和结果。
+     *
+     * @param requestId
+     * @param reqStatus
+     * @param error
+     * @param result
+     */
+    private void updateReqHistory(String requestId, int reqStatus, String error, String result) {
+        try {
+            // check req history exists
+            Optional<ReqHistory> reqHistoryOptional = this.reqHistoryRepository.findByReqId(requestId);
+            if (reqHistoryOptional.isPresent()) {
+                // update req history record
+                ReqHistory reqHistory = reqHistoryOptional.get();
+                reqHistory.setReqStatus(reqStatus);
+                if (StringUtils.isNotBlank(error)) {
+                    reqHistory.setError(StringUtils.length(error) > MAX_ERROR_LENGTH ?
+                            StringUtils.substring(error, 0, MAX_ERROR_LENGTH) : error);
+                }
+                reqHistory.setProcessTime(System.currentTimeMillis() - ThreadLocalHolder.getStartTime());
+                reqHistory.setResult(result);
+                reqHistory.setProof(result);
+                reqHistory.setProofType(ProofTypeEnum.SIGN.getId());
+
+                // save
+                this.reqHistoryRepository.save(reqHistory);
+            } else {
+                log.error("No request history:[{}] inserted!!!", requestId);
+            }
+        } catch (Exception e) {
+            log.error("Update req history error:[{}]", requestId, e);
+        } finally {
+            ThreadLocalHolder.removeStartTime();
+        }
     }
 }

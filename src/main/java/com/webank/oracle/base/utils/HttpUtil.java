@@ -32,15 +32,15 @@ public class HttpUtil {
     /**
      * 连接超时时间, 默认 5s.
      */
-    private static final int DEFAULT_CONNECT_TIMEOUT = 5;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 30;
     /**
      * 默认读取超时时间, 默认 5s.
      */
-    private static final int DEFAULT_READ_TIMEOUT = 5;
+    private static final int DEFAULT_READ_TIMEOUT = 30;
     /**
      * 默认写数据超时时间, 默认 5s.
      */
-    private static final int DEFAULT_WRITE_TIMEOUT = 5;
+    private static final int DEFAULT_WRITE_TIMEOUT = 30;
 
     // avoid creating several instances, should be singleon
     private static OkHttpClient client = null;

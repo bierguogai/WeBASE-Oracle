@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
 import com.webank.oracle.event.vo.BaseLogResult;
@@ -58,7 +60,8 @@ public class VRFService extends AbstractCoreService {
         Credentials credentials = keyStoreService.getCredentials();
         VRFCoordinator vrfCoordinator = null;
         try {
-            vrfCoordinator = VRFCoordinator.deploy(getWeb3j(chainId, groupId), credentials, contractGasProvider).send();
+            vrfCoordinator = VRFCoordinator.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    credentials, ConstantProperties.GAS_PROVIDER).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
@@ -100,7 +103,7 @@ public class VRFService extends AbstractCoreService {
         String requestId = vrfLogResult.getRequestId();
         BigInteger blockNumber = vrfLogResult.getBlockNumber();
 
-        String vrfCoordinatorAddress = contractAddressMap.get(getKey(chainId, groupId));
+        String vrfCoordinatorAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
         if (StringUtils.isBlank(vrfCoordinatorAddress)) {
             throw new FullFillException(VRF_CONTRACT_ADDRESS_ERROR);
         }
@@ -108,10 +111,10 @@ public class VRFService extends AbstractCoreService {
         String sender = vrfLogResult.getSender();
         log.debug("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
         try {
-            Web3j web3j = getWeb3j(chainId, groupId);
+            Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
 
-            VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, contractGasProvider);
+            VRFCoordinator vrfCoordinator = VRFCoordinator.load(vrfCoordinatorAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
 
             byte[] bnbytes = Numeric.toBytesPadded(blockNumber, 32);
             byte[] i = Numeric.hexStringToByteArray(proof);

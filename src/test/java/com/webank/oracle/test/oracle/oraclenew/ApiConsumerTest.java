@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.oracle.base.BaseTest;
@@ -26,10 +27,10 @@ public class ApiConsumerTest extends BaseTest {
 
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(), 1);
 
-        OracleCore oracleCore = OracleCore.deploy(web3j, credentials, contractGasProvider).send();
+        OracleCore oracleCore = OracleCore.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER).send();
         String orcleAddress = oracleCore.getContractAddress();
         System.out.println("orcleAddress: " + orcleAddress);
-        APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCore.getContractAddress()).send();
+        APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, oracleCore.getContractAddress()).send();
         String apiConsumerAddress = apiConsumer.getContractAddress();
         System.out.println("apiConsumerAddress: " + apiConsumerAddress);
 
@@ -67,7 +68,7 @@ public class ApiConsumerTest extends BaseTest {
 
             // asset
             Web3j web3j = getWeb3j(chainId, groupId);
-            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, contractGasProvider, oracleCoreAddress).send();
+            APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, oracleCoreAddress).send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);
 

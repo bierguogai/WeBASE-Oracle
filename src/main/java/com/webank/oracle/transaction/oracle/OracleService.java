@@ -34,6 +34,8 @@ import org.springframework.stereotype.Service;
 import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.exception.OracleException;
 import com.webank.oracle.base.pojo.vo.ConstantCode;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.ChainGroupMapKeyUtil;
 import com.webank.oracle.base.utils.JsonUtils;
 import com.webank.oracle.event.exception.FullFillException;
 import com.webank.oracle.event.service.AbstractCoreService;
@@ -59,7 +61,8 @@ public class OracleService extends AbstractCoreService {
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {
-            oraliceCore = OracleCore.deploy(getWeb3j(chainId, groupId), credentials, contractGasProvider).send();
+            oraliceCore = OracleCore.deploy(web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    credentials, ConstantProperties.GAS_PROVIDER).send();
         } catch (OracleException e) {
             throw e;
         } catch (Exception e) {
@@ -107,13 +110,13 @@ public class OracleService extends AbstractCoreService {
         log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
         try {
 
-            Web3j web3j = getWeb3j(chainId, groupId);
+            Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
-            String oracleCoreAddress = contractAddressMap.get(getKey(chainId, groupId));
+            String oracleCoreAddress = contractAddressMap.get(ChainGroupMapKeyUtil.getKey(chainId, groupId));
             if (StringUtils.isBlank(oracleCoreAddress)) {
                 throw new FullFillException(ORACLE_CORE_CONTRACT_ADDRESS_ERROR);
             }
-            OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, contractGasProvider);
+            OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
             TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
                     // TODO. safe convert ????? biginteger
                     oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount).send();
