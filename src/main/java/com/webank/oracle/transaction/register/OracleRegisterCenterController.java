@@ -20,6 +20,9 @@ public class OracleRegisterCenterController {
     public BaseResponse getOracleCoreAddress(@RequestParam(defaultValue = "1") int chainId,
                                              @RequestParam(defaultValue = "1") int groupId) {
         try {
+            if (chainId <= 0 || groupId <= 0){
+                return new BaseResponse(ConstantCode.CHAIN_OR_GROUP_ID_PARAM_ERROR);
+            }
             return new BaseResponse(ConstantCode.SUCCESS, oracleRegisterCenterService.getOracleServiceList(chainId,groupId));
         } catch (Exception e) {
             return new BaseResponse(ConstantCode.FETCH_ORACLE_SERVICE_LIST_ERROR);

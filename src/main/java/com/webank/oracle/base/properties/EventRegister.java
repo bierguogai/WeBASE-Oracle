@@ -13,4 +13,7 @@ public class EventRegister {
     private String vrfContractAddress;
     private String fromBlock = "latest";
     private String toBlock = "latest";
+
+    private String operator;
+    private String url;
 }

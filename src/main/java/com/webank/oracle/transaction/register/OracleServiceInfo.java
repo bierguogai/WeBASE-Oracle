@@ -1,9 +1,11 @@
 package com.webank.oracle.transaction.register;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.collections4.CollectionUtils;
 import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 
 import lombok.Data;
@@ -18,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OracleServiceInfo {
     private BigInteger index;
     private String oracleServiceAddress;
-    private List<BigInteger> publicKeyList;
+    private List<String> publicKeyList;
     private String keyHash;
     private String operator;
     private String url;
@@ -33,7 +35,8 @@ public class OracleServiceInfo {
         OracleServiceInfo oracleServiceInfo = new OracleServiceInfo();
         oracleServiceInfo.index = tuple10.getValue1();
         oracleServiceInfo.oracleServiceAddress = tuple10.getValue2();
-        oracleServiceInfo.publicKeyList = tuple10.getValue3();
+        List<BigInteger> publicKey = tuple10.getValue3();
+
         oracleServiceInfo.keyHash = Hex.encodeHexString(tuple10.getValue4());
         oracleServiceInfo.operator = tuple10.getValue5();
         oracleServiceInfo.url = tuple10.getValue6();
@@ -41,6 +44,13 @@ public class OracleServiceInfo {
         oracleServiceInfo.latestRequstProcessedTime = tuple10.getValue8();
         oracleServiceInfo.status = tuple10.getValue9();
         oracleServiceInfo.processedRequestAmount = tuple10.getValue10();
+
+        // public key
+        if (CollectionUtils.size(publicKey) == 2)
+            oracleServiceInfo.publicKeyList = Arrays.asList(new String[]{
+                    Hex.encodeHexString(publicKey.get(0).toByteArray()),
+                    Hex.encodeHexString(publicKey.get(1).toByteArray())
+            });
 
 
         return oracleServiceInfo;
