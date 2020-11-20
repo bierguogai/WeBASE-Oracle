@@ -59,7 +59,6 @@ dependencies {
     implementation log4j
     implementation "net.java.dev.jna:jna:4.5.2"
     implementation 'org.fisco-bcos:web3sdk:2.6.2'
-
     implementation "mysql:mysql-connector-java:8.0.13"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
@@ -70,12 +69,8 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:3.8.1"
     implementation "org.apache.commons:commons-collections4:4.4"
 
-//    implementation 'io.netty:netty-transport-native-epoll:4.1.51.Final'
-//    implementation 'io.netty:netty-tcnative:2.0.34.Final'
-//    implementation 'io.netty:netty-tcnative-boringssl-static:2.0.34.Final'
 
     // log
-
     compileOnly lombok
     annotationProcessor lombok
 
