@@ -1,4 +1,4 @@
-package com.webank.oracle.test.oracle.oraclenew;
+package com.webank.oracle.test.transaction.oraclenew;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -13,8 +13,8 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
-import com.webank.oracle.test.oracle.base.BaseTest;
-import com.webank.oracle.test.oracle.oraclenew.contract.APIConsumer;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.test.transaction.oraclenew.contract.APIConsumer;
 import com.webank.oracle.transaction.oracle.OracleCore;
 
 import lombok.extern.slf4j.Slf4j;
