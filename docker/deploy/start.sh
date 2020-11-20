@@ -1,14 +1,24 @@
 #!/usr/bin/env bash
 
-LOG_WARN() {
+LOG_WARN()
+{
     local content=${1}
     echo -e "\033[31m[WARN] ${content}\033[0m"
 }
 
-LOG_INFO() {
+LOG_INFO()
+{
     local content=${1}
     echo -e "\033[32m[INFO] ${content}\033[0m"
 }
+
+function replaceFile(){
+    file="$1"
+
+    content=$(cat "${file}" | envsubst)
+    cat <<< "${content}" > "${file}"
+}
+
 
 # 命令返回非 0 时，就退出
 set -o errexit
@@ -34,18 +44,13 @@ __base="$(basename ${__file} .sh)"
 __root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
 
 
-########################### build docker image ##########################
-image_version=latest
+# 启动中间件服务
+LOG_INFO "String FISCO-BCOS nodes...."
+cd "${__dir}/fiscobcos" && docker-compose up -d
 
-## compile project
-cd "${__root}" && gradle clean build -x test
+LOG_INFO "String WeBASE-Front...."
+cd "${__dir}/webase" && docker-compose up -d
 
-## docker build
-cd "${__root}"/dist
-# delete extra files
-rm -f ./conf/*-yhb.yml
-rm -f ./conf/*.crt
-rm -f ./conf/*.key
-
-docker build -t fiscoorg/webase-oracle:${image_version} -f "${__dir}"/../docker/Dockerfile .
+LOG_INFO "String WeOracle...."
+cd "${__dir}/weoracle" && docker-compose up -d
 

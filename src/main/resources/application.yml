@@ -4,7 +4,7 @@ server:
   servlet:
     context-path: /Oracle-Service
 
-### TODO. optimization
+### Config connection properties of chain and group
 group-channel-connections-configs:
   configs:
     - caCert: classpath:ca.crt
@@ -12,17 +12,24 @@ group-channel-connections-configs:
       sslKey: classpath:node.key
       chainId: 1
       all-channel-connections:
-         - group-id: 1 #group ID
-           connections-str:
-              - 119.23.46.126:20200 # node listen_ip:channel_listen_port
-    - caCert: classpath:ca.crt
-      sslCert: classpath:node.crt
-      sslKey: classpath:node.key
-      chainId: 2
-      all-channel-connections:
-         - group-id: 1 #group ID
-           connections-str:
-              - 127.0.0.1:20200 # node listen_ip:channel_listen_port
+        - group-id: 1 #group ID
+          connections-str:
+            # listen_ip:channel_listen_port
+            - 127.0.0.1:20200
+
+    ###### Here comes another chain's configurations
+    #
+    #- caCert: classpath:2/ca.crt
+    #  sslCert: classpath:2/node.crt
+    #  sslKey: classpath:2/node.key
+    #  chainId: 2
+    #  all-channel-connections:
+    #    - group-id: 1 #group ID
+    #      connections-str:
+    #        # listen_ip:channel_listen_port
+    #        - 127.0.0.1:20200
+
+
 # sdk
 sdk:
   orgName: orgTest
@@ -37,7 +44,7 @@ sdk:
 key-user:
   store_file: "./key/keyStoreUser.txt"  # file to save keyUser.
 
-### TODO. optimization
+
 #event register,
 #fisco-bcos 2.2 or latest
 #https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/java_sdk.html#id14
@@ -45,10 +52,10 @@ event:
   eventRegisters:
    # list of EventRegister objects. Use default value when property not configured.
    # Oracle contracts will be auto deployed when contractAddress is blank
-    - {chainId: 1, group: 1, operator: "operator", url: "http://localhost"}
-   # - {chainId: 1, group: 2, operator: "operator", url: "http://localhost"}
-   # - {chainId: 2, group: 1, operator: "operator", url: "http://localhost"}
-   # - {chainId: 2, group: 2, operator: "operator", url: "http://localhost"}
+   - {chainId: 1, group: 1, operator: "operator", url: "http://localhost"}
+   #- {chainId: 1, group: 2, operator: "operator", url: "http://localhost"}
+   #- {chainId: 2, group: 1, operator: "operator", url: "http://localhost"}
+   #- {chainId: 2, group: 2, operator: "operator", url: "http://localhost"}
 
 
 #log config
@@ -68,7 +75,7 @@ spring:
     default-property-inclusion: non_null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/webaseoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/weoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: "defaultAccount"
     password: "defaultPassword"
   jpa:
