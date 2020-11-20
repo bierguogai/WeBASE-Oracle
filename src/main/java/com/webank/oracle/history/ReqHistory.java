@@ -15,6 +15,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.webank.oracle.base.enums.OracleVersionEnum;
 import com.webank.oracle.base.enums.SourceTypeEnum;
 
@@ -121,7 +122,7 @@ public class ReqHistory {
     /**
      * 证明
      */
-    @Column(length = 256, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String proof;
 
     /**
@@ -131,8 +132,11 @@ public class ReqHistory {
     private String serviceIdList;
 
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
+
     @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime modifyTime;
 
 

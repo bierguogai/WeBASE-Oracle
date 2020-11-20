@@ -62,12 +62,14 @@ public class EventRegisterProperties {
             return chainGroupList;
         }
 
-        chainGroupListMap.entrySet().forEach((chain) -> {
-            if (CollectionUtils.isEmpty(chain.getValue())) {
+        chainGroupListMap.entrySet().forEach((chainGroupListEntry) -> {
+            if (CollectionUtils.isEmpty(chainGroupListEntry.getValue())) {
                 return;
             }
-            List<Integer> groupIdList = chain.getValue().stream().map(EventRegister::getGroup).collect(Collectors.toList());
             ChainGroup chainGroup = new ChainGroup();
+            chainGroup.setChainId(chainGroupListEntry.getKey());
+
+            List<Integer> groupIdList = chainGroupListEntry.getValue().stream().map(EventRegister::getGroup).collect(Collectors.toList());
             chainGroup.setGroupIdList(groupIdList);
             chainGroupList.add(chainGroup);
         });

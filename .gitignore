@@ -14,3 +14,5 @@ out
 *.DS_Store
 application-dev.yml
 *.publickey
+
+!docker/build
