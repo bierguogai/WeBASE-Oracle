@@ -58,7 +58,10 @@ dependencies {
 
     implementation log4j
     implementation "net.java.dev.jna:jna:4.5.2"
-    implementation 'org.fisco-bcos:web3sdk:2.6.2'
+    implementation ( 'org.fisco-bcos:web3sdk:2.6.2') {
+        exclude group: 'org.ethereum'
+    }
+    implementation 'org.fisco-bcos:solcJ:0.6.10.0'
     implementation "mysql:mysql-connector-java:8.0.13"
 
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
