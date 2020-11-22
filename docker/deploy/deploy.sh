@@ -53,11 +53,11 @@ function install(){
     if [[ ! $(command -v "${command}") ]] ;then
         if [[ $(command -v apt) ]]; then
             # Debian/Ubuntu
-            echo "Start to check and install ${app_name} on remote Debian system ....."
+            echo "Start to check and install ${app_name} on remote Debian system ..."
             sudo dpkg -l | grep -qw "${app_name}" || sudo apt install -y "${app_name}"
         elif [[ $(command -v yum) ]]; then
             ## RHEL/CentOS
-            echo "Start to check and install ${app_name} on remote RHEL system ....."
+            echo "Start to check and install ${app_name} on remote RHEL system ..."
             sudo rpm -qa | grep -qw "${app_name}" || sudo yum install -y "${app_name}"
         fi
     fi
@@ -106,6 +106,20 @@ function check_commands(){
             exit 5
         fi
     done
+}
+
+## check port is listening
+function check_port(){
+    port=$1
+    service_name=$2
+
+    process_of_port=$(lsof -i -P -n | grep LISTEN | grep -w ":${port}") || :
+    if [[ "${process_of_port}x" != "x" ]]; then
+        process_name=$(echo ${process_of_port} | awk '{print $1}')
+        process_id=$(echo ${process_of_port} | awk '{print $2}')
+        LOG_WARN "Port:[${port}] is already in use by a process ${process_id} of [${process_name}], please leave the port:[${port}] for service:[${service_name}]"
+        exit 5
+    fi
 }
 
 ## 获取用户输入
@@ -189,20 +203,25 @@ while getopts w:f:o:i:dgph OPT;do
 done
 
 ################### install deps if with -d option ###################
+echo "=============================================================="
 ## install dependency software
 if [[ "${install_deps}x" == "yesx" ]]; then
+    LOG_INFO "Start to install dependencies ..."
+
+    #TODO. check system version
+
     install openssl openssl
     install wget    wget
     install curl    curl
     
     ## install docker
     if [[ ! $(command -v docker) ]]; then
-        LOG_INFO "Installing Docker..."
+        LOG_INFO "Installing Docker ..."
         curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun;
     fi
     ## install docker-compose
     if [[ ! $(command -v docker-compose) ]]; then
-        LOG_INFO "Installing Docker Compose..."
+        LOG_INFO "Installing Docker Compose ..."
         ## TODO. fetch latest tag
         ## curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose;
         curl -L https://get.daocloud.io/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -212,15 +231,48 @@ fi
 
 
 # check if deps are installed
+LOG_INFO "Start to check dependencies ..."
 check_commands curl wget openssl docker docker-compose
 
 # start docker
+LOG_INFO "Start Docker service ..."
 systemctl start docker
 
+echo "=============================================================="
 ################### check if ports available ###################
-# TODO.
+LOG_INFO "Start to check ports are available ..."
+# check MySQL
+check_port 3306 MySQL
+
+# check WeBASE-Front
+check_port 5002 "WeBASE-Front"
+
+# check WeOracle-Web
+check_port 5000 "WeOracle-Web"
+
+# check WeOracle-Service
+check_port 5012 "WeOracle-Service"
+
+# check p2p port
+check_port 30300 "node0 p2p"
+check_port 30301 "node1 p2p"
+check_port 30302 "node2 p2p"
+check_port 30303 "node3 p2p"
+
+# check channel port
+check_port 20200 "node0 channel"
+check_port 20201 "node1 channel"
+check_port 20202 "node2 channel"
+check_port 20203 "node3 channel"
+
+# check JSON-RPC port
+check_port 8545 "node0 JSON-RPC"
+check_port 8546 "node1 JSON-RPC"
+check_port 8547 "node2 JSON-RPC"
+check_port 8548 "node3 JSON-RPC"
 
 
+echo "=============================================================="
 ################### fetch latest build_chain.sh ###################
 fisco_bcos_root="${__root}/fiscobcos"
 build_chain_shell="build_chain.sh"
@@ -229,6 +281,7 @@ build_chain_shell="build_chain.sh"
 cd "${fisco_bcos_root}"
 
 # download build_chain.sh
+# TODO. check MD5 of build_chain.sh
 if [[ ! -f "${build_chain_shell}" ]]; then
     LOG_INFO "Downloading build_chain.sh ..."
     curl -#L https://gitee.com/FISCO-BCOS/FISCO-BCOS/raw/master/tools/build_chain.sh > "${build_chain_shell}" && chmod u+x "${build_chain_shell}"
@@ -272,11 +325,14 @@ if [[ "${guomi}x" == "yesx" ]]; then
     guomi_opt=" -g "
 fi
 
-LOG_INFO "Generate nodes config..."
+LOG_INFO "Generate FISCO-BCOS nodes' config ..."
 bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}"
 
 
+echo "=============================================================="
 ################### check images ###################
+echo ""
+LOG_INFO "Check docker images exist ..."
 mysql_repository="mysql"
 fiscobcos_repository="fiscoorg/fiscobcos"
 weoracle_server_repository="${image_organization}/weoracle-service"
@@ -299,7 +355,9 @@ fi
 
 export image_organization
 
+echo "=============================================================="
 ################### update webase files ###################
+echo ""
 LOG_INFO "Replace encrypt_type in webase-front.yml file..."
 sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/webase/webase-front.yml
 
@@ -314,16 +372,16 @@ export fiscobcos_version
 replace_vars_in_file ${__root}/fiscobcos/node.yml
 
 ################### update WeOracle files ###################
-LOG_INFO "Replace FISCO-BCOS version in node.yml file..."
+LOG_INFO "Replace WeOracle weoracle.yml file..."
 export weoracle_version
 export mysql_version
 replace_vars_in_file ${__root}/weoracle/docker-compose.yml
 sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/weoracle/weoracle.yml
 
-
-
-if [[ ! $(command -v docker-compose) ]]; then
-  LOG_WARN "Docker && Docker Compose install failed!!!"
-  exit 7;
-fi
+echo "=============================================================="
+LOG_INFO "Deploy WeOracle service SUCCESS!!"
+echo ""
+LOG_INFO "  Start:[ bash start.sh ]"
+echo ""
+LOG_INFO "  Stop :[ bash stop.sh  ]"
 
