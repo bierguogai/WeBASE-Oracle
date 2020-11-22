@@ -46,7 +46,16 @@
 
    
 ### 2  安装部署
- [Oracle-Service服务安装部署](./install.md)  
+当前 WeOracle 服务默认支持两种部署方式：
+
+* Docker 部署
+    * 提供一键部署脚本 `deploy.sh`
+    * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
+
+* 手动编译部署
+    * 手动部署，请参考：[Oracle-Service服务安装部署](./install.md)
+
+
 
 ### 3  快速开发  
    [快速开发自己的预言机](./develop.md)
