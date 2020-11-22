@@ -1,24 +1,25 @@
 package com.webank.oracle.http;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.webank.oracle.base.utils.HttpsUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
+import static com.webank.oracle.base.utils.JsonUtils.toList;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.math.BigInteger;
 import java.util.List;
 
-import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
-import static com.webank.oracle.base.utils.JsonUtils.toList;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.webank.oracle.base.enums.ReqStatusEnum;
+import com.webank.oracle.event.exception.RemoteCallException;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.HttpUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * service for http request.
@@ -26,37 +27,50 @@ import static com.webank.oracle.base.utils.JsonUtils.toList;
 @Slf4j
 @Service
 public class HttpService {
-    @Autowired
-    private RestTemplate restTemplate;
+
+    @Autowired private ConstantProperties constantProperties;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void init() {
+        HttpUtil.init(constantProperties.getConnectTimeout(),
+                constantProperties.getReadTimeout(), constantProperties.getWriteTimeout());
+
+    }
+
 
     /**
      * get result by url,and get value from the result by keyList.
      *
      * @param url
+     * @param format
      * @param resultKeyList
      * @return
+     * @throws Exception
      */
-    //todo  exception log
-    public Object getObjectByUrlAndKeys(String url, String formate, List<String> resultKeyList) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, IOException {
+    public BigInteger getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
         try {
-            //String result = restTemplate.getForObject(url, String.class);
-            String result =     HttpsUtil.get(url);
-            if(formate.equals("json")) {
-                JsonNode jsonNode = stringToJsonNode(result);
-                return getValueByKeys(jsonNode, resultKeyList);
-            }
-            //if(formate.equals("plain"))
-            else  {
-                return result.split("\n")[0];
-            }
-        }
-//        catch (ResourceAccessException e) {
-//            log.error("getObjectByUrlAndKeys error, please check the url, url:{} resultKeyList:{}",url, toJSONString(resultKeyList), e);
-//        }
+            //get data
+            String result = HttpUtil.get(url);
+            BigInteger value = BigInteger.valueOf(0L);
 
-        catch (Exception ex) {
-            log.error("getObjectByUrlAndKeys error, url:{} resultKeyList:{}", url, toJSONString(resultKeyList), ex);
-            throw ex;
+            // fetch value from result by format
+            switch (StringUtils.lowerCase(format)) {
+                case "json":
+                    JsonNode jsonNode = stringToJsonNode(result);
+                    if (jsonNode == null) {
+                        throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
+                    }
+                    // TODO. exception
+                    value = new BigInteger(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
+
+                    break;
+                default:
+                    value = new BigInteger(result.split("\n")[0]);
+            }
+            return value;
+        } catch (Exception e) {
+            log.error("Request url:[{}] unexpected exception error.", url, e);
+            throw e;
         }
     }
 
@@ -67,7 +81,7 @@ public class HttpService {
      * @param keyList
      * @return
      */
-    private static  Object getValueByKeys(JsonNode jsonNode, List<String> keyList) {
+    private static Object getValueByKeys(JsonNode jsonNode, List<String> keyList) {
         if (jsonNode == null || keyList == null || keyList.size() == 0) return jsonNode;
         Object finalResult = jsonNode;
         for (String key : keyList) {
@@ -90,10 +104,10 @@ public class HttpService {
             return jsonArray.get(Integer.valueOf(String.valueOf(key)));
         }
         try {
-            JsonNode jsonNode1 = (JsonNode)jsonNode;
+            JsonNode jsonNode1 = (JsonNode) jsonNode;
             return jsonNode1.get(key);
         } catch (Exception ex) {
-            return jsonNode;
+            throw new RemoteCallException(ReqStatusEnum.PARSE_RESULT_ERROR, String.valueOf(jsonNode), key);
         }
     }
 

@@ -15,6 +15,11 @@
  */
 package com.webank.oracle.base.pojo.vo;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+
 import lombok.Data;
 
 /**
@@ -26,6 +31,7 @@ public class BaseResponse {
     private int code;
     private String message;
     private Object data;
+    private long totalCount;
 
     public BaseResponse() {
     }
@@ -39,5 +45,17 @@ public class BaseResponse {
         this.code = retcode.getCode();
         this.message = retcode.getMessage();
         this.data = data;
+    }
+
+    public static BaseResponse pageResponse(RetCode retcode, List<?> data, long totalCount) {
+        BaseResponse baseResponse = new BaseResponse();
+        baseResponse.code = retcode.getCode();
+        baseResponse.message = retcode.getMessage();
+        baseResponse.data = CollectionUtils.isEmpty(data) ? Collections.emptyList() : data;
+        baseResponse.totalCount = totalCount;
+        return baseResponse;
+    }
+    public static BaseResponse emptyPageResponse(RetCode retcode) {
+        return pageResponse(retcode,Collections.emptyList(), 0);
     }
 }

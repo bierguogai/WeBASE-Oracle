@@ -15,16 +15,19 @@
  */
 package com.webank.oracle.base.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.base.utils.JsonUtils.stringToObj;
+import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.crypto.Sign.SignatureData;
 import org.fisco.bcos.web3j.tx.txdecode.EventResultEntity;
 import org.fisco.bcos.web3j.utils.Numeric;
 
-import java.util.List;
-
-import static com.webank.oracle.base.utils.JsonUtils.stringToObj;
-import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * CommonUtils.
@@ -47,6 +50,21 @@ public class CommonUtils {
         return Numeric.toHexString(byteArr, 0, byteArr.length, false);
     }
 
+    /**
+     * TODO. return null???
+     *
+     * @param params
+     * @param fieldName
+     * @return
+     */
+    public static String byte32LogToString(List<EventResultEntity> params, String fieldName){
+        Bytes32 keyHash = CommonUtils.getBytes32FromEventLog(params, fieldName);
+        if (keyHash != null){
+            return  Numeric.toHexString(keyHash.getValue());
+        }
+        return null;
+    }
+
 
     /**
      * @param params    Fields of the eventLog
@@ -54,7 +72,10 @@ public class CommonUtils {
      * @return Field value
      */
     public static String getStringFromEventLog(List<EventResultEntity> params, String fieldName) {
-        return getDataFromEventLog(params, fieldName, String.class);
+        String result = getDataFromEventLog(params, fieldName, String.class);
+        result = StringUtils.removeStart(result,"\"");
+        result = StringUtils.removeEnd(result,"\"");
+        return result;
     }
 
 
@@ -65,6 +86,16 @@ public class CommonUtils {
      */
     public static Bytes32 getBytes32FromEventLog(List<EventResultEntity> params, String fieldName) {
         return getDataFromEventLog(params, fieldName, Bytes32.class);
+    }
+
+    /**
+     *
+     * @param params
+     * @param fieldName
+     * @return
+     */
+    public static BigInteger getBigIntegerFromEventLog(List<EventResultEntity> params, String fieldName) {
+        return getDataFromEventLog(params, fieldName, BigInteger.class);
     }
 
     /**

@@ -8,5 +8,11 @@ log/
 *.crt
 *.key
 *.iml
-out/
-.DS_Store
+*.crt
+*.key
+out
+*.DS_Store
+application-dev.yml
+*.publickey
+
+!docker/build

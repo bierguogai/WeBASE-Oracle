@@ -23,6 +23,7 @@ package com.webank.oracle.base.pojo.vo;
  * Oracle-Service:05 <br/>
  * C: error code <br/>
  */
+// TODO. refactor
 public class ConstantCode {
 
     /* return success */
@@ -33,14 +34,20 @@ public class ConstantCode {
 
     /*Business exception */
     public static final RetCode NEW_KEY_STORE_FAIL = RetCode.mark(205000, "create keyStore exception");
-
     public static final RetCode SEND_TRANSACTION_FAIL = RetCode.mark(205001, "send transaction exception");
-
     public static final RetCode GROUP_ID_NOT_EXIST = RetCode.mark(205002, "group id not exist");
-
-    public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
-
     public static final RetCode DATA_SIGN_ERROR = RetCode.mark(205003, "data sign error");
+    public static final RetCode DEPLOY_FAILED = RetCode.mark(205004, "deploy failed");
+    public static final RetCode DATA_NOT_EXISTS = RetCode.mark(205005, "Data not exists");
+    public static final RetCode DECODE_PROOF_ERROR = RetCode.mark(205006, "Decode proof error");
+    public static final RetCode REGISTER_CONTRACT_NOT_CONFIGURED = RetCode.mark(205007,
+            "Register center contract name and version not configured.");
+    public static final RetCode FETCH_ORACLE_SERVICE_LIST_ERROR = RetCode.mark(205008,
+            "Fetch oracle service list error.");
+    public static final RetCode CHAIN_OR_GROUP_ID_PARAM_ERROR = RetCode.mark(205009,
+            "Chain id and group id should great than 0.");
+    public static final RetCode NO_CNS_SERVICE_ERROR = RetCode.mark(205010,
+            "No cns service error.");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

@@ -1,13 +1,13 @@
 package com.webank.oracle.base.utils;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.fisco.bcos.web3j.abi.FunctionReturnDecoder;
 import org.fisco.bcos.web3j.abi.TypeReference;
 import org.fisco.bcos.web3j.abi.datatypes.Function;
 import org.fisco.bcos.web3j.abi.datatypes.Type;
 import org.fisco.bcos.web3j.abi.datatypes.Utf8String;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 解析合约执行的返回output
@@ -52,4 +52,7 @@ public class DecodeOutputUtils {
 //            throw new SdkException(ErrorCode.DECODE_OUTPUT_ERROR, e);
 //        }
 //    }
+    public static void main(String[] args) {
+        System.out.println(decodeOutputReturnString0x16("0x08c379a0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000186e6f20636f72726573706f6e64696e6720726571756573740000000000000000"));
+    }
 }

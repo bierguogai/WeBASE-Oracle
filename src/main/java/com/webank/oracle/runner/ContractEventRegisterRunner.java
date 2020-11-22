@@ -1,30 +1,54 @@
 package com.webank.oracle.runner;
 
-import com.webank.oracle.event.EventService;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-/**
- * Register contract event.
- */
-@Order(2)
-@Component
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.base.properties.EventRegisterProperties;
+import com.webank.oracle.transaction.oracle.OracleCoreEventCallback;
+import com.webank.oracle.transaction.vrf.VRFContractEventCallback;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-public class ContractEventRegisterRunner implements ApplicationRunner {
+@Component
+public class ContractEventRegisterRunner {
 
     @Autowired
-    private EventService eventService;
+    private EventRegisterProperties eventRegisterProperties;
+    @Autowired
+    private ApplicationContext ctx;
 
-    @Override
-    public void run(ApplicationArguments args) {
-        try{
-            eventService.registerContractEvent();
-        }catch (Exception ex){
-            log.error("ContractEventRegisterRunner exception",ex);
+
+    /**
+     * 注册回调
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void init() {
+        try {
+            log.info("Register event listener call back...");
+            List<EventRegister> eventRegisterList = eventRegisterProperties.getEventRegisters();
+            for (int i = 0; i < eventRegisterList.size(); i++) {
+                EventRegister eventRegister = eventRegisterList.get(i);
+                // init OracleCore on this chain and group
+                OracleCoreEventCallback oracleCoreEventCallback = ctx.getBean(OracleCoreEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
+                oracleCoreEventCallback.init(eventRegister);
+                log.info("OracleCore contract address:[{}] of chain:[{}:{}]",
+                        eventRegister.getOracleCoreContractAddress(), eventRegister.getChainId(), eventRegister.getGroup());
+
+                // init VRF on this chain and group
+                VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
+                vrfContractEventCallback.init(eventRegister);
+                log.info("Vrf contract address:[{}] of chain:[{}:{}]",
+                        eventRegister.getVrfContractAddress(), eventRegister.getChainId(), eventRegister.getGroup());
+            }
+        } catch (Exception ex) {
+            log.error("ContractEventRegisterRunner exception", ex);
             System.exit(0);
         }
 
