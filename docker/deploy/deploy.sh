@@ -53,47 +53,52 @@ function install(){
     if [[ ! $(command -v "${command}") ]] ;then
         if [[ $(command -v apt) ]]; then
             # Debian/Ubuntu
-            echo "Start to check and install ${app_name} on remote Debian system ....."
+            echo "Start to check and install ${app_name} on remote Debian system ..."
             sudo dpkg -l | grep -qw "${app_name}" || sudo apt install -y "${app_name}"
         elif [[ $(command -v yum) ]]; then
             ## RHEL/CentOS
-            echo "Start to check and install ${app_name} on remote RHEL system ....."
+            echo "Start to check and install ${app_name} on remote RHEL system ..."
             sudo rpm -qa | grep -qw "${app_name}" || sudo yum install -y "${app_name}"
         fi
     fi
 }
 
 ## check and pull docker image
-function check_image(){
+CDN_BASE_URL="https://osp-1257653870.cos.ap-guangzhou.myqcloud.com/WeBASE/download/docker/image"
+function pull_image(){
     # 镜像名和版本
     repository=$1
     tag=$2
+    tar_file_name=$3
+
+    tar_file="${tar_file_name}-${tag}.tar"
 
     if [[ "$(docker images -q ${repository}:${tag} 2> /dev/null)" == "" ]]; then
-        LOG_WARN "Docker image [${repository}:${tag}] not exists!! "
+        LOG_WARN "Docker image [${repository}:${tag}] not exists!!"
         echo ""
-        if [[ "${auto_pull}x" == "yesx" ]]; then
-            LOG_INFO "With '-p' option, try to pull image [${repository}:${tag}] from docker official registry of docker hub ..."
-            docker pull ${repository}:${tag}
-        else
-            ## try to load image from local file
-            if [[ -f "images/${repository}.tar" ]]; then
-                LOG_INFO "Load image [${repository}:${tag}] from tar file ["images/${repository}.tar"] ..."
-                docker load -i "images/${repository}.tar"
-                return;
-            fi
-
-            ## no image tar file, show tips and exit
-            LOG_INFO "Please install image [${repository}:${tag}] manually by using command:"
-            LOG_INFO "  docker pull ${repository}:${tag}"
-            LOG_INFO "Or"
-            LOG_INFO "  docker load -i ${repository}.tar"
-            echo ""
-            LOG_INFO "Otherwise if you want to pull image [${repository}:${tag}] from docker official registry of docker hub,  try to exec deploy.sh with '-p' option"
-            exit 5
-        fi
+        LOG_INFO "Pull image [${repository}:${tag}] from ${image_from}!!"
+        case ${image_from} in
+            cdn )
+                wget "${CDN_BASE_URL}/${tar_file}" -O ${tar_file} && docker load -i ${tar_file} && rm -rf ${tar_file}
+                ;;
+            docker )
+                docker pull ${repository}:${tag}
+                ;;
+            *)
+            LOG_WARN "Option '-t' has only two available values: 'cdn' or 'docker'"
+            usage
+            exit 1;
+        esac
     else
         LOG_INFO "Docker image [${repository}:${tag}] exists."
+    fi
+
+
+    if [[ "$(docker images -q ${repository}:${tag} 2> /dev/null)" == "" ]]; then
+        LOG_WARN "Docker image:[${repository}:${tag}] is still missing after pull execution !!"
+        echo ""
+        LOG_WARN "Please check the network and try to re-run deploy.sh with '-c cdn' parameter."
+        exit 5;
     fi
 }
 
@@ -106,6 +111,20 @@ function check_commands(){
             exit 5
         fi
     done
+}
+
+## check port is listening
+function check_port(){
+    port=$1
+    service_name=$2
+
+    process_of_port=$(lsof -i -P -n | grep LISTEN | grep -w ":${port}") || :
+    if [[ "${process_of_port}x" != "x" ]]; then
+        process_name=$(echo ${process_of_port} | awk '{print $1}')
+        process_id=$(echo ${process_of_port} | awk '{print $2}')
+        LOG_WARN "Port:[${port}] is already in use by a process ${process_id} of [${process_name}], please leave the port:[${port}] for service:[${service_name}]"
+        exit 5
+    fi
 }
 
 ## 获取用户输入
@@ -133,29 +152,48 @@ fiscobcos_version="v2.6.0"
 webase_front_version="v1.4.2"
 weoracle_version="v0.4"
 guomi="no"
-auto_pull="no"
 install_deps="no"
+# 拉取镜像的方式，cdn、Docker Hub，默认：cdn
+image_from="cdn"
 
 
 # usage help doc.
 usage() {
     cat << USAGE  >&2
 Usage:
-    $cmdname [-w v1.4.2] [-f v2.6.0] [-o v0.4] [-i fiscoorg] [-d] [-g] [-p] [-h]
+    $cmdname [-g] [-t cdn|docker] [-d] [-w v1.4.2] [-f v2.6.0] [-o v0.4] [-i fiscoorg] [-h]
+    -g        Use guomi, default no.
+    -t        Where to get docker images, cdn or Docker hub, default cdn.
+    -d        Install dependencies during deployment, default no.
+
     -w        WeBASE-Front version, default v1.4.2
     -f        FISCO-BCOS version, default v2.6.0.
     -o        WeOracle version, default v0.4.
     -i        Organization of docker images, default fiscoorg.
-    -d        Install dependencies during deployment, default no.
-    -g        Use guomi, default no.
-    -p        Pull images from docker official registry of docker hub, default no.
     -h        Show help info.
 USAGE
     exit 1
 }
 
-while getopts w:f:o:i:dgph OPT;do
+while getopts gt:dw:f:o:i:h OPT;do
     case $OPT in
+        g)
+            guomi="yes"
+            ;;
+        t)
+            case $OPTARG in
+                cdn | docker )
+                    ;;
+                *)
+                LOG_WARN "Invalid value of '-t' parameter, valid are [cdn] or [docker]!"
+                    usage
+                    exit 1;
+            esac
+            env=$OPTARG
+            ;;
+        d)
+            install_deps="yes"
+            ;;
         w)
             webase_front_version=$OPTARG
             ;;
@@ -167,15 +205,6 @@ while getopts w:f:o:i:dgph OPT;do
             ;;
         i)
             image_organization=$OPTARG
-            ;;
-        d)
-            install_deps="yes"
-            ;;
-        g)
-            guomi="yes"
-            ;;
-        p)
-            auto_pull="yes"
             ;;
         h)
             usage
@@ -189,20 +218,25 @@ while getopts w:f:o:i:dgph OPT;do
 done
 
 ################### install deps if with -d option ###################
+echo "=============================================================="
 ## install dependency software
 if [[ "${install_deps}x" == "yesx" ]]; then
+    LOG_INFO "Start to install dependencies ..."
+
+    #TODO. check system version
+
     install openssl openssl
     install wget    wget
     install curl    curl
     
     ## install docker
     if [[ ! $(command -v docker) ]]; then
-        LOG_INFO "Installing Docker..."
+        LOG_INFO "Installing Docker ..."
         curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun;
     fi
     ## install docker-compose
     if [[ ! $(command -v docker-compose) ]]; then
-        LOG_INFO "Installing Docker Compose..."
+        LOG_INFO "Installing Docker Compose ..."
         ## TODO. fetch latest tag
         ## curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose;
         curl -L https://get.daocloud.io/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -212,15 +246,48 @@ fi
 
 
 # check if deps are installed
+LOG_INFO "Start to check dependencies ..."
 check_commands curl wget openssl docker docker-compose
 
 # start docker
+LOG_INFO "Start Docker service ..."
 systemctl start docker
 
+echo "=============================================================="
 ################### check if ports available ###################
-# TODO.
+LOG_INFO "Start to check ports are available ..."
+# check MySQL
+check_port 3306 MySQL
+
+# check WeBASE-Front
+check_port 5002 "WeBASE-Front"
+
+# check WeOracle-Web
+check_port 5000 "WeOracle-Web"
+
+# check WeOracle-Service
+check_port 5012 "WeOracle-Service"
+
+# check p2p port
+check_port 30300 "node0 p2p"
+check_port 30301 "node1 p2p"
+check_port 30302 "node2 p2p"
+check_port 30303 "node3 p2p"
+
+# check channel port
+check_port 20200 "node0 channel"
+check_port 20201 "node1 channel"
+check_port 20202 "node2 channel"
+check_port 20203 "node3 channel"
+
+# check JSON-RPC port
+check_port 8545 "node0 JSON-RPC"
+check_port 8546 "node1 JSON-RPC"
+check_port 8547 "node2 JSON-RPC"
+check_port 8548 "node3 JSON-RPC"
 
 
+echo "=============================================================="
 ################### fetch latest build_chain.sh ###################
 fisco_bcos_root="${__root}/fiscobcos"
 build_chain_shell="build_chain.sh"
@@ -229,6 +296,7 @@ build_chain_shell="build_chain.sh"
 cd "${fisco_bcos_root}"
 
 # download build_chain.sh
+# TODO. check MD5 of build_chain.sh
 if [[ ! -f "${build_chain_shell}" ]]; then
     LOG_INFO "Downloading build_chain.sh ..."
     curl -#L https://gitee.com/FISCO-BCOS/FISCO-BCOS/raw/master/tools/build_chain.sh > "${build_chain_shell}" && chmod u+x "${build_chain_shell}"
@@ -272,23 +340,26 @@ if [[ "${guomi}x" == "yesx" ]]; then
     guomi_opt=" -g "
 fi
 
-LOG_INFO "Generate nodes config..."
+LOG_INFO "Generate FISCO-BCOS nodes' config ..."
 bash ${build_chain_shell} -l "127.0.0.1:4" -d "${guomi_opt}"
 
 
+echo "=============================================================="
 ################### check images ###################
+echo ""
+LOG_INFO "Check docker images exist ..."
 mysql_repository="mysql"
 fiscobcos_repository="fiscoorg/fiscobcos"
-weoracle_server_repository="${image_organization}/weoracle-service"
+weoracle_service_repository="${image_organization}/weoracle-service"
 weoracle_web_repository="${image_organization}/weoracle-web"
 webase_front_repository="${image_organization}/webase-front"
 mysql_version=5.7
 
-check_image ${mysql_repository} ${mysql_version}
-check_image ${fiscobcos_repository} ${fiscobcos_version}
-check_image ${weoracle_web_repository} ${weoracle_version}
-check_image ${weoracle_server_repository} ${weoracle_version}
-check_image ${webase_front_repository} ${webase_front_version}
+pull_image ${mysql_repository} ${mysql_version} "mysql"
+pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
+pull_image ${weoracle_web_repository} ${weoracle_version} "weoracle-service"
+pull_image ${weoracle_service_repository} ${weoracle_version} "weoracle-web"
+pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
 
 
 # guomi option
@@ -299,7 +370,9 @@ fi
 
 export image_organization
 
+echo "=============================================================="
 ################### update webase files ###################
+echo ""
 LOG_INFO "Replace encrypt_type in webase-front.yml file..."
 sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/webase/webase-front.yml
 
@@ -314,16 +387,16 @@ export fiscobcos_version
 replace_vars_in_file ${__root}/fiscobcos/node.yml
 
 ################### update WeOracle files ###################
-LOG_INFO "Replace FISCO-BCOS version in node.yml file..."
+LOG_INFO "Replace WeOracle weoracle.yml file..."
 export weoracle_version
 export mysql_version
 replace_vars_in_file ${__root}/weoracle/docker-compose.yml
 sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/weoracle/weoracle.yml
 
-
-
-if [[ ! $(command -v docker-compose) ]]; then
-  LOG_WARN "Docker && Docker Compose install failed!!!"
-  exit 7;
-fi
+echo "=============================================================="
+LOG_INFO "Deploy WeOracle service SUCCESS!!"
+echo ""
+LOG_INFO "  Start:[ bash start.sh ]"
+echo ""
+LOG_INFO "  Stop :[ bash stop.sh  ]"
 
