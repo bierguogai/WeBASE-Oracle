@@ -3,7 +3,6 @@ package com.webank.oracle.transaction.oracle;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Hex;
 import org.fisco.bcos.web3j.tx.txdecode.LogResult;
 
 import com.webank.oracle.base.enums.OracleVersionEnum;
@@ -54,6 +53,6 @@ public class OracleCoreLogResult extends BaseLogResult {
 
     @Override
     public ReqHistory convert(OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, Hex.encodeHexString(timesAmount.toByteArray()));
+        return ReqHistory.build(requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
     }
 }
