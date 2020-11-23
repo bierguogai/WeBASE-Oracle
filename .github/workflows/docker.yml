@@ -62,10 +62,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Copy nginx config file
-        id: copy-nginx-file
-        run: |
-          cp ./docker/weoracle-web.conf dist/
+            #- name: Copy nginx config file
+            #  id: copy-nginx-file
+            #  run: |
+            #    cp ./docker/weoracle-web.conf dist/
 
       - name: Build and push
         id: docker_build
