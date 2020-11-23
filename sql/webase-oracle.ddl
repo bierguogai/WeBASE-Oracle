@@ -19,7 +19,7 @@ grant all on db_example.* to 'springuser'@'%';
  Source Server Type    : MySQL
  Source Server Version : 50731
  Source Host           : localhost:3306
- Source Schema         : webaseoracle
+ Source Schema         : weoracle
 
  Target Server Type    : MySQL
  Target Server Version : 50731

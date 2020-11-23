@@ -31,7 +31,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 //@DynamicUpdate
-@Table(name = "contract_deploy", schema = "webaseoracle",
+@Table(name = "contract_deploy", schema = "weoracle",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"})
         })
