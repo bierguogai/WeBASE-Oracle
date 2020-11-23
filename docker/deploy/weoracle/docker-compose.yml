@@ -39,7 +39,6 @@ services:
       - 'mysqld'
       - '--character-set-server=utf8mb4'
       - '--collation-server=utf8mb4_unicode_ci'
-      - '--init-connect="SET NAMES utf8mb4"'
       - '--default-time-zone=+8:00'
       - '--log-error=/var/log/mysql/error.log'
       - '--log-error-verbosity=3'
