@@ -1,0 +1,93 @@
+#server config
+server:
+  port: 5012
+  servlet:
+    context-path: /Oracle-Service
+
+### Config connection properties of chain and group
+group-channel-connections-configs:
+  configs:
+    - gmCaCert: classpath:gmca.crt
+      gmSslCert: classpath:gmsdk.crt
+      gmSslKey: classpath:gmsdk.key
+      gmEnSslCert: classpath:gmensdk.key
+      gmEnSslKey: classpath:gmensdk.key
+      chainId: 1
+      all-channel-connections:
+         - group-id: 1 #group ID
+           connections-str:
+              - 139.159.200.48:20200 # node listen_ip:channel_listen
+#    - caCert: classpath:ca1.crt
+#      sslCert: classpath:node1.crt
+#      sslKey: classpath:node1.key
+#      chainId: 2
+#      all-channel-connections:
+#         - group-id: 1 #group ID
+#           connections-str:
+#              - 127.0.0.1:20200 # node listen_ip:channel_listen
+# sdk
+sdk:
+  orgName: orgTest
+  corePoolSize: 50
+  maxPoolSize: 100
+  queueCapacity: 100
+  timeout: 10000
+  keepAlive: 60
+  encryptType: 1 #0:standard, 1:guomi
+
+#key store
+key-user:
+  store_file: "./key/keyStoreUser.txt"  # file to save keyUser.
+
+
+#event register,
+#fisco-bcos 2.2 or latest
+#https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/java_sdk.html#id14
+event:
+  eventRegisters:
+   # list of EventRegister objects. Use default value when property not configured.
+   # Oracle contracts will be auto deployed when contractAddress is blank
+   - {chainId: 1, group: 1, operator: "operator", url: "http://localhost"}
+   #- {chainId: 1, group: 2, operator: "operator", url: "http://localhost"}
+   #- {chainId: 2, group: 1, operator: "operator", url: "http://localhost"}
+   #- {chainId: 2, group: 2, operator: "operator", url: "http://localhost"}
+
+#    - chainId: 1
+#      group: 1
+#      contractAddress: "0x8fcd8a0db3d335c5ef6fe3a4940875adb13eb789"
+#      fromBlock: "latest"
+#      toBlock: "latest"
+
+#log config
+logging:
+  config: classpath:log4j2.xml
+  level.com.webank.oracle: info
+
+# constant
+constant:
+  transMaxWait: 30
+  restTemplateMaxWait: 30
+
+spring:
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    time-zone: "GMT+8"
+    default-property-inclusion: non_null
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.108.248.156:3306/webaseoraclegm?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "root"
+    password: "xBj2019"
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    openInView: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      session:
+        events:
+          log: false
+    properties:
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false

@@ -60,12 +60,13 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("OracleRegisterCenter.sol")){
+            if(!solFile.getName().equals("APIConsumer.sol")){
                 continue;
             }
             SolidityCompiler.Result res =
                     SolidityCompiler.compile(solFile, true,true, ABI, BIN, INTERFACE, METADATA);
             System.out.println("result failed: "+ res.isFailed() );
+           // System.out.println("result : "+ res.getOutput() );
             CompilationResult result = CompilationResult.parse(res.getOutput());
             System.out.println("contractname  " + solFile.getName());
             Path source = Paths.get(solFile.getPath());

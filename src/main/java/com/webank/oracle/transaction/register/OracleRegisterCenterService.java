@@ -148,7 +148,7 @@ public class OracleRegisterCenterService {
      * @param url
      * @param publicKeyList
      */
-    private void registerServiceToCenterOfChainAndGroup(int chainId, int groupId, String operator, String url, List<BigInteger> publicKeyList){
+    private void registerServiceToCenterOfChainAndGroup(int chainId, int groupId, String operator, String url, List<BigInteger> publicKeyList)  {
         // get web3j
         Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
 
@@ -178,6 +178,8 @@ public class OracleRegisterCenterService {
             log.info("This service register to chain:[{}:{}] success, receipt status:[{}]", chainId, groupId, oracleRegisterReceipt.getStatus());
         } catch (Exception e) {
             log.error("This service register to chain:[{}:{}] error", chainId, groupId);
+            //log.error("  error stack: {}",e.getStackTrace());
+            e.printStackTrace();
         }
     }
 

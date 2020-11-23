@@ -1,6 +1,7 @@
 package com.webank.oracle.test.base;
 
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ public class BaseTest {
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
 
     //根据私钥导入账户
-    protected Credentials credentials = Credentials.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+    protected Credentials credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
     protected Credentials credentialsBob = Credentials.create("2");
 
     // 生成随机私钥使用下面方法；

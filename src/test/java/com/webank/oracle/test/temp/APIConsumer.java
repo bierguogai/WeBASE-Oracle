@@ -1,5 +1,10 @@
-package com.webank.oracle.test.transaction.oraclenew.contract;
+package com.webank.oracle.test.temp;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
@@ -22,12 +27,6 @@ import org.fisco.bcos.web3j.tx.Contract;
 import org.fisco.bcos.web3j.tx.TransactionManager;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>Auto generated code.
@@ -93,9 +92,9 @@ public class APIConsumer extends Contract {
     }
 
     public List<FulfilledEventResponse> getFulfilledEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(FULFILLED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(FULFILLED_EVENT, transactionReceipt);
         ArrayList<FulfilledEventResponse> responses = new ArrayList<FulfilledEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             FulfilledEventResponse typedResponse = new FulfilledEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.id = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -115,9 +114,9 @@ public class APIConsumer extends Contract {
     }
 
     public List<RequestedEventResponse> getRequestedEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(REQUESTED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(REQUESTED_EVENT, transactionReceipt);
         ArrayList<RequestedEventResponse> responses = new ArrayList<RequestedEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             RequestedEventResponse typedResponse = new RequestedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.id = (byte[]) eventValues.getIndexedValues().get(0).getValue();
@@ -139,8 +138,8 @@ public class APIConsumer extends Contract {
     public RemoteCall<TransactionReceipt> __callback(byte[] _requestId, BigInteger _result) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -148,8 +147,8 @@ public class APIConsumer extends Contract {
     public void __callback(byte[] _requestId, BigInteger _result, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -157,8 +156,8 @@ public class APIConsumer extends Contract {
     public String __callbackSeq(byte[] _requestId, BigInteger _result) {
         final Function function = new Function(
                 FUNC___CALLBACK, 
-                Arrays.<Type>asList(new Bytes32(_requestId),
-                new Int256(_result)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32(_requestId), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.Int256(_result)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
