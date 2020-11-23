@@ -1,11 +1,23 @@
-package com.webank.oracle.transaction.register;
+package com.webank.oracle.test.temp;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
 import org.fisco.bcos.web3j.abi.EventEncoder;
 import org.fisco.bcos.web3j.abi.FunctionReturnDecoder;
 import org.fisco.bcos.web3j.abi.TypeReference;
-import org.fisco.bcos.web3j.abi.datatypes.*;
+import org.fisco.bcos.web3j.abi.datatypes.Address;
+import org.fisco.bcos.web3j.abi.datatypes.Bool;
+import org.fisco.bcos.web3j.abi.datatypes.DynamicArray;
+import org.fisco.bcos.web3j.abi.datatypes.Event;
+import org.fisco.bcos.web3j.abi.datatypes.Function;
+import org.fisco.bcos.web3j.abi.datatypes.Type;
+import org.fisco.bcos.web3j.abi.datatypes.Utf8String;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Bytes32;
 import org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2;
 import org.fisco.bcos.web3j.abi.datatypes.generated.Uint256;
@@ -21,13 +33,6 @@ import org.fisco.bcos.web3j.tx.Contract;
 import org.fisco.bcos.web3j.tx.TransactionManager;
 import org.fisco.bcos.web3j.tx.gas.ContractGasProvider;
 import org.fisco.bcos.web3j.tx.txdecode.TransactionDecoder;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * <p>Auto generated code.
@@ -113,9 +118,9 @@ public class OracleRegisterCenter extends Contract {
     }
 
     public List<LogNewOracleServiceEventResponse> getLogNewOracleServiceEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(LOGNEWORACLESERVICE_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(LOGNEWORACLESERVICE_EVENT, transactionReceipt);
         ArrayList<LogNewOracleServiceEventResponse> responses = new ArrayList<LogNewOracleServiceEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             LogNewOracleServiceEventResponse typedResponse = new LogNewOracleServiceEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.index = (BigInteger) eventValues.getIndexedValues().get(0).getValue();
@@ -141,9 +146,9 @@ public class OracleRegisterCenter extends Contract {
     }
 
     public List<LogUpdateOracleServiceEventResponse> getLogUpdateOracleServiceEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(LOGUPDATEORACLESERVICE_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(LOGUPDATEORACLESERVICE_EVENT, transactionReceipt);
         ArrayList<LogUpdateOracleServiceEventResponse> responses = new ArrayList<LogUpdateOracleServiceEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             LogUpdateOracleServiceEventResponse typedResponse = new LogUpdateOracleServiceEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.index = (BigInteger) eventValues.getIndexedValues().get(0).getValue();
@@ -171,9 +176,9 @@ public class OracleRegisterCenter extends Contract {
     }
 
     public List<OwnershipTransferRequestedEventResponse> getOwnershipTransferRequestedEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERREQUESTED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERREQUESTED_EVENT, transactionReceipt);
         ArrayList<OwnershipTransferRequestedEventResponse> responses = new ArrayList<OwnershipTransferRequestedEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             OwnershipTransferRequestedEventResponse typedResponse = new OwnershipTransferRequestedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.from = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -194,9 +199,9 @@ public class OracleRegisterCenter extends Contract {
     }
 
     public List<OwnershipTransferredEventResponse> getOwnershipTransferredEvents(TransactionReceipt transactionReceipt) {
-        List<EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
         ArrayList<OwnershipTransferredEventResponse> responses = new ArrayList<OwnershipTransferredEventResponse>(valueList.size());
-        for (EventValuesWithLog eventValues : valueList) {
+        for (Contract.EventValuesWithLog eventValues : valueList) {
             OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.from = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -257,7 +262,7 @@ public class OracleRegisterCenter extends Contract {
 
     public RemoteCall<String> getOracleServiceAtIndex(BigInteger index) {
         final Function function = new Function(FUNC_GETORACLESERVICEATINDEX, 
-                Arrays.<Type>asList(new Uint256(index)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.Uint256(index)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
@@ -271,7 +276,7 @@ public class OracleRegisterCenter extends Contract {
 
     public RemoteCall<Tuple10<BigInteger, String, List<BigInteger>, byte[], String, String, BigInteger, BigInteger, Boolean, BigInteger>> getOracleServiceInfo(String oracleAddress) {
         final Function function = new Function(FUNC_GETORACLESERVICEINFO, 
-                Arrays.<Type>asList(new Address(oracleAddress)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(oracleAddress)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Address>() {}, new TypeReference<StaticArray2<Uint256>>() {}, new TypeReference<Bytes32>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Bool>() {}, new TypeReference<Uint256>() {}));
         return new RemoteCall<Tuple10<BigInteger, String, List<BigInteger>, byte[], String, String, BigInteger, BigInteger, Boolean, BigInteger>>(
                 new Callable<Tuple10<BigInteger, String, List<BigInteger>, byte[], String, String, BigInteger, BigInteger, Boolean, BigInteger>>() {
@@ -295,7 +300,7 @@ public class OracleRegisterCenter extends Contract {
 
     public RemoteCall<Boolean> isOracleExist(String oracleAddress) {
         final Function function = new Function(FUNC_ISORACLEEXIST, 
-                Arrays.<Type>asList(new Address(oracleAddress)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(oracleAddress)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
@@ -303,10 +308,10 @@ public class OracleRegisterCenter extends Contract {
     public RemoteCall<TransactionReceipt> oracleRegister(String _operatorInfo, String _url, List<BigInteger> _publicKey) {
         final Function function = new Function(
                 FUNC_ORACLEREGISTER, 
-                Arrays.<Type>asList(new Utf8String(_operatorInfo),
-                new Utf8String(_url),
-                new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operatorInfo), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -314,10 +319,10 @@ public class OracleRegisterCenter extends Contract {
     public void oracleRegister(String _operatorInfo, String _url, List<BigInteger> _publicKey, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_ORACLEREGISTER, 
-                Arrays.<Type>asList(new Utf8String(_operatorInfo),
-                new Utf8String(_url),
-                new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operatorInfo), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -325,10 +330,10 @@ public class OracleRegisterCenter extends Contract {
     public String oracleRegisterSeq(String _operatorInfo, String _url, List<BigInteger> _publicKey) {
         final Function function = new Function(
                 FUNC_ORACLEREGISTER, 
-                Arrays.<Type>asList(new Utf8String(_operatorInfo),
-                new Utf8String(_url),
-                new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class))),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operatorInfo), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url), 
+                new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class))), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -369,7 +374,7 @@ public class OracleRegisterCenter extends Contract {
     public RemoteCall<TransactionReceipt> transferOwnership(String _to) {
         final Function function = new Function(
                 FUNC_TRANSFEROWNERSHIP, 
-                Arrays.<Type>asList(new Address(_to)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(_to)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -377,7 +382,7 @@ public class OracleRegisterCenter extends Contract {
     public void transferOwnership(String _to, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_TRANSFEROWNERSHIP, 
-                Arrays.<Type>asList(new Address(_to)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(_to)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -385,7 +390,7 @@ public class OracleRegisterCenter extends Contract {
     public String transferOwnershipSeq(String _to) {
         final Function function = new Function(
                 FUNC_TRANSFEROWNERSHIP, 
-                Arrays.<Type>asList(new Address(_to)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.Address(_to)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }
@@ -405,10 +410,10 @@ public class OracleRegisterCenter extends Contract {
     public RemoteCall<TransactionReceipt> updateOracleInfo(List<BigInteger> _publicKey, String _operator, String _url) {
         final Function function = new Function(
                 FUNC_UPDATEORACLEINFO, 
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new Utf8String(_operator),
-                new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operator), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -416,10 +421,10 @@ public class OracleRegisterCenter extends Contract {
     public void updateOracleInfo(List<BigInteger> _publicKey, String _operator, String _url, TransactionSucCallback callback) {
         final Function function = new Function(
                 FUNC_UPDATEORACLEINFO, 
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new Utf8String(_operator),
-                new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operator), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
     }
@@ -427,10 +432,10 @@ public class OracleRegisterCenter extends Contract {
     public String updateOracleInfoSeq(List<BigInteger> _publicKey, String _operator, String _url) {
         final Function function = new Function(
                 FUNC_UPDATEORACLEINFO, 
-                Arrays.<Type>asList(new StaticArray2<Uint256>(
-                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, Uint256.class)),
-                new Utf8String(_operator),
-                new Utf8String(_url)),
+                Arrays.<Type>asList(new org.fisco.bcos.web3j.abi.datatypes.generated.StaticArray2<org.fisco.bcos.web3j.abi.datatypes.generated.Uint256>(
+                        org.fisco.bcos.web3j.abi.Utils.typeMap(_publicKey, org.fisco.bcos.web3j.abi.datatypes.generated.Uint256.class)), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_operator), 
+                new org.fisco.bcos.web3j.abi.datatypes.Utf8String(_url)), 
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);
     }

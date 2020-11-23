@@ -39,6 +39,6 @@ public class ConstantProperties {
      * Oracle register contract name and version for CNS.
      */
     private String registerContractName = "register";
-    private String registerContractVersion = "1.0";
+    private String registerContractVersion = "2.0";
     private String registerContractNameAndVersion = String.format("%s:%s", registerContractName, registerContractVersion);
 }

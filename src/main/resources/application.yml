@@ -14,10 +14,9 @@ group-channel-connections-configs:
       gmEnSslKey: classpath:gmensdk.key
       chainId: 1
       all-channel-connections:
-<<<<<<< HEAD
          - group-id: 1 #group ID
            connections-str:
-              - 116.85.72.123:20200 # node listen_ip:channel_listen
+              - 127.0.0.1:20200 # node listen_ip:channel_listen
 #    - caCert: classpath:ca1.crt
 #      sslCert: classpath:node1.crt
 #      sslKey: classpath:node1.key
@@ -26,26 +25,6 @@ group-channel-connections-configs:
 #         - group-id: 1 #group ID
 #           connections-str:
 #              - 127.0.0.1:20200 # node listen_ip:channel_listen
-=======
-        - group-id: 1 #group ID
-          connections-str:
-            # listen_ip:channel_listen_port
-            - 127.0.0.1:20200
-
-    ###### Here comes another chain's configurations
-    #
-    #- caCert: classpath:2/ca.crt
-    #  sslCert: classpath:2/node.crt
-    #  sslKey: classpath:2/node.key
-    #  chainId: 2
-    #  all-channel-connections:
-    #    - group-id: 1 #group ID
-    #      connections-str:
-    #        # listen_ip:channel_listen_port
-    #        - 127.0.0.1:20200
-
-
->>>>>>> dev
 # sdk
 sdk:
   orgName: orgTest
@@ -66,21 +45,12 @@ key-user:
 #https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/sdk/java_sdk.html#id14
 event:
   eventRegisters:
-<<<<<<< HEAD
-    - chainId: 1
-      group: 1
-      contractAddress: "0xff1feb61cbae29c412afeb86db838100ae3cb3ea"
-      fromBlock: "latest"
-      toBlock: "latest"
-=======
    # list of EventRegister objects. Use default value when property not configured.
    # Oracle contracts will be auto deployed when contractAddress is blank
    - {chainId: 1, group: 1, operator: "operator", url: "http://localhost"}
    #- {chainId: 1, group: 2, operator: "operator", url: "http://localhost"}
    #- {chainId: 2, group: 1, operator: "operator", url: "http://localhost"}
    #- {chainId: 2, group: 2, operator: "operator", url: "http://localhost"}
-
->>>>>>> dev
 
 #    - chainId: 1
 #      group: 1
@@ -105,9 +75,9 @@ spring:
     default-property-inclusion: non_null
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/weoracle?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: "defaultAccount"
-    password: "defaultPassword"
+    url: jdbc:mysql://39.108.248.156:3306/webaseoraclegm?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: "root"
+    password: "xBj2019"
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
