@@ -120,7 +120,8 @@ public class OracleService extends AbstractCoreService {
             TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
                     // TODO. safe convert ????? biginteger
                     oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount).send();
-            log.info("Write data to chain:[{}]", receipt.getStatus());
+            log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
+
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
         } catch (OracleException oe) {

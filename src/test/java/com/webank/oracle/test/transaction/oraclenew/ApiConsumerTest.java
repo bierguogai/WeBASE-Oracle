@@ -62,6 +62,7 @@ public class ApiConsumerTest extends BaseTest {
 
             int chainId = eventRegister.getChainId();
             int groupId = eventRegister.getGroup();
+            Web3j web3j = getWeb3j(chainId, groupId);
 
             Optional<ContractDeploy> deployOptional =
                     this.contractDeployRepository.findByChainIdAndGroupIdAndContractType(chainId, groupId, ContractTypeEnum.ORACLE_CORE.getId());
@@ -74,7 +75,6 @@ public class ApiConsumerTest extends BaseTest {
             log.info("oracle core address " + oracleCoreAddress);
 
             // asset
-            Web3j web3j = getWeb3j(chainId, groupId);
             APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials1, ConstantProperties.GAS_PROVIDER, oracleCoreAddress).send();
             String apiConsumerAddress = apiConsumer.getContractAddress();
             log.info("Deploy APIConsumer contract:[{}]", apiConsumerAddress);

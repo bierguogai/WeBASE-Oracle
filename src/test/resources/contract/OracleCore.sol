@@ -17,7 +17,8 @@ contract OracleCore is  Ownable {
   mapping(bytes32 => bytes32) private commitments;
 
   //__callback(bytes32,int256)
-   bytes4 private callbackFunctionId = 0xe8d0a0d2;
+  //standard bytes4 private callbackFunctionId = 0xe8d0a0d2;
+   bytes4 private callbackFunctionId = 0xa6e0c7dc;
 
 
   event OracleRequest(
