@@ -51,7 +51,7 @@
     * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
 
 * 手动编译部署
-    * 手动部署，请参考：[Oracle-Service服务安装部署](./install.md)
+    * 手动部署，请参考：[Oracle-Service服务安装部署](./install-gm.md)
 
 
 
