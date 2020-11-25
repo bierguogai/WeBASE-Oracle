@@ -52,11 +52,6 @@ event:
    #- {chainId: 2, group: 1, operator: "operator", url: "http://localhost"}
    #- {chainId: 2, group: 2, operator: "operator", url: "http://localhost"}
 
-#    - chainId: 1
-#      group: 1
-#      contractAddress: "0x8fcd8a0db3d335c5ef6fe3a4940875adb13eb789"
-#      fromBlock: "latest"
-#      toBlock: "latest"
 
 #log config
 logging:
