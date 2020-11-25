@@ -1,6 +1,6 @@
 # WeOracle Docker 部署
 
-**提示：** 使用 Docker 部署 WeOracle 服务时，**当前仅支持 `Linux` 操作系统**。
+**提示：** 使用 Docker 部署 WeOracle 服务时，**当前仅支持 `Linux` 操作系统！！**
 
 ##  部署架构
 WeOracle 服务支持使用 Docker 进行部署和运行。

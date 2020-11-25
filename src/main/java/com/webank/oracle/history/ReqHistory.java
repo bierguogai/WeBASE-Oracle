@@ -34,7 +34,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 //@DynamicUpdate
-@Table(name = "req_history", schema = "webaseoracle")
+@Table(name = "req_history", schema = "weoracle")
 public class ReqHistory {
 
     /**
