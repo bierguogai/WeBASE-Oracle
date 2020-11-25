@@ -9,6 +9,8 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.EncryptType;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
@@ -33,12 +35,12 @@ public class RegisterTest extends BaseTest {
     public void testRegister() throws Exception {
         int chainId = 1;
         int groupId = 1;
-
+        EncryptType.setEncryptType(1);
         Web3j web3j = getWeb3j(chainId, groupId);
         String registerCenterAddress = this.oracleRegisterCenterService.getRegisterCenterAddress(chainId, groupId);
         log.info("Oracle register center address:[{}]", registerCenterAddress);
 
-        OracleRegisterCenter registerCenter = OracleRegisterCenter.load(registerCenterAddress, web3j, Credentials.create(RandomUtils.nextInt() + ""), ConstantProperties.GAS_PROVIDER);
+        OracleRegisterCenter registerCenter = OracleRegisterCenter.load(registerCenterAddress, web3j, GenCredential.create(RandomUtils.nextInt() + ""), ConstantProperties.GAS_PROVIDER);
 
         String operator = "operator";
         String url = "http://www.baidu.com";
