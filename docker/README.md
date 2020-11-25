@@ -122,4 +122,4 @@ Usage:
 使用 `bash start.sh` 脚本启动 WeOracle 服务。
 
 ### 停止
-使用 `bash start.sh` 脚本停止 WeOracle 服务。
+使用 `bash stop.sh` 脚本停止 WeOracle 服务。

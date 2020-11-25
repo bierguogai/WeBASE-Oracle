@@ -189,7 +189,7 @@ while getopts gt:dw:f:o:i:h OPT;do
                     usage
                     exit 1;
             esac
-            env=$OPTARG
+            image_from=$OPTARG
             ;;
         d)
             install_deps="yes"
