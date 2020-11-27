@@ -177,7 +177,7 @@ public class Web3Config {
                 Web3j web3jSync = Web3j.build(channelEthereumService, service.getGroupId());
                 // for getClockNumber local
                 web3jSync.getBlockNumberCache();
-                System.out.println("***********chainId: "+s+" groupid: " + i+ " "+web3jSync.getBlockNumber().send().getBlockNumber());
+                log.info("***********chainId: "+s+" groupid: " + i+ " "+web3jSync.getBlockNumber().send().getBlockNumber());
                 web3jMap.put(Integer.valueOf(i), web3jSync);
             }
             web3jMapWithChainId.put(s, web3jMap);
