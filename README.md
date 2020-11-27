@@ -35,7 +35,7 @@
    ![VRF随机数生成流程图](img/vrf.png)
    采用k1椭圆曲线的VRF算法。链上合约验证Proof。
    用户提供随机数种子，oracle service服务方提供自己私钥，产生VRF的 proof。链上合约验证proof。  
-   [VRF介绍](./VRF.md)  
+   [VRF介绍](doc/VRF.md)  
    
   3 支持去中心化部署和结果聚合
   
@@ -53,12 +53,12 @@
     * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
 
 * 手动编译部署
-    * 手动部署，请参考：[Oracle-Service服务安装部署](./install.md)
+    * 手动部署，请参考：[Oracle-Service服务安装部署](doc/install.md)
 
 
 
 ### 3  快速开发  
-   [快速开发自己的预言机](./develop.md)
+   [快速开发自己的预言机](doc/develop.md)
 
 ### 4 使用注意事项：
 
