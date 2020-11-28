@@ -15,7 +15,7 @@ import com.webank.oracle.event.exception.NativeCallException;
 
 public interface LibVRF extends Library {
 
-    static Logger logger = LoggerFactory.getLogger(LibVRF.class);
+     Logger logger = LoggerFactory.getLogger(LibVRF.class);
 
     /**
      * @param sk

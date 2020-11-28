@@ -13,7 +13,6 @@ import com.webank.oracle.base.enums.ContractTypeEnum;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
-import com.webank.oracle.test.transaction.VRF.contract.RandomNumberConsumer;
 import com.webank.oracle.test.base.BaseTest;
 
 import lombok.extern.slf4j.Slf4j;

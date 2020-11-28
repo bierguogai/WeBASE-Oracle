@@ -40,5 +40,6 @@ public class ConstantProperties {
      */
     private String registerContractName = "register";
     private String registerContractVersion = "1.0";
+    //todo
     private String registerContractNameAndVersion = String.format("%s:%s", registerContractName, registerContractVersion);
 }
