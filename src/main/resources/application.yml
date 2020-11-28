@@ -7,11 +7,9 @@ server:
 ### Config connection properties of chain and group
 group-channel-connections-configs:
   configs:
-    - gmCaCert: classpath:gmca.crt
-      gmSslCert: classpath:gmsdk.crt
-      gmSslKey: classpath:gmsdk.key
-      gmEnSslCert: classpath:gmensdk.key
-      gmEnSslKey: classpath:gmensdk.key
+    - caCert: classpath:ca.crt
+      sslCert: classpath:node.crt
+      sslKey: classpath:node.key
       chainId: 1
       all-channel-connections:
          - group-id: 1 #group ID
@@ -33,11 +31,11 @@ sdk:
   queueCapacity: 100
   timeout: 10000
   keepAlive: 60
-  encryptType: 1 #0:standard, 1:guomi
+  encryptType: 0 #0:standard, 1:guomi
 
 #key store
 key-user:
-  store_file: "./key/keyStoreUser.txt"  # file to save keyUser.
+  store_file: "./key/ECC/keyStoreUser.txt"  # file to save keyUser.
 
 
 #event register,

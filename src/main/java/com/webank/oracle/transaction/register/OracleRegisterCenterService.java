@@ -64,7 +64,9 @@ public class OracleRegisterCenterService {
      */
     private void checkOrDeployOracleRegisterCenterContract(){
         log.info("Start to check if oracle register center deployed...");
-        String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
+
+        String nameAndVersion = constantProperties.getRegisterContractName()+":"+constantProperties.getRegisterContractVersion();
+        log.info("cns NameAndVersion: [{}]", nameAndVersion);
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
             return;
@@ -243,7 +245,7 @@ public class OracleRegisterCenterService {
      * @throws Exception
      */
     public String getRegisterCenterAddress(int chainId, int groupId){
-        String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
+        String nameAndVersion = constantProperties.getRegisterContractName()+":"+constantProperties.getRegisterContractVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
             throw new OracleException(ConstantCode.REGISTER_CONTRACT_NOT_CONFIGURED);

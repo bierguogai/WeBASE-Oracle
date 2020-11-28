@@ -27,7 +27,7 @@ public class BaseTest {
     @Autowired protected OracleRegisterCenterService oracleRegisterCenterService;
 
     //根据私钥导入账户
-    protected Credentials credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+    protected Credentials credentials;
     protected Credentials credentialsBob = Credentials.create("2");
 
     // 生成随机私钥使用下面方法；

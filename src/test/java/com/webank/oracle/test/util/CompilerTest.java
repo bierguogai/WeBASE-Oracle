@@ -60,36 +60,47 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("OracleCore.sol")){
+            if(!solFile.getName().equals("OracleRegisterCenter.sol")){
                 continue;
             }
             SolidityCompiler.Result res =
+                    SolidityCompiler.compile(solFile, false,true, ABI, BIN, INTERFACE, METADATA);
+               SolidityCompiler.Result gmres =
                     SolidityCompiler.compile(solFile, true,true, ABI, BIN, INTERFACE, METADATA);
-            System.out.println("result failed: "+ res.isFailed() );
+
            // System.out.println("result : "+ res.getOutput() );
             CompilationResult result = CompilationResult.parse(res.getOutput());
+            CompilationResult gmresult = CompilationResult.parse(gmres.getOutput());
             System.out.println("contractname  " + solFile.getName());
             Path source = Paths.get(solFile.getPath());
             String contractname = solFile.getName().split("\\.")[0];
             CompilationResult.ContractMetadata a =
-                    result.getContract(source, solFile.getName().split("\\.")[0]);
+                    result.getContract(source, contractname);
+            CompilationResult.ContractMetadata agm =
+                    gmresult.getContract(source, contractname);
             FileUtils.writeStringToFile(
                     new File("src/test/resources/solidity/" + contractname + ".abi"), a.abi);
             FileUtils.writeStringToFile(
                     new File("src/test/resources/solidity/" + contractname + ".bin"), a.bin);
+            FileUtils.writeStringToFile(
+                    new File("src/test/resources/solidity/" + contractname + "_gm"+".bin"), agm.bin);
             String binFile;
             String abiFile;
+            String gmBinFile;
             String tempDirPath = new File("src/test/java/").getAbsolutePath();
-            String packageName = "com.webank.oracle.test.temp";
+            String packageName = "com.webank.oracle.test.temp1";
             String filename = contractname;
             abiFile = "src/test/resources/solidity/" + filename + ".abi";
             binFile = "src/test/resources/solidity/" + filename + ".bin";
+            gmBinFile = "src/test/resources/solidity/" + filename +"_gm"+ ".bin";
             SolidityFunctionWrapperGenerator.main(
                     Arrays.asList(
                                     "-a",
                                     abiFile,
                                     "-b",
                                     binFile,
+                                    "-s",
+                                    gmBinFile,
                                     "-p",
                                     packageName,
                                     "-o",
@@ -110,54 +121,5 @@ public class CompilerTest {
         CompilationResult.ContractMetadata a = result.getContract(source, "test2");
     }
 
-//    @Test
-//    public void compileFilesWithImportFromParentFileTest() throws IOException {
-//
-//        Path source = Paths.get("src", "test", "resources", "contract", "test3.sol");
-//
-//        SolidityCompiler.Option allowPathsOption =
-//                new AllowPaths(Collections.singletonList(source.getParent().getParent().toFile()));
-//        SolidityCompiler.Result res =
-//                SolidityCompiler.compile(
-//                        source.toFile(),false, true, ABI, BIN, INTERFACE, METADATA, allowPathsOption);
-//        CompilationResult result = CompilationResult.parse(res.getOutput());
-//
-//        Assertions.assertEquals(2, result.getContractKeys().size());
-//        Assertions.assertEquals(result.getContract("test3"), result.getContract(source, "test3"));
-//        Assertions.assertNotNull(result.getContract("test1"));
-//
-//        CompilationResult.ContractMetadata a = result.getContract(source, "test3");
-//    }
 
-//    @Test
-//    public void compileFilesWithImportFromParentStringTest() throws IOException {
-//
-//        Path source = Paths.get("src", "test", "resources", "contract", "test3.sol");
-//
-//        SolidityCompiler.Option allowPathsOption =
-//                new AllowPaths(
-//                        Collections.singletonList(
-//                                source.getParent().getParent().toAbsolutePath().toString()));
-//        SolidityCompiler.Result res =
-//                SolidityCompiler.compile(
-//                        source.toFile(), true, ABI, BIN, INTERFACE, METADATA, allowPathsOption);
-//        CompilationResult result = CompilationResult.parse(res.output);
-//
-//        CompilationResult.ContractMetadata a = result.getContract(source, "test3");
-//    }
-//
-//    @Test
-//    public void compileFilesWithImportFromParentPathTest() throws IOException {
-//
-//        Path source = Paths.get("src", "test", "resources", "contract", "test3.sol");
-//
-//        SolidityCompiler.Option allowPathsOption =
-//                new AllowPaths(Collections.singletonList(source.getParent().getParent()));
-//        SolidityCompiler.Result res =
-//                SolidityCompiler.compile(
-//                        source.toFile(), true, ABI, BIN, INTERFACE, METADATA, allowPathsOption);
-//        CompilationResult result = CompilationResult.parse(res.output);
-//
-//        CompilationResult.ContractMetadata a = result.getContract("test3");
-//    }
 }

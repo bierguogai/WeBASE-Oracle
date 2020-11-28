@@ -1,4 +1,4 @@
-pragma solidity 0.6.10;
+pragma solidity ^0.6.10;
 
 import "./Ownable.sol";
 import "./SafeMath.sol";
@@ -18,7 +18,7 @@ contract OracleCore is  Ownable {
 
   //__callback(bytes32,int256)
   //standard bytes4 private callbackFunctionId = 0xe8d0a0d2;
-   bytes4 private callbackFunctionId = 0xa6e0c7dc;
+   bytes4 private callbackFunctionId = bytes4(keccak256("__callback(bytes32,int256)"));
 
 
   event OracleRequest(
@@ -93,6 +93,7 @@ contract OracleCore is  Ownable {
     // callback(addr+functionId) as it is untrusted.
     // See: https://solidity.readthedocs.io/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern
     // todo!!!
+    // ConsumerInterface(_callbackAddress).__callback(_requestId,_data);
     (bool success, ) = _callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, _requestId, _data)); // solhint-disable-line avoid-low-level-calls
 
     return success;
