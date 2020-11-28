@@ -5,7 +5,6 @@ import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.properties.EventRegister;
 import com.webank.oracle.contract.ContractDeploy;
 import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.test.temp.APIConsumer;
 import com.webank.oracle.transaction.oracle.OracleCore;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;

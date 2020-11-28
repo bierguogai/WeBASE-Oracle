@@ -60,7 +60,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("OracleRegisterCenter.sol")){
+            if(!solFile.getName().equals("VRF.sol")){
                 continue;
             }
             SolidityCompiler.Result res =
@@ -88,7 +88,7 @@ public class CompilerTest {
             String abiFile;
             String gmBinFile;
             String tempDirPath = new File("src/test/java/").getAbsolutePath();
-            String packageName = "com.webank.oracle.test.temp1";
+            String packageName = "com.webank.oracle.test.temp";
             String filename = contractname;
             abiFile = "src/test/resources/solidity/" + filename + ".abi";
             binFile = "src/test/resources/solidity/" + filename + ".bin";
