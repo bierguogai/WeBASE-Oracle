@@ -25,7 +25,7 @@ contract OracleCore {
   
     function() onlyadmin {}
 
-    function OraclizeCore() {
+     constructor() {
         owner = msg.sender;
         cbAddress = msg.sender;
         

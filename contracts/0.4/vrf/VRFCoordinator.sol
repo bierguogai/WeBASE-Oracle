@@ -1,7 +1,7 @@
 /**
  *Submitted for verification at Etherscan.io on 2020-08-27
 */
-pragma solidity 0.6.6;
+pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
 import "./VRFRequestIDBase.sol";
 import "./VRF.sol";

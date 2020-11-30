@@ -13,6 +13,7 @@ log/
 out
 *.DS_Store
 application-dev.yml
+application-gm.yml
 *.publickey
 
 !docker/build

@@ -1,4 +1,4 @@
-package com.webank.oracle.transaction.vrf;
+package com.webank.oracle.test.temp;
 
 import org.fisco.bcos.channel.client.TransactionSucCallback;
 import org.fisco.bcos.channel.event.filter.EventLogPushWithDecodeCallback;
@@ -132,7 +132,7 @@ public class VRF extends Contract {
 
     public RemoteCall<TransactionReceipt> testRandomValueFromVRFProof(byte[] proof) {
         final Function function = new Function(
-                FUNC_TESTRANDOMVALUEFROMVRFPROOF,
+                FUNC_TESTRANDOMVALUEFROMVRFPROOF, 
                 Arrays.<Type>asList(new DynamicBytes(proof)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
@@ -140,7 +140,7 @@ public class VRF extends Contract {
 
     public void testRandomValueFromVRFProof(byte[] proof, TransactionSucCallback callback) {
         final Function function = new Function(
-                FUNC_TESTRANDOMVALUEFROMVRFPROOF,
+                FUNC_TESTRANDOMVALUEFROMVRFPROOF, 
                 Arrays.<Type>asList(new DynamicBytes(proof)),
                 Collections.<TypeReference<?>>emptyList());
         asyncExecuteTransaction(function, callback);
@@ -148,7 +148,7 @@ public class VRF extends Contract {
 
     public String testRandomValueFromVRFProofSeq(byte[] proof) {
         final Function function = new Function(
-                FUNC_TESTRANDOMVALUEFROMVRFPROOF,
+                FUNC_TESTRANDOMVALUEFROMVRFPROOF, 
                 Arrays.<Type>asList(new DynamicBytes(proof)),
                 Collections.<TypeReference<?>>emptyList());
         return createTransactionSeq(function);

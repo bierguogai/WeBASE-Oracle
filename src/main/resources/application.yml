@@ -12,24 +12,17 @@ group-channel-connections-configs:
       sslKey: classpath:node.key
       chainId: 1
       all-channel-connections:
-        - group-id: 1 #group ID
-          connections-str:
-            # listen_ip:channel_listen_port
-            - 127.0.0.1:20200
-
-    ###### Here comes another chain's configurations
-    #
-    #- caCert: classpath:2/ca.crt
-    #  sslCert: classpath:2/node.crt
-    #  sslKey: classpath:2/node.key
-    #  chainId: 2
-    #  all-channel-connections:
-    #    - group-id: 1 #group ID
-    #      connections-str:
-    #        # listen_ip:channel_listen_port
-    #        - 127.0.0.1:20200
-
-
+         - group-id: 1 #group ID
+           connections-str:
+              - 127.0.0.1:20200 # node listen_ip:channel_listen
+#    - caCert: classpath:ca1.crt
+#      sslCert: classpath:node1.crt
+#      sslKey: classpath:node1.key
+#      chainId: 2
+#      all-channel-connections:
+#         - group-id: 1 #group ID
+#           connections-str:
+#              - 127.0.0.1:20200 # node listen_ip:channel_listen
 # sdk
 sdk:
   orgName: orgTest
@@ -42,7 +35,7 @@ sdk:
 
 #key store
 key-user:
-  store_file: "./key/keyStoreUser.txt"  # file to save keyUser.
+  store_file: "./key/ECC/keyStoreUser.txt"  # file to save keyUser.
 
 
 #event register,

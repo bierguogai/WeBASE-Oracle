@@ -1,6 +1,6 @@
 // File: contracts/VRF.sol
 
-pragma solidity 0.6.6;
+pragma solidity ^0.6.6;
 
 /** ****************************************************************************
   * @notice Verification of verifiable-random-function (VRF) proofs, following
