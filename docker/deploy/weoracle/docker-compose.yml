@@ -31,10 +31,10 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      MYSQL_ROOT_PASSWORD: defaultPassword # 箭头前后中间不能带空格，会将匹配的清楚
+      MYSQL_ROOT_PASSWORD: defaultPassword
       MYSQL_DATABASE: weoracle
       MYSQL_USER: weoracle
-      MYSQL_PASSWORD: defaultPassword # 箭头前后中间不能带空格，会将匹配的清楚
+      MYSQL_PASSWORD: defaultPassword
     command:
       - 'mysqld'
       - '--character-set-server=utf8mb4'
