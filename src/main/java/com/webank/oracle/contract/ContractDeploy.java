@@ -33,7 +33,7 @@ import lombok.ToString;
 //@DynamicUpdate
 @Table(name = "contract_deploy", schema = "weoracle",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"chainId", "groupId", "contractType"})
+                @UniqueConstraint(columnNames = {"chainId", "groupId"})
         })
 public class ContractDeploy {
 

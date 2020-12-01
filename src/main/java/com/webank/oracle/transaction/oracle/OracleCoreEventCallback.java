@@ -52,7 +52,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
 
     @Override
     public String loadOrDeployContract(int chainId, int group) {
-        return oracleService.loadContractAddress(chainId,group);
+        return oracleService.loadContractAddress(chainId, group);
     }
 
     @Override
@@ -60,13 +60,13 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
         OracleCoreLogResult oracleCoreLogResult = new OracleCoreLogResult(logResult);
 
         log.info("Process log event:[{}]", oracleCoreLogResult);
-        if ( this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
+        if (this.reqHistoryRepository.findByReqId(oracleCoreLogResult.getRequestId()).isPresent()) {
             log.error("Request already exists:[{}:{}:{}].", oracleCoreLogResult.getCallbackAddress(),
                     oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
             throw new PushEventLogException(REQ_ALREADY_EXISTS, oracleCoreLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(oracleCoreLogResult.convert(OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
+        this.reqHistoryRepository.save(oracleCoreLogResult.convert(chainId, groupId, OracleVersionEnum.ORACLIZE_4000, SourceTypeEnum.URL));
         log.info("Save request:[{}:{}:{}] to db.", oracleCoreLogResult.getCallbackAddress(),
                 oracleCoreLogResult.getRequestId(), oracleCoreLogResult.getUrl());
 
@@ -80,7 +80,7 @@ public class OracleCoreEventCallback extends AbstractEventCallback {
     }
 
     @Override
-    public String getContractAddress(EventRegister eventRegister){
+    public String getContractAddress(EventRegister eventRegister) {
         return eventRegister.getOracleCoreContractAddress();
     }
 }

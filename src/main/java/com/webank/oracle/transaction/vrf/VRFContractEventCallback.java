@@ -39,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Slf4j
 public class VRFContractEventCallback extends AbstractEventCallback {
+
     @Autowired private VRFService vrfService;
 
     /**
@@ -52,7 +53,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
     @Override
     public String loadOrDeployContract(int chainId, int group) {
-        return vrfService.loadContractAddress(chainId,group);
+        return vrfService.loadContractAddress(chainId, group);
     }
 
     @Override
@@ -63,14 +64,14 @@ public class VRFContractEventCallback extends AbstractEventCallback {
 
         if (this.reqHistoryRepository.findByReqId(vrfLogResult.getRequestId()).isPresent()) {
             log.error("Request already exists:[{}:{}:{}].",
-                    vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+                    vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());
             throw new PushEventLogException(REQ_ALREADY_EXISTS, vrfLogResult.getRequestId());
         }
 
-        this.reqHistoryRepository.save(vrfLogResult.convert(OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
-        // save request to db
-        log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(),vrfLogResult.getSeedAndBlockNum());
+        this.reqHistoryRepository.save(vrfLogResult.convert(chainId, groupId, OracleVersionEnum.VRF_4000, SourceTypeEnum.VRF));
 
+        // save request to db
+        log.info("Save request:[{}:{}:{}] to db.", vrfLogResult.getRequestId(), vrfLogResult.getSender(), vrfLogResult.getSeedAndBlockNum());
 
         //get data from url and update blockChain
         return vrfService.getResultAndUpToChain(chainId, groupId, vrfLogResult);
@@ -82,7 +83,7 @@ public class VRFContractEventCallback extends AbstractEventCallback {
     }
 
     @Override
-    public String getContractAddress(EventRegister eventRegister){
+    public String getContractAddress(EventRegister eventRegister) {
         return eventRegister.getVrfContractAddress();
     }
 }
