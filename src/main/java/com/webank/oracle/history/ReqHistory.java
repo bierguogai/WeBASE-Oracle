@@ -35,7 +35,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 //@DynamicUpdate
-@Table(name = "req_history", schema = "weoracle",
+@Table(name = "req_history", schema = "trustoracle",
         indexes = {
                 @Index(columnList = "chainId,groupId")
         }

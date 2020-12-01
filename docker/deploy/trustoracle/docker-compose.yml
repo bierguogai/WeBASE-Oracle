@@ -1,8 +1,8 @@
 version: '3.7'
 services:
-  weoracle-web:
-    container_name: weoracle-web
-    image: ${image_organization}/weoracle-web:${weoracle_version}
+  trustoracle-web:
+    container_name: trustoracle-web
+    image: ${image_organization}/trustoracle-web:${weoracle_version}
     restart: always
     network_mode: "host"
     environment:
@@ -10,30 +10,30 @@ services:
     volumes:
       - ./log/nginx:/var/log/nginx/
 
-  weoracle-server:
-    container_name: weoracle-service
-    image: ${image_organization}/weoracle-service:${weoracle_version}
+  trustoracle-server:
+    container_name: trustoracle-service
+    image: ${image_organization}/trustoracle-service:${weoracle_version}
     restart: always
     network_mode: "host"
     environment:
       - "SPRING_PROFILES_ACTIVE=docker"
     volumes:
       - ./log/server:/dist/log
-      - ./weoracle.yml:/dist/conf/application-docker.yml
+      - ./trustoracle.yml:/dist/conf/application-docker.yml
       - ../fiscobcos/nodes/127.0.0.1/sdk/ca.crt:/dist/conf/ca.crt
       - ../fiscobcos/nodes/127.0.0.1/sdk/node.crt:/dist/conf/node.crt
       - ../fiscobcos/nodes/127.0.0.1/sdk/node.key:/dist/conf/node.key
       - ./key:/dist/key
 
-  weoracle-mysql:
-    container_name: weoracle-mysql
+  trustoracle-mysql:
+    container_name: trustoracle-mysql
     image: mysql:${mysql_version}
     restart: always
     network_mode: "host"
     environment:
       MYSQL_ROOT_PASSWORD: defaultPassword
-      MYSQL_DATABASE: weoracle
-      MYSQL_USER: weoracle
+      MYSQL_DATABASE: trustoracle
+      MYSQL_USER: trustoracle
       MYSQL_PASSWORD: defaultPassword
     command:
       - 'mysqld'

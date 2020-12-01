@@ -51,6 +51,6 @@ cd "${__dir}/fiscobcos" && docker-compose up -d
 LOG_INFO "String WeBASE-Front...."
 cd "${__dir}/webase" && docker-compose up -d
 
-LOG_INFO "String WeOracle...."
-cd "${__dir}/weoracle" && docker-compose up -d
+LOG_INFO "String TrustOracle...."
+cd "${__dir}/trustoracle" && docker-compose up -d
 

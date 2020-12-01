@@ -168,7 +168,7 @@ Usage:
 
     -w        WeBASE-Front version, default v1.4.2
     -f        FISCO-BCOS version, default v2.6.0.
-    -o        WeOracle version, default v0.4.
+    -o        TrustOracle version, default v0.4.
     -i        Organization of docker images, default fiscoorg.
     -h        Show help info.
 USAGE
@@ -262,11 +262,11 @@ check_port 3306 MySQL
 # check WeBASE-Front
 check_port 5002 "WeBASE-Front"
 
-# check WeOracle-Web
-check_port 5000 "WeOracle-Web"
+# check TrustOracle-Web
+check_port 5000 "TrustOracle-Web"
 
-# check WeOracle-Service
-check_port 5012 "WeOracle-Service"
+# check TrustOracle-Service
+check_port 5012 "TrustOracle-Service"
 
 # check p2p port
 check_port 30300 "node0 p2p"
@@ -350,15 +350,15 @@ echo ""
 LOG_INFO "Check docker images exist ..."
 mysql_repository="mysql"
 fiscobcos_repository="fiscoorg/fiscobcos"
-weoracle_service_repository="${image_organization}/weoracle-service"
-weoracle_web_repository="${image_organization}/weoracle-web"
+weoracle_service_repository="${image_organization}/trustoracle-service"
+weoracle_web_repository="${image_organization}/trustoracle-web"
 webase_front_repository="${image_organization}/webase-front"
 mysql_version=5.7
 
 pull_image ${mysql_repository} ${mysql_version} "mysql"
 pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
-pull_image ${weoracle_web_repository} ${weoracle_version} "weoracle-service"
-pull_image ${weoracle_service_repository} ${weoracle_version} "weoracle-web"
+pull_image ${weoracle_web_repository} ${weoracle_version} "trustoracle-service"
+pull_image ${weoracle_service_repository} ${weoracle_version} "trustoracle-web"
 pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
 
 
@@ -386,15 +386,15 @@ LOG_INFO "Replace FISCO-BCOS version in node.yml file..."
 export fiscobcos_version
 replace_vars_in_file ${__root}/fiscobcos/node.yml
 
-################### update WeOracle files ###################
-LOG_INFO "Replace WeOracle weoracle.yml file..."
+################### update TrustOracle files ###################
+LOG_INFO "Replace TrustOracle trustoracle.yml file..."
 export weoracle_version
 export mysql_version
-replace_vars_in_file ${__root}/weoracle/docker-compose.yml
-sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/weoracle/weoracle.yml
+replace_vars_in_file ${__root}/trustoracle/docker-compose.yml
+sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/trustoracle/trustoracle.yml
 
 echo "=============================================================="
-LOG_INFO "Deploy WeOracle service SUCCESS!!"
+LOG_INFO "Deploy TrustOracle service SUCCESS!!"
 echo ""
 LOG_INFO "  Start:[ bash start.sh ]"
 echo ""

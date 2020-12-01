@@ -44,11 +44,11 @@
 
    
 ### 2  安装部署
-当前 WeOracle 服务默认支持两种部署方式：
+当前 TrustOracle 服务默认支持两种部署方式：
 
 * Docker 部署
     * 提供一键部署脚本 `deploy.sh`
-    * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
+    * Docker 部署，请参考：[TrustOracle Docker 部署](./docker/README.md)
 
 * 手动编译部署
     * 手动部署，请参考：[Oracle-Service服务安装部署](doc/install.md)
