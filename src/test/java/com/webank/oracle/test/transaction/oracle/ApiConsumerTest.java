@@ -21,7 +21,7 @@ public class ApiConsumerTest extends BaseTest {
 
 
     @Test
-    public void testOracleChain1() throws Exception {
+    public void testOracleChain() throws Exception {
 
         credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
 
@@ -29,21 +29,18 @@ public class ApiConsumerTest extends BaseTest {
 
         OracleCore oracleCore = OracleCore.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER).send();
         String orcleAddress = oracleCore.getContractAddress();
-        System.out.println("orcleAddress: " + orcleAddress);
+        log.info("oracleAddress:{} ", orcleAddress);
         APIConsumer apiConsumer = APIConsumer.deploy(web3j, credentials, ConstantProperties.GAS_PROVIDER, oracleCore.getContractAddress()).send();
         String apiConsumerAddress = apiConsumer.getContractAddress();
-        System.out.println("apiConsumerAddress: " + apiConsumerAddress);
-
+        log.info("apiConsumerAddress:{} ", apiConsumerAddress);
         TransactionReceipt t = apiConsumer.request().send();
-        System.out.println(t.getStatus());
-        System.out.println(t.getOutput());
 
         OracleCore.OracleRequestEventResponse requestedEventResponse = oracleCore.getOracleRequestEvents(t).get(0);
 
-        System.out.println(requestedEventResponse.url);
-        System.out.println(requestedEventResponse._timesAmount);
-        System.out.println(requestedEventResponse.callbackAddr);
-        System.out.println(bytesToHex(requestedEventResponse.requestId));
+        Assertions.assertNotNull(requestedEventResponse.url);
+        Assertions.assertNotNull(requestedEventResponse._timesAmount);
+        Assertions.assertNotNull(requestedEventResponse.callbackAddr);
+        Assertions.assertNotNull(bytesToHex(requestedEventResponse.requestId));
 
 
     }

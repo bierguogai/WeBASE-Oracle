@@ -1,20 +1,5 @@
 package com.webank.oracle.test.transaction.VRF;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
-import jdk.nashorn.internal.codegen.types.BitwiseType;
-import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.web3j.abi.datatypes.Address;
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.utils.Numeric;
-import org.junit.jupiter.api.Test;
-
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.CryptoUtil;
 import com.webank.oracle.base.utils.DecodeOutputUtils;
@@ -22,6 +7,19 @@ import com.webank.oracle.test.base.BaseTest;
 import com.webank.oracle.transaction.vrf.LibVRF;
 import com.webank.oracle.transaction.vrf.VRF;
 import com.webank.oracle.transaction.vrf.VRFCoordinator;
+import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.web3j.abi.datatypes.Address;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.fisco.bcos.web3j.utils.Numeric;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
 
@@ -48,6 +46,7 @@ public class VRFTest extends BaseTest {
         VRF.TestRandomEventResponse log =  vrf.getTestRandomEvents(t).get(0);
 
         BigInteger result = vrf.randomValueFromVRFProof(i).send();
+        Assertions.assertNotNull(result);
 
     }
 
@@ -74,10 +73,9 @@ public class VRFTest extends BaseTest {
 
     @Test
     public void testCalculateTheKeyHash() throws Exception {
+        credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
         Credentials user = Credentials.create("2");
-        // gm address  0x1f609497612656e806512fb90972d720e2e508b5
-        //   address   0xc950b511a1a6a1241fc53d5692fdcbed4f766c65
         log.info(user.getAddress());
         log.info("pk : {} ",user.getEcKeyPair().getPublicKey());
         String pk = user.getEcKeyPair().getPublicKey().toString(16);
