@@ -31,7 +31,6 @@ public class RegisterTest extends BaseTest {
     public void testRegisterDeploy() throws Exception {
         int chainId = 1;
         int groupId = 1;
-        //EncryptType.setEncryptType(1);
         Web3j web3j = getWeb3j(chainId, groupId);
         OracleRegisterCenter registerCenter = OracleRegisterCenter.deploy( web3j, GenCredential.create(RandomUtils.nextInt() + ""), ConstantProperties.GAS_PROVIDER).send();
         String operator = "operator";
