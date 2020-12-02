@@ -1,5 +1,7 @@
 # Oracle-Service
-   
+
+[![CodeFactor](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/badge/v0.3)](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/overview/v0.3)
+
 ### 1 原理简介：  
 #### 1.1 原理
    
