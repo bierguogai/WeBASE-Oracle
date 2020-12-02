@@ -17,6 +17,7 @@
  */
 package com.webank.oracle.test.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.fisco.bcos.web3j.codegen.SolidityFunctionWrapperGenerator;
 import org.fisco.solc.compiler.CompilationResult;
@@ -33,17 +34,12 @@ import static org.fisco.solc.compiler.SolidityCompiler.Options.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 
-/** Created by Anton Nashatyrev on 03.03.2016. */
+@Slf4j
 public class CompilerTest {
 
     @Test
     public void solc_getVersion_shouldWork() throws IOException {
         final String version = SolidityCompiler.runGetVersionOutput(true);
-
-        // ##### May produce 2 lines:
-        // solc, the solidity compiler commandline interface
-        // Version: 0.4.7+commit.822622cf.mod.Darwin.appleclang
-        System.out.println(version);
 
         assertThat(version, containsString("version:"));
     }
@@ -71,7 +67,7 @@ public class CompilerTest {
            // System.out.println("result : "+ res.getOutput() );
             CompilationResult result = CompilationResult.parse(res.getOutput());
             CompilationResult gmresult = CompilationResult.parse(gmres.getOutput());
-            System.out.println("contractname  " + solFile.getName());
+            log.info("contractname  " + solFile.getName());
             Path source = Paths.get(solFile.getPath());
             String contractname = solFile.getName().split("\\.")[0];
             CompilationResult.ContractMetadata a =

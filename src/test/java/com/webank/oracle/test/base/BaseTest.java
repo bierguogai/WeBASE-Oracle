@@ -1,24 +1,21 @@
 package com.webank.oracle.test.base;
 
-import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
-import org.fisco.bcos.web3j.protocol.Web3j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import com.webank.oracle.Application;
 import com.webank.oracle.base.properties.EventRegisterProperties;
 import com.webank.oracle.base.service.Web3jMapService;
 import com.webank.oracle.contract.ContractDeployRepository;
 import com.webank.oracle.keystore.KeyStoreService;
 import com.webank.oracle.transaction.register.OracleRegisterCenterService;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  *
  */
 
 @SpringBootTest(classes = Application.class)
-//@Transactional
 public class BaseTest {
     @Autowired protected Web3jMapService web3jMapService;
     @Autowired protected EventRegisterProperties eventRegisterProperties;

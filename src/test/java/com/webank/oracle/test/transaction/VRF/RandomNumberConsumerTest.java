@@ -1,21 +1,19 @@
 package com.webank.oracle.test.transaction.VRF;
 
-import java.math.BigInteger;
-import java.util.Optional;
-
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.contract.ContractDeploy;
+import com.webank.oracle.test.base.BaseTest;
+import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.contract.ContractDeploy;
-import com.webank.oracle.test.base.BaseTest;
-
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.util.Optional;
 
 /**
  *
@@ -55,14 +53,14 @@ public class RandomNumberConsumerTest extends BaseTest {
             Web3j web3j = getWeb3j(chainId, groupId);
             RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j, credential, ConstantProperties.GAS_PROVIDER, coordinatorAddress, keyhashbyte).send();
             String consumerContractAddress = randomNumberConsumer.getContractAddress();
-            System.out.println("consumer address: " + consumerContractAddress);
+            log.info("consumer address: " + consumerContractAddress);
 
             // 请求随机数
-            System.out.println("consumer start a query ....... ");
+            log.info("consumer start a query ....... ");
             TransactionReceipt randomT = randomNumberConsumer.getRandomNumber(new BigInteger("1")).send();
-            System.out.println(randomT.getStatus());
-            System.out.println(randomT.getOutput());
-            System.out.println("consumer query reqId: " + randomT.getOutput());
+            log.info(randomT.getStatus());
+            log.info(randomT.getOutput());
+            log.info("consumer query reqId: " + randomT.getOutput());
 
             Thread.sleep(10000);
 
