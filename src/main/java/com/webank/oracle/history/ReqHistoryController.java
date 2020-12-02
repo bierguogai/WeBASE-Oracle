@@ -65,6 +65,8 @@ public class ReqHistoryController {
 
     @GetMapping("list")
     public BaseResponse list(
+            @RequestParam(value = "chainId", defaultValue = "1") int chainId,
+            @RequestParam(value = "groupId", defaultValue = "1") int groupId,
             @RequestParam(value = "pageNumber", defaultValue = "1") int pageNumberParam,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSizeParam,
             @RequestParam(value = "hideResult", defaultValue = "true") boolean hideResult
@@ -82,9 +84,9 @@ public class ReqHistoryController {
         // page
         PageRequest page = PageRequest.of(pageNumber, pageSize, sort);
 
-        long count = reqHistoryRepository.count();
+        long count = reqHistoryRepository.countByChainIdAndGroupId(chainId, groupId);
         if (count > 0) {
-            Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findAll(page);
+            Page<ReqHistory> reqHistoryPage = reqHistoryRepository.findByChainIdAndGroupIdOrderByModifyTimeDesc(chainId, groupId, page);
             if (hideResult) {
                 reqHistoryPage.getContent().forEach((history) -> {
                     history.setResult("");
