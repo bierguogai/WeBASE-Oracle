@@ -50,6 +50,16 @@ public class VRFService extends AbstractCoreService {
         return ContractTypeEnum.VRF;
     }
 
+    @Override
+    public boolean isContractAddressValid(int chainId, int groupId, String contractAddress) {
+        try {
+            return VRFCoordinator.load(contractAddress, web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER).isValid();
+        } catch (Exception e) {
+            throw new OracleException(ConstantCode.CHECK_CONTRACT_VALID_ERROR);
+        }
+    }
+
     /**
      * @param chainId
      * @param groupId

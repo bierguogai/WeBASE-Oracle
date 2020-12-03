@@ -1,5 +1,10 @@
 # Oracle-Service
-   
+
+[![CodeFactor](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/badge/v0.3)](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/overview/v0.3)
+[![Latest release](https://img.shields.io/github/release/yuanmomo/WeBASE-Oracle.svg)](https://github.com/yuanmomo/WeBASE-Oracle/releases/latest)
+![Docker Hub](https://github.com/yuanmomo/WeBASE-Oracle/workflows/Docker%20Hub/badge.svg)
+![](https://img.shields.io/github/license/yuanmomo/WeBASE-Oracle)
+
 ### 1 原理简介：  
 #### 1.1 原理
    
@@ -44,11 +49,11 @@
 
    
 ### 2  安装部署
-当前 WeOracle 服务默认支持两种部署方式：
+当前 TrustOracle 服务默认支持两种部署方式：
 
 * Docker 部署
     * 提供一键部署脚本 `deploy.sh`
-    * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
+    * Docker 部署，请参考：[TrustOracle Docker 部署](./docker/README.md)
 
 * 手动编译部署
     * 手动部署，请参考：[Oracle-Service服务安装部署](doc/install.md)

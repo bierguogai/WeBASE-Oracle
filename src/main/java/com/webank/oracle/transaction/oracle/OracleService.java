@@ -56,8 +56,17 @@ public class OracleService extends AbstractCoreService {
     }
 
     @Override
+    public boolean isContractAddressValid(int chainId, int groupId, String contractAddress) {
+        try {
+            return OracleCore.load(contractAddress, web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER).isValid();
+        } catch (Exception e) {
+            throw new OracleException(ConstantCode.CHECK_CONTRACT_VALID_ERROR);
+        }
+    }
+
+    @Override
     protected String deployContract(int chainId, int groupId) {
-        // check deployed ?
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {

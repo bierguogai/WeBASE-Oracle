@@ -37,7 +37,7 @@ __root="$(cd "$(dirname "${__dir}")" && pwd)"/../ # <-- change this as it depend
 
 ########################### properties config ##########################
 image_organization=fiscoorg
-image_name="weoracle-service"
+image_name="trustoracle-service"
 docker_push="no"
 latest_tag=latest
 new_tag=

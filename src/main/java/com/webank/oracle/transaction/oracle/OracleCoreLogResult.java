@@ -44,7 +44,7 @@ public class OracleCoreLogResult extends BaseLogResult {
 
     @Override
     public void parse(LogResult logResult) {
-        List rawLogResults =  logResult.getLogParams();
+        List rawLogResults = logResult.getLogParams();
         callbackAddress = CommonUtils.getStringFromEventLog(rawLogResults, LOG_CALLBACK_ADDR);
         url = CommonUtils.getStringFromEventLog(rawLogResults, LOG_URL);
         timesAmount = CommonUtils.getBigIntegerFromEventLog(rawLogResults, LOG_TIMES_AMOUNT);
@@ -52,7 +52,7 @@ public class OracleCoreLogResult extends BaseLogResult {
     }
 
     @Override
-    public ReqHistory convert(OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
-        return ReqHistory.build(requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
+    public ReqHistory convert(int chainId, int groupId, OracleVersionEnum oracleVersionEnum, SourceTypeEnum sourceTypeEnum) {
+        return ReqHistory.build(chainId, groupId, requestId, callbackAddress, oracleVersionEnum, sourceTypeEnum, url, timesAmount.toString(10));
     }
 }

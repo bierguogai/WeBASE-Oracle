@@ -46,8 +46,8 @@ cd "${__dir}/fiscobcos" && docker-compose down
 LOG_INFO "Shutdown WeBASE-Front...."
 cd "${__dir}/webase" && docker-compose down
 
-LOG_INFO "Shutdown WeOracle...."
-cd "${__dir}/weoracle" && docker-compose down
+LOG_INFO "Shutdown TrustOracle...."
+cd "${__dir}/trustoracle" && docker-compose down
 
 
 
