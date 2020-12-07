@@ -1,3 +1,4 @@
+
 /**
  *Submitted for verification at Etherscan.io on 2020-08-27
 */
@@ -5,7 +6,6 @@ pragma solidity ^0.6.6;
 import  "./SafeMath.sol";
 import "./VRFRequestIDBase.sol";
 import "./VRF.sol";
-//import "./VRFConsumerBase.sol";
 /**
  * @title VRFCoordinator coordinates on-chain verifiable-randomness requests
  * @title with off-chain responses
@@ -62,20 +62,6 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     bytes32  seedAndBlockNum);
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);
-
-//  function registerProvingKey(
-//   address _oracle, uint256[2] calldata _publicProvingKey)
-//    external
-//  {
-//    bytes32 keyHash = hashOfKey(_publicProvingKey);
-//    address oldVRFOracle = serviceAgreements[keyHash].vRFOracle;
-//    require(oldVRFOracle == address(0), "please register a new key");
-//    require(_oracle != address(0), "_oracle must not be 0x0");
-//    serviceAgreements[keyHash].vRFOracle = _oracle;
-//    // Yes, this revert message doesn't fit in a word
-//
-//    emit NewServiceAgreement(keyHash, _oracle);
-//  }
 
 
   /**
@@ -146,16 +132,13 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     address consumerContract) internal {
     // Dummy variable; allows access to method selector in next line. See
     // https://github.com/ethereum/solidity/issues/3506#issuecomment-553727797
-      bytes4 s = 0x94985ddd;
-    // todo 固定值
+    bytes4 s =  bytes4(keccak256("fulfillRandomness(bytes32,uint256)"));
     bytes memory resp = abi.encodeWithSelector(
       s, requestId, randomness);
     (bool success,) = consumerContract.call(resp);
     // Avoid unused-local-variable warning. (success is only present to prevent
     // a warning that the return value of consumerContract.call is unused.)
    (success);
-
-  //  VRFConsumerBaseInterface(consumerContract).rawFulfillRandomness(requestId, randomness);
 
   }
 
@@ -184,10 +167,6 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
       blockNum)), "wrong preSeed or block num");
 
     bytes32 blockHash = blockhash(blockNum);
-//    if (blockHash == bytes32(0)) {
-//      blockHash = blockHashStore.getBlockhash(blockNum);
-//      require(blockHash != bytes32(0), "please prove blockhash");
-//    }
     // The seed actually used by the VRF machinery, mixing in the blockhash
     uint256 actualSeed = uint256(keccak256(abi.encodePacked(preSeed, blockHash)));
     // solhint-disable-next-line no-inline-assembly
