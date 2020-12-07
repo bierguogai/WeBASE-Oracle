@@ -430,7 +430,7 @@ contract VRF {
 //        cSSeed[0], // c
 //        cSSeed[1], // s
 //        cSSeed[2], // seed
-//        Witness,
+//        uWitness,
 //        cGammaWitness,
 //        sHashWitness,
 //        zInv
