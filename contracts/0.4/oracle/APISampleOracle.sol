@@ -27,7 +27,7 @@ contract APISampleOracle is FiscoOracleClient {
           // Set your URL
          url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
 
-        return oracle_query(oracleCoreAddress, url, timesAmount);
+        return oracleQuery(oracleCoreAddress, url, timesAmount);
     }
 
     /**

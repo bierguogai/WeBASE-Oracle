@@ -22,14 +22,14 @@ abstract contract FiscoOracleClient {
   function __callback(bytes32 requestId, int256 result, bytes proof) public virtual;
 
 
-  function oracle_query(address _oracle, string memory url, uint256 timesAmount)
+  function oracleQuery(address _oracle, string memory url, uint256 timesAmount)
     internal
     returns (bytes32 requestId)
   {
-     return oracle_query(EXPIRY_TIME,"url", _oracle, url, timesAmount);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount);
   }
 
-  function oracle_query(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount) internal
+  function oracleQuery(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount) internal
   returns (bytes32 requestId) {
     // calculate the id;
     requestId = sha3(abi.encodePacked(this, requestCount));
