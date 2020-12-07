@@ -2,12 +2,11 @@ pragma solidity ^0.6.0;
 
 import "./FiscoOracleClient.sol";
 
-contract APIConsumer is FiscoOracleClient {
+contract APISampleOracle is FiscoOracleClient {
 
 
     //指定处理的oracle
     address private oracleCoreAddress;
-    // bytes32 private jobId;
 
     // Multiply the result by 1000000000000000000 to remove decimals
     uint256 private timesAmount  = 10**18;
@@ -22,14 +21,13 @@ contract APIConsumer is FiscoOracleClient {
     }
 
 
-    function request() public returns (bytes32 requestId)
+    function update() public returns (bytes32 requestId)
     {
 
-          // Set the URL to perform the GET request on
+          // Set your URL
          url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
 
-        // Sends the request
-        return sendRequestTo(oracleCoreAddress, url, timesAmount);
+        return oracle_query(oracleCoreAddress, url, timesAmount);
     }
 
     /**
