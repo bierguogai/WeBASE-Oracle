@@ -26,10 +26,10 @@ abstract contract FiscoOracleClient {
     internal
     returns (bytes32 requestId)
   {
-     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false);
   }
 
-  function oracleQuery(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount) internal
+  function oracleQuery(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof) internal
   returns (bytes32 requestId) {
     // calculate the id;
     requestId = sha3(abi.encodePacked(this, requestCount));
@@ -37,7 +37,7 @@ abstract contract FiscoOracleClient {
     emit Requested(requestId);
 
     oracle = OracleCoreInterface(_oracle);
-    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime),"oracle-core invoke failed!");
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
 

@@ -7,7 +7,8 @@ interface OracleCoreInterface  {
     uint256 _nonce,
     string calldata _url,
     uint256 _timesAmount,
-    uint256 _expiryTime
+    uint256 _expiryTime,
+    bool needProof
   ) external
    returns(bool) ;
 

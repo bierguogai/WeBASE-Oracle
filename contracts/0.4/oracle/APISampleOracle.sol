@@ -33,7 +33,7 @@ contract APISampleOracle is FiscoOracleClient {
     }
 
     /**
-     * Receive the response in the form of uint256
+     * Receive the response in the form of int256
      */
     function __callback(bytes32 _requestId, int256 _result) public override onlyOracleCoreInvoke(_requestId)
     {
