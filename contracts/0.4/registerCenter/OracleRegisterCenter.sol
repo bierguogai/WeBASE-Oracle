@@ -9,13 +9,11 @@ contract OracleRegisterCenter is Owned {
         // TODO. equal to public key ?
         address oracleServiceAddress;
         // support for vrf
-        // TODO. when register : publicKey == msg.sender ???
         uint256[2] publicKey;
         bytes32 keyhash;
-        string operator;
+        string operatorInfo;
         string url;
         uint256 createTime;
-        // TODO. last update time ??
         uint256 latestRequstProcessedTime;
         bool status;
         uint256 processedRequestAmount;
@@ -40,7 +38,6 @@ contract OracleRegisterCenter is Owned {
 
         require(!isOracleExist(msg.sender), "OracleService has registerd!");
 
-        // TODO. equal to publicKey????
         address oracleAddress = msg.sender;
 
         // register only not register
@@ -53,7 +50,6 @@ contract OracleRegisterCenter is Owned {
             operator : _operatorInfo, url : _url, createTime : now, status : true, latestRequstProcessedTime : 0, processedRequestAmount : 0
             });
 
-        // add mapping
         oracleServiceMap[oracleAddress] = service;
 
         // event
@@ -70,7 +66,6 @@ contract OracleRegisterCenter is Owned {
 
     // get oracleCore instance by address of oracleService
     function getOracleServiceInfo(address oracleAddress) public view returns (uint, address, uint256[2] memory  , bytes32 , string memory, string memory, uint256, uint256, bool, uint256) {
-        // TODO. use if and return null when not exists???
         require(isOracleExist(oracleAddress), "Oracle service not exists.");
 
         OracleService memory service = oracleServiceMap[oracleAddress];
@@ -82,7 +77,6 @@ contract OracleRegisterCenter is Owned {
 
     // get oracleCore instance by index
     function getOracleServiceAtIndex(uint index) public view returns (address oracleAddress) {
-        // TODO. use require ??
         require(index < 0 || index >= oracleServiceList.length, "index is wrong!");
 
         return oracleServiceList[index];
