@@ -10,35 +10,44 @@ abstract contract FiscoOracleClient {
   OracleCoreInterface private oracle;
   uint256 private requestCount = 1;
   mapping(bytes32 => address) private pendingRequests;
-
+  mapping (address => uint) private reqc;
+  uint256 constant public EXPIRY_TIME = 10 minutes;
 
   event Requested(bytes32 indexed id);
   event Fulfilled(bytes32 indexed id);
 
-  function __callback(bytes32 requestId, int256 result)
-    public virtual;
+  function __callback(bytes32 requestId, int256 result) public virtual;
+
+  // __callback with proof
+  function __callback(bytes32 requestId, int256 result, bytes proof) public virtual;
 
 
-  function sendRequestTo(address _oracle, string memory url, uint256 timesAmount)
+  function oracleQuery(address _oracle, string memory url, uint256 timesAmount)
     internal
     returns (bytes32 requestId)
   {
-    requestId = keccak256(abi.encodePacked(this, requestCount));
-//    _req.nonce = requestCount;
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount);
+  }
+
+  function oracleQuery(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount) internal
+  returns (bytes32 requestId) {
+    // calculate the id;
+    requestId = sha3(abi.encodePacked(this, requestCount));
     pendingRequests[requestId] = _oracle;
     emit Requested(requestId);
 
     oracle = OracleCoreInterface(_oracle);
-    require(oracle.query(address(this),requestCount, url,timesAmount),"oracle-core invoke failed!");
-    requestCount += 1;
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime),"oracle-core invoke failed!");
+    requestCount++;
+    reqc[msg.sender]++;
 
     return requestId;
   }
 
 
   /**
-   * @notice Sets the stored oracle address
-   * @param _oracle The address of the oracle contract
+   * @notice Sets the stored oracle core address
+   * @param _oracle The address of the oracle core contract
    */
   function setOracleCoreAddress(address _oracle) internal {
     oracle = OracleCoreInterface(_oracle);
@@ -68,15 +77,6 @@ abstract contract FiscoOracleClient {
             "Source must be the oracle of the request");
     delete pendingRequests[_requestId];
     emit Fulfilled(_requestId);
-    _;
-  }
-
-  /**
-   * @dev Reverts if the request is already pending
-   * @param _requestId The request ID for fulfillment
-   */
-  modifier notPendingRequest(bytes32 _requestId) {
-    require(pendingRequests[_requestId] == address(0), "Request is already pending");
     _;
   }
 }
