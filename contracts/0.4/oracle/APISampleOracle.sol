@@ -27,7 +27,8 @@ contract APISampleOracle is FiscoOracleClient {
     {
 
           // Set your URL
-         url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
+          // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
+         url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
          bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
          validIds[requestId] = true;
     }
