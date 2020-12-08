@@ -1,5 +1,10 @@
 # Oracle-Service
-   
+
+[![CodeFactor](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/badge/v0.3)](https://www.codefactor.io/repository/github/yuanmomo/webase-oracle/overview/v0.3)
+[![Latest release](https://img.shields.io/github/release/yuanmomo/WeBASE-Oracle.svg)](https://github.com/yuanmomo/WeBASE-Oracle/releases/latest)
+![Docker Hub](https://github.com/yuanmomo/WeBASE-Oracle/workflows/Docker%20Hub/badge.svg)
+![](https://img.shields.io/github/license/yuanmomo/WeBASE-Oracle)
+
 ### 1 原理简介：  
 #### 1.1 原理
    
@@ -12,10 +17,8 @@
    我们可以通过引入预言机（Oracle）的功能来解决这一问题，预言机可以为智能合约提供与外部世界的连接性。   
    Oracle-Service 分为链上部分和链下部分。
    链上部分主要是oracle相关合约，链下部分主要是java服务，负责监听合约的事件，采集结果并回写到智能合约。  
-   
-         
-#### 1.2 作用
 
+#### 1.2 作用
   保险方面，预言机的设计让智能合约保险在实现权利义务明确和自动执行（消除传统保险合约因陈述条款模糊而导致的纠纷）的基础上，更进一步的遏制保险欺诈，防止投保人和保险人的委托代理风险。  
   金融方面，获取汇率  
   游戏方面，获取链上随机数  
@@ -45,12 +48,12 @@
      
 
    
-### 2  安装部署
-当前 WeOracle 服务默认支持两种部署方式：
+### 2 安装部署
+当前 TrustOracle 服务默认支持两种部署方式：
 
 * Docker 部署
     * 提供一键部署脚本 `deploy.sh`
-    * Docker 部署，请参考：[WeOracle Docker 部署](./docker/README.md)
+    * Docker 部署，请参考：[TrustOracle Docker 部署](./docker/README.md)
 
 * 手动编译部署
     * 手动部署，请参考：[Oracle-Service服务安装部署](doc/install.md)

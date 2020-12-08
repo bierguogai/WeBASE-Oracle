@@ -12,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ContractTypeEnum {
     ORACLE_CORE(0, "oracle core contract"),
-    VRF(1, "vrf"),
+    VRF(1, "VRF"),
     ;
 
     private int id;

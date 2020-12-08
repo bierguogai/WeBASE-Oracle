@@ -27,8 +27,6 @@ abstract contract VRFConsumerBase  {
     public returns (bytes32 requestId)
   {
 
-   // LINK.transferAndCall(vrfCoordinator, _fee, abi.encode(_keyHash, _seed));
-   //todo
     VRFCoordinator(vrfCoordinator).randomnessRequest(_keyHash, _seed, address(this));
     // This is the seed passed to VRFCoordinator. The oracle will mix this with
     // the hash of the block containing this request to obtain the seed/input

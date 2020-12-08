@@ -26,7 +26,7 @@ public class OracleFileUtils {
      */
     public static void writeConstantToFile(File file, String constant) {
         try {
-            OracleFileUtils.createFileIfNotExist(file, true, true);
+            OracleFileUtils.createFileIfNotExist(file, false, true);
         } catch (IOException ioe) {
             String errorMsg = format("Failed to create file: %s", file.getAbsolutePath());
             log.error(errorMsg);

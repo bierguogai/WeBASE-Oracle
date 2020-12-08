@@ -48,6 +48,13 @@ public abstract class AbstractCoreService {
 
 
     /**
+     * 检查合约地址是否有效
+     *
+     * @return
+     */
+    public abstract boolean isContractAddressValid(int chainId, int groupId, String contractAddress);
+
+    /**
      * 部署合约
      *
      * @return
@@ -88,22 +95,32 @@ public abstract class AbstractCoreService {
             contractDeploy = deployOptional.get();
             String contractAddress = contractDeploy.getContractAddress();
             if (StringUtils.isNotBlank(contractAddress)) {
-                // oracle core already deployed
-                contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), contractAddress);
-                return contractAddress;
+                // contract address valid
+                if (this.isContractAddressValid(chainId, groupId, contractAddress)) {
+                    // oracle core already deployed
+                    contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), contractAddress);
+                    return contractAddress;
+                }
+
+                // delete this dirty contract address
+                log.warn("Contract address:[{}] exists, but not valid on chain:[{}] and group:[{}]. " +
+                                "Maybe dirty data, try to re-deploy this contract:[{}].",
+                        contractAddress, chainId, groupId, this.getContractType().getType());
+                log.warn("Delete contract address:[{}:{}]", contractDeploy.getChainId(), contractAddress);
+                this.contractDeployRepository.deleteById(contractDeploy.getId());
             }
         }
 
-        contractDeploy = ContractDeploy.build(chainId, groupId, contractType);
         // deploy contract
+        log.info("Deploy contract:[{}] on chain:[{}:{}]", this.getContractType(), chainId, groupId);
         String deployedContractAddress = this.deployContract(chainId, groupId);
         if (StringUtils.isNotBlank(deployedContractAddress)) {
+            contractDeploy = ContractDeploy.build(chainId, groupId, contractType);
             contractDeploy.setContractAddress(deployedContractAddress);
             contractDeployRepository.save(contractDeploy);
             contractAddressMap.put(ChainGroupMapKeyUtil.getKey(chainId, groupId), deployedContractAddress);
         }
         return deployedContractAddress;
-
     }
 
     /**

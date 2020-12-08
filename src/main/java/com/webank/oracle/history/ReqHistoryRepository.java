@@ -2,9 +2,9 @@ package com.webank.oracle.history;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.webank.oracle.history.ReqHistory;
 
 /**
  *
@@ -27,6 +27,9 @@ public interface ReqHistoryRepository extends JpaRepository<ReqHistory, Long> {
      */
     long count();
 
+    long countByChainIdAndGroupId(int chainId,int groupId);
+
+    Page<ReqHistory> findByChainIdAndGroupIdOrderByModifyTimeDesc(int chainId,int groupId,Pageable pageable);
 
 //    List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
 //
