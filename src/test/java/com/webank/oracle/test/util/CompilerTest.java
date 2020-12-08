@@ -56,7 +56,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("VRF.sol")){
+            if(!solFile.getName().equals("OracleCore.sol")){
                 continue;
             }
             SolidityCompiler.Result res =

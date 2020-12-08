@@ -19,25 +19,25 @@ abstract contract FiscoOracleClient {
   function __callback(bytes32 requestId, int256 result) public virtual;
 
   // __callback with proof
-  function __callback(bytes32 requestId, int256 result, bytes proof) public virtual;
+ // function __callback(bytes32 requestId, int256 result, bytes calldata proof) public virtual;
 
 
   function oracleQuery(address _oracle, string memory url, uint256 timesAmount)
     internal
     returns (bytes32 requestId)
   {
-     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount);
+     return oracleQuery(EXPIRY_TIME,"url", _oracle, url, timesAmount, false);
   }
 
-  function oracleQuery(uint expiryTime, string datasource, address _oracle, string memory url, uint256 timesAmount) internal
+  function oracleQuery(uint expiryTime, string memory datasource, address _oracle, string memory url, uint256 timesAmount, bool needProof) internal
   returns (bytes32 requestId) {
     // calculate the id;
-    requestId = sha3(abi.encodePacked(this, requestCount));
+    requestId = keccak256(abi.encodePacked(this, requestCount));
     pendingRequests[requestId] = _oracle;
     emit Requested(requestId);
 
     oracle = OracleCoreInterface(_oracle);
-    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime),"oracle-core invoke failed!");
+    require(oracle.query(address(this),requestCount, url,timesAmount, expiryTime,needProof),"oracle-core invoke failed!");
     requestCount++;
     reqc[msg.sender]++;
 
