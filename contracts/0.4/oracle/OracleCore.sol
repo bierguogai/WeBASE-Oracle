@@ -68,7 +68,7 @@ contract OracleCore is  Ownable {
     address _callbackAddress,
     uint256 _expiration,
     uint256 _result,
-    bytes proof
+    bytes calldata proof
   )
     public
     onlyOwner
@@ -101,12 +101,5 @@ contract OracleCore is  Ownable {
     _;
   }
 
-  /**
-   * @dev Reverts if `msg.sender` is not authorized to fulfill requests
-   */
-  modifier onlyOwner() {
-    require(msg.sender == owner(), "Not an authorized node to fulfill requests");
-    _;
-  }
 
 }
