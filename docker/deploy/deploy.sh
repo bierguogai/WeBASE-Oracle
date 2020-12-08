@@ -36,7 +36,7 @@ cmdname=$(basename $0)
 image_organization=fiscoorg
 fiscobcos_version="v2.6.0"
 webase_front_version="v1.4.2"
-weoracle_version="v0.5"
+trustoracle_version="v0.5"
 guomi="no"
 install_deps="no"
 # 拉取镜像的方式，cdn、Docker Hub，默认：cdn
@@ -87,7 +87,7 @@ while getopts gt:dw:f:o:i:h OPT;do
             fiscobcos_version=$OPTARG
             ;;
         o)
-            weoracle_version=$OPTARG
+            trustoracle_version=$OPTARG
             ;;
         i)
             image_organization=$OPTARG
@@ -192,16 +192,16 @@ LOG_INFO "Check docker images exist ..."
 echo ""
 mysql_repository="mysql"
 fiscobcos_repository="fiscoorg/fiscobcos"
-weoracle_service_repository="${image_organization}/trustoracle-service"
-weoracle_web_repository="${image_organization}/trustoracle-web"
+trustoracle_service_repository="${image_organization}/trustoracle-service"
+trustoracle_web_repository="${image_organization}/trustoracle-web"
 webase_front_repository="${image_organization}/webase-front"
 mysql_version=5.7
 
 pull_image "docker/compose" "1.27.4" "docker-compose"
 pull_image ${mysql_repository} ${mysql_version} "mysql"
 pull_image ${fiscobcos_repository} ${fiscobcos_version} "fiscobcos"
-pull_image ${weoracle_web_repository} ${weoracle_version} "trustoracle-service"
-pull_image ${weoracle_service_repository} ${weoracle_version} "trustoracle-web"
+pull_image ${trustoracle_web_repository} ${trustoracle_version} "trustoracle-service"
+pull_image ${trustoracle_service_repository} ${trustoracle_version} "trustoracle-web"
 pull_image ${webase_front_repository} ${webase_front_version} "webase-front"
 
 
@@ -236,7 +236,7 @@ echo "Replace trustoracle/trustoracle.yml ..."
 cd ${__root}/trustoracle/
 check_directory_exists "${__root}/trustoracle/" "mysql"
 
-export weoracle_version
+export trustoracle_version
 export mysql_version
 replace_vars_in_file ${__root}/trustoracle/docker-compose.yml
 sed -i "s/encryptType.*#/encryptType: ${encrypt_type} #/g" ${__root}/trustoracle/trustoracle.yml

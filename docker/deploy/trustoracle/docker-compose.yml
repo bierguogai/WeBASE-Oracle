@@ -2,7 +2,7 @@ version: '3.7'
 services:
   trustoracle-web:
     container_name: trustoracle-web
-    image: ${image_organization}/trustoracle-web:${weoracle_version}
+    image: ${image_organization}/trustoracle-web:${trustoracle_version}
     restart: always
     network_mode: "host"
     environment:
@@ -12,7 +12,7 @@ services:
 
   trustoracle-server:
     container_name: trustoracle-service
-    image: ${image_organization}/trustoracle-service:${weoracle_version}
+    image: ${image_organization}/trustoracle-service:${trustoracle_version}
     restart: always
     network_mode: "host"
     environment:
