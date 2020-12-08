@@ -1,25 +1,5 @@
 #!/usr/bin/env bash
 
-LOG_WARN()
-{
-    local content=${1}
-    echo -e "\033[31m[WARN] ${content}\033[0m"
-}
-
-LOG_INFO()
-{
-    local content=${1}
-    echo -e "\033[32m[INFO] ${content}\033[0m"
-}
-
-function replaceFile(){
-    file="$1"
-
-    content=$(cat "${file}" | envsubst)
-    cat <<< "${content}" > "${file}"
-}
-
-
 # 命令返回非 0 时，就退出
 set -o errexit
 # 管道命令中任何一个失败，就退出
@@ -41,16 +21,24 @@ __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 __base="$(basename ${__file} .sh)"
 # 脚本所在的目录的父目录，一般脚本都会在父项目中的子目录，
 #     比如: bin, script 等，需要根据场景修改
-__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
+#__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
+__root="${__dir}" # <-- change this as it depends on your app
+
+# source shell util file
+export __root
+source ${__root}/util/shell-util.sh
+
+echo "=============================================================="
+LOG_INFO "Root dir: [${__root}]"
 
 
 # 启动中间件服务
 LOG_INFO "String FISCO-BCOS nodes...."
-cd "${__dir}/fiscobcos" && docker-compose up -d
+cd "${__dir}/fiscobcos" && docker-compose-container up -d
 
 LOG_INFO "String WeBASE-Front...."
-cd "${__dir}/webase" && docker-compose up -d
+cd "${__dir}/webase" && docker-compose-container up -d
 
 LOG_INFO "String TrustOracle...."
-cd "${__dir}/trustoracle" && docker-compose up -d
+cd "${__dir}/trustoracle" && docker-compose-container up -d
 
