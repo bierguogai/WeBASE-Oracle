@@ -19,7 +19,8 @@ contract OracleCore is  Ownable {
     bytes32 requestId,
     string url,
     uint256  expiration,
-    uint256 _timesAmount
+    uint256 timesAmount,
+    bool needProof
   );
 
   constructor()
@@ -34,7 +35,8 @@ contract OracleCore is  Ownable {
     uint256 _nonce,
     string calldata _url,
     uint256 _timesAmount,
-    uint256 _expiryTime
+    uint256 _expiryTime,
+    bool _needProof
   )
     external
   returns(bool)
@@ -55,7 +57,8 @@ contract OracleCore is  Ownable {
       requestId,
       _url,
       expiration,
-     _timesAmount);
+     _timesAmount,
+     _needProof);
     return true;
   }
 
@@ -64,9 +67,10 @@ contract OracleCore is  Ownable {
     bytes32 _requestId,
     address _callbackAddress,
     uint256 _expiration,
-    uint256 _result
+    uint256 _result,
+    bytes calldata proof
   )
-    external
+    public
     onlyOwner
     isValidRequest(_requestId)
     returns (bool)
@@ -97,12 +101,5 @@ contract OracleCore is  Ownable {
     _;
   }
 
-  /**
-   * @dev Reverts if `msg.sender` is not authorized to fulfill requests
-   */
-  modifier onlyOwner() {
-    require(msg.sender == owner(), "Not an authorized node to fulfill requests");
-    _;
-  }
 
 }
