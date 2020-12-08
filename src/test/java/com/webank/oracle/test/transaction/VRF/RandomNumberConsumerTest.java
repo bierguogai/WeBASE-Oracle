@@ -1,19 +1,22 @@
 package com.webank.oracle.test.transaction.VRF;
 
-import com.webank.oracle.base.enums.ContractTypeEnum;
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.properties.EventRegister;
-import com.webank.oracle.contract.ContractDeploy;
-import com.webank.oracle.test.base.BaseTest;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.util.Optional;
+
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.Optional;
+import com.webank.oracle.base.enums.ContractTypeEnum;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.properties.EventRegister;
+import com.webank.oracle.contract.ContractDeploy;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.trial.contract.RandomNumberSampleOracle;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -51,7 +54,7 @@ public class RandomNumberConsumerTest extends BaseTest {
             // keyhashbyte: 必须要用部署 coordinate 合约的公钥
 
             Web3j web3j = getWeb3j(chainId, groupId);
-            RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j, credential, ConstantProperties.GAS_PROVIDER, coordinatorAddress, keyhashbyte).send();
+            RandomNumberSampleOracle randomNumberConsumer = RandomNumberSampleOracle.deploy(web3j, credential, ConstantProperties.GAS_PROVIDER, coordinatorAddress, keyhashbyte).send();
             String consumerContractAddress = randomNumberConsumer.getContractAddress();
             log.info("consumer address: " + consumerContractAddress);
 

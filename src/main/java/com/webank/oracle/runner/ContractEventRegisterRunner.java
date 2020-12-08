@@ -2,6 +2,7 @@ package com.webank.oracle.runner;
 
 import java.util.List;
 
+import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
@@ -19,10 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ContractEventRegisterRunner {
 
-    @Autowired
-    private EventRegisterProperties eventRegisterProperties;
-    @Autowired
-    private ApplicationContext ctx;
+    @Autowired private EventRegisterProperties eventRegisterProperties;
+    @Autowired private ApplicationContext ctx;
 
 
     /**
@@ -42,6 +41,10 @@ public class ContractEventRegisterRunner {
                         eventRegister.getOracleCoreContractAddress(), eventRegister.getChainId(), eventRegister.getGroup());
 
                 // init VRF on this chain and group
+                if (EncryptType.encryptType == EncryptType.SM2_TYPE) {
+                    log.warn("VRF is not supported on FISCO-BCOS chain of SM2 type.");
+                    continue;
+                }
                 VRFContractEventCallback vrfContractEventCallback = ctx.getBean(VRFContractEventCallback.class, eventRegister.getChainId(), eventRegister.getGroup());
                 vrfContractEventCallback.init(eventRegister);
                 log.info("Vrf contract address:[{}] of chain:[{}:{}]",

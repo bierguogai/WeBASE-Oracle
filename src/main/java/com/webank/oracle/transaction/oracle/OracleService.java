@@ -18,6 +18,7 @@ import static com.webank.oracle.base.enums.ReqStatusEnum.ORACLE_CORE_CONTRACT_AD
 import static com.webank.oracle.base.enums.ReqStatusEnum.UPLOAD_RESULT_TO_CHAIN_ERROR;
 import static com.webank.oracle.base.utils.JsonUtils.toJSONString;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,11 +94,11 @@ public class OracleService extends AbstractCoreService {
         int left = url.indexOf("(");
         int right = url.indexOf(")");
         String format = url.substring(0, left);
-        url = url.substring(left + 1, right);
-        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(url);
+        String httpUrl = url.substring(left + 1, right);
+        List<String> httpResultIndexList = subFiledValueForHttpResultIndex(url.substring(right + 1));
 
         //get data
-        BigInteger httpResult = httpService.getObjectByUrlAndKeys(url,
+        BigDecimal httpResult = httpService.getObjectByUrlAndKeys(httpUrl,
                 format, httpResultIndexList);
         log.info("url {} https result: {} ", oracleCoreLogResult.getUrl(), toJSONString(httpResult));
 
@@ -115,7 +116,9 @@ public class OracleService extends AbstractCoreService {
         String requestId = oracleCoreLogResult.getRequestId();
         log.info("Start to write data to chain, contractAddress:{} data:{}", JsonUtils.toJSONString(baseLogResult), result);
 
-        BigInteger afterTimesAmount = ((BigInteger) result).multiply(oracleCoreLogResult.getTimesAmount());
+        BigInteger afterTimesAmount = ((BigDecimal) result)
+                .multiply(new BigDecimal(oracleCoreLogResult.getTimesAmount()))
+                .toBigInteger();
         log.info("After times amount:[{}]", Hex.encodeHexString(afterTimesAmount.toByteArray()));
         try {
 
@@ -127,8 +130,7 @@ public class OracleService extends AbstractCoreService {
             }
             OracleCore oracleCore = OracleCore.load(oracleCoreAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
             TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
-                    // TODO. safe convert ????? biginteger
-                    oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount).send();
+                    oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount,new byte[0]).send();
             log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
 
             dealWithReceipt(receipt);
