@@ -93,6 +93,12 @@ public class ReqHistory {
     private String reqQuery;
 
     /**
+     * 是否需要证明，仅链下 API 有效
+     */
+    @Column(nullable = false)
+    private boolean needProof;
+
+    /**
      * 请求状态, 0. 请求中；1. 请求失败；2. 请求成功。默认 0
      */
     @ColumnDefault("0")
