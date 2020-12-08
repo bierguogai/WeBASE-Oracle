@@ -26,8 +26,9 @@ public class OracleCoreLogResult extends BaseLogResult {
 
     private static final String LOG_CALLBACK_ADDR = "callbackAddr";
     private static final String LOG_URL = "url";
-    private static final String LOG_TIMES_AMOUNT = "_timesAmount";
+    private static final String LOG_TIMES_AMOUNT = "timesAmount";
     private static final String LOG_EXPIRATION = "expiration";
+    private static final String NEED_PROOF = "needProof";
 
     private String callbackAddress;
     private String url;
@@ -37,6 +38,7 @@ public class OracleCoreLogResult extends BaseLogResult {
      * Multiply the result by 1000000000000000000 to remove decimals
      */
     private BigInteger timesAmount;
+    private boolean needProof;
 
     public OracleCoreLogResult(LogResult logResult) {
         super(logResult);
@@ -49,6 +51,7 @@ public class OracleCoreLogResult extends BaseLogResult {
         url = CommonUtils.getStringFromEventLog(rawLogResults, LOG_URL);
         timesAmount = CommonUtils.getBigIntegerFromEventLog(rawLogResults, LOG_TIMES_AMOUNT);
         expiration = CommonUtils.getBigIntegerFromEventLog(rawLogResults, LOG_EXPIRATION);
+        needProof = CommonUtils.getBooleanFromEventLog(rawLogResults, NEED_PROOF);
     }
 
     @Override

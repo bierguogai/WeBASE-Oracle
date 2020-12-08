@@ -58,7 +58,7 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     uint256 seed,
     uint256 blockNumber,
     address sender,
-    bytes32 requestID,
+    bytes32 requestId,
     bytes32  seedAndBlockNum);
 
   event RandomnessRequestFulfilled(bytes32 requestId, uint256 output);

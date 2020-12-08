@@ -3,7 +3,7 @@ package com.webank.oracle.http;
 import static com.webank.oracle.base.utils.JsonUtils.stringToJsonNode;
 import static com.webank.oracle.base.utils.JsonUtils.toList;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.webank.oracle.base.enums.ReqStatusEnum;
-import com.webank.oracle.event.exception.RemoteCallException;
 import com.webank.oracle.base.properties.ConstantProperties;
 import com.webank.oracle.base.utils.HttpUtil;
+import com.webank.oracle.event.exception.RemoteCallException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,11 +47,11 @@ public class HttpService {
      * @return
      * @throws Exception
      */
-    public BigInteger getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
+    public BigDecimal getObjectByUrlAndKeys(String url, String format, List<String> resultKeyList) throws Exception {
         try {
             //get data
             String result = HttpUtil.get(url);
-            BigInteger value = BigInteger.valueOf(0L);
+            BigDecimal value = BigDecimal.valueOf(0L);
 
             // fetch value from result by format
             switch (StringUtils.lowerCase(format)) {
@@ -61,11 +61,11 @@ public class HttpService {
                         throw new RemoteCallException(ReqStatusEnum.RESULT_FORMAT_ERROR, format, result);
                     }
                     // TODO. exception
-                    value = new BigInteger(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
+                    value = new BigDecimal(String.valueOf(getValueByKeys(jsonNode, resultKeyList)));
 
                     break;
                 default:
-                    value = new BigInteger(result.split("\n")[0]);
+                    value = new BigDecimal(result.split("\n")[0]);
             }
             return value;
         } catch (Exception e) {

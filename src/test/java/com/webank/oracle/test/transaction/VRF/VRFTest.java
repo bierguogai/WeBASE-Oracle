@@ -1,13 +1,11 @@
 package com.webank.oracle.test.transaction.VRF;
 
-import com.webank.oracle.base.properties.ConstantProperties;
-import com.webank.oracle.base.utils.CryptoUtil;
-import com.webank.oracle.base.utils.DecodeOutputUtils;
-import com.webank.oracle.test.base.BaseTest;
-import com.webank.oracle.transaction.vrf.LibVRF;
-import com.webank.oracle.transaction.vrf.VRF;
-import com.webank.oracle.transaction.vrf.VRFCoordinator;
-import lombok.extern.slf4j.Slf4j;
+import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.fisco.bcos.web3j.abi.datatypes.Address;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
@@ -17,11 +15,16 @@ import org.fisco.bcos.web3j.utils.Numeric;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import com.webank.oracle.base.properties.ConstantProperties;
+import com.webank.oracle.base.utils.CryptoUtil;
+import com.webank.oracle.base.utils.DecodeOutputUtils;
+import com.webank.oracle.test.base.BaseTest;
+import com.webank.oracle.transaction.vrf.LibVRF;
+import com.webank.oracle.transaction.vrf.VRF;
+import com.webank.oracle.transaction.vrf.VRFCoordinator;
+import com.webank.oracle.trial.contract.RandomNumberSampleOracle;
 
-import static com.webank.oracle.event.service.AbstractCoreService.dealWithReceipt;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class VRFTest extends BaseTest {
@@ -29,7 +32,7 @@ public class VRFTest extends BaseTest {
     @Test
     public void testVRF() throws Exception {
 
-        credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+        credentials = GenCredential.create();
 
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
       //  System.out.println(Credentials.create("1").getAddress());
@@ -54,7 +57,7 @@ public class VRFTest extends BaseTest {
     @Test
     public void testVRFCoordinator() throws Exception {
 
-          credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+        credentials = GenCredential.create();
 
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
         log.info(Credentials.create("1").getAddress());
@@ -73,7 +76,7 @@ public class VRFTest extends BaseTest {
 
     @Test
     public void testCalculateTheKeyHash() throws Exception {
-        credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+        credentials = GenCredential.create();
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
         Credentials user = Credentials.create("2");
         log.info(user.getAddress());
@@ -103,7 +106,7 @@ public class VRFTest extends BaseTest {
     @Test
     public void testRandomNumberConsumer() throws Exception {
 
-         credentials = GenCredential.create("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
+         credentials = GenCredential.create();
 
         log.info("deploy vrf coordinator");
         Web3j web3j = getWeb3j(eventRegisterProperties.getEventRegisters().get(0).getChainId(),1);
@@ -116,7 +119,7 @@ public class VRFTest extends BaseTest {
         byte[] keyhashbyte  = calculateTheHashOfPK("b83261efa42895c38c6c2364ca878f43e77f3cddbc922bf57d0d48070f79feb6");
         log.info("deploy consumer  contract");
 
-        RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.deploy(web3j,credentials,ConstantProperties.GAS_PROVIDER,vrfCoordinator.getContractAddress(),keyhashbyte).send();
+        RandomNumberSampleOracle randomNumberConsumer = RandomNumberSampleOracle.deploy(web3j,credentials,ConstantProperties.GAS_PROVIDER,vrfCoordinator.getContractAddress(),keyhashbyte).send();
       // RandomNumberConsumer randomNumberConsumer = RandomNumberConsumer.load("0x0382f73a5924aa2dbf51429421275a8541eb53c3", web3j,credentials,contractGasProvider);
         log.info("consumer address: " + randomNumberConsumer.getContractAddress() );
 
@@ -136,7 +139,7 @@ public class VRFTest extends BaseTest {
         log.info("blocknumber: " + randomevent.blockNumber);
 
         log.info("sender: "+ randomevent.sender);
-        log.info("requestId: " +bytesToHex(randomevent.requestID));
+        log.info("requestId: " +bytesToHex(randomevent.requestId));
         log.info("seedAndBlock:        " +bytesToHex(randomevent.seedAndBlockNum));
 
 //        Tuple2<String, byte[]> callback =  vrfCoordinator.callbacks(randomevent.requestId).send();
