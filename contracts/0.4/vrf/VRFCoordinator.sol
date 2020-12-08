@@ -132,7 +132,7 @@ contract VRFCoordinator is VRF, VRFRequestIDBase {
     address consumerContract) internal {
     // Dummy variable; allows access to method selector in next line. See
     // https://github.com/ethereum/solidity/issues/3506#issuecomment-553727797
-    bytes4 s =  bytes4(keccak256("fulfillRandomness(bytes32,uint256)"));
+    bytes4 s =  bytes4(keccak256("rawFulfillRandomness(bytes32,uint256)"));
     bytes memory resp = abi.encodeWithSelector(
       s, requestId, randomness);
     (bool success,) = consumerContract.call(resp);
