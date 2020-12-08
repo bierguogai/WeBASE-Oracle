@@ -48,6 +48,8 @@ public class ConstantCode {
             "Chain id and group id should great than 0.");
     public static final RetCode NO_CNS_SERVICE_ERROR = RetCode.mark(205010,
             "No cns service error.");
+    public static final RetCode CHECK_CONTRACT_VALID_ERROR = RetCode.mark(205011,
+            "Check contract valid error.");
 
     /* param exception */
     public static final RetCode PARAM_EXCEPTION = RetCode.mark(405000, "param exception");

@@ -15,6 +15,7 @@ import org.fisco.bcos.web3j.precompile.cns.CnsService;
 import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.tuples.generated.Tuple1;
+import org.fisco.bcos.web3j.tuples.generated.Tuple10;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -63,7 +64,9 @@ public class OracleRegisterCenterService {
      */
     private void checkOrDeployOracleRegisterCenterContract(){
         log.info("Start to check if oracle register center deployed...");
-        String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
+
+        String nameAndVersion = constantProperties.getRegisterContractName()+":"+constantProperties.getRegisterContractVersion();
+        log.info("cns NameAndVersion: [{}]", nameAndVersion);
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
             return;
@@ -147,7 +150,7 @@ public class OracleRegisterCenterService {
      * @param url
      * @param publicKeyList
      */
-    private void registerServiceToCenterOfChainAndGroup(int chainId, int groupId, String operator, String url, List<BigInteger> publicKeyList){
+    private void registerServiceToCenterOfChainAndGroup(int chainId, int groupId, String operator, String url, List<BigInteger> publicKeyList)  {
         // get web3j
         Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
 
@@ -165,8 +168,8 @@ public class OracleRegisterCenterService {
 
         try {
             // check if oracle service already register
-            TransactionReceipt serviceExists = registerCenter.isOracleExist(this.keyStoreService.getKeyStoreInfo().getAddress()).send();
-            if (registerCenter.getIsOracleExistOutput(serviceExists).getValue1()){
+            Boolean serviceExists = registerCenter.isOracleExist(this.keyStoreService.getKeyStoreInfo().getAddress()).send();
+            if (serviceExists){
                 log.info("This service is already register to oracle register center");
                 return;
             }
@@ -177,6 +180,8 @@ public class OracleRegisterCenterService {
             log.info("This service register to chain:[{}:{}] success, receipt status:[{}]", chainId, groupId, oracleRegisterReceipt.getStatus());
         } catch (Exception e) {
             log.error("This service register to chain:[{}:{}] error", chainId, groupId);
+            //log.error("  error stack: {}",e.getStackTrace());
+            e.printStackTrace();
         }
     }
 
@@ -210,30 +215,24 @@ public class OracleRegisterCenterService {
         OracleRegisterCenter registerCenter = OracleRegisterCenter.load(registerCenterAddress, web3j, credentials, ConstantProperties.GAS_PROVIDER);
 
         // get all oracle service address list
-        TransactionReceipt sendReceipt = registerCenter.getAllOracleServiceInfo().send();
-        log.info("Get all oracle service list on chain:[{}:{}], receipt status:[{}]", chainId, groupId, sendReceipt.getStatus());
-        dealWithReceipt(sendReceipt);
-        Tuple1<List<String>> serviceListTuple1 = registerCenter.getGetAllOracleServiceInfoOutput(sendReceipt);
-        if (serviceListTuple1 == null || CollectionUtils.isEmpty(serviceListTuple1.getValue1())) {
+        List<String> allServiceInfo = registerCenter.getAllOracleServiceInfo().send();
+
+        if (allServiceInfo == null || CollectionUtils.isEmpty(allServiceInfo)) {
             log.error("Not oracle service registered.");
             return Collections.emptyList();
         }
 
         // get oracle info list by address list
-        return serviceListTuple1.getValue1().stream().map((address) -> {
-            TransactionReceipt oracleServiceInfoReceipt = null;
+        return allServiceInfo.stream().map(address -> {
             try {
                 // TODO. sync to DB
-                oracleServiceInfoReceipt = registerCenter.getOracleServiceInfo(address).send();
-                log.info("Get oracle service info on chain:[{}:{}], receipt status:[{}]",
-                        chainId, groupId, oracleServiceInfoReceipt.getStatus());
-                dealWithReceipt(oracleServiceInfoReceipt);
+                Tuple10 serviceInfo = registerCenter.getOracleServiceInfo(address).send();
 
                 // convert output to oracle service info
-                return OracleServiceInfo.build(registerCenter.getGetOracleServiceInfoOutput(oracleServiceInfoReceipt));
+                return OracleServiceInfo.build(serviceInfo);
             } catch (Exception e) {
-                log.error("Get oracle service info on chain:[{}:{}] error, receipt status:[{}]",
-                        chainId, groupId, oracleServiceInfoReceipt.getStatus());
+                log.error("Get oracle service info on chain:[{}:{}] error,",
+                        chainId, groupId);
                 return null;
             }
         }).filter((service) -> service != null).collect(Collectors.toList());
@@ -246,7 +245,7 @@ public class OracleRegisterCenterService {
      * @throws Exception
      */
     public String getRegisterCenterAddress(int chainId, int groupId){
-        String nameAndVersion = constantProperties.getRegisterContractNameAndVersion();
+        String nameAndVersion = constantProperties.getRegisterContractName()+":"+constantProperties.getRegisterContractVersion();
         if (StringUtils.isBlank(nameAndVersion)) {
             log.error("Register center contract name and version not configured.");
             throw new OracleException(ConstantCode.REGISTER_CONTRACT_NOT_CONFIGURED);

@@ -1,4 +1,4 @@
-name: Docker Build And Push To Docker Hub
+name: Docker Hub
 
 on:
 #  schedule:
@@ -11,7 +11,7 @@ on:
 #  pull_request:
 
 env:
-  DOCKER_REPOSITORY: yuanmomo/weoracle-service
+  DOCKER_REPOSITORY: yuanmomo/trustoracle-service
 
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
             #- name: Copy nginx config file
             #  id: copy-nginx-file
             #  run: |
-            #    cp ./docker/weoracle-web.conf dist/
+            #    cp ./docker/trustoracle-web.conf dist/
 
       - name: Build and push
         id: docker_build

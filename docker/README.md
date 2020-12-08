@@ -1,38 +1,38 @@
-# WeOracle Docker 部署
+# TrustOracle Docker 部署
 
-**提示：** 使用 Docker 部署 WeOracle 服务时，**当前仅支持 `Linux` 操作系统！！**
+**提示：** 使用 Docker 部署 TrustOracle 服务时，**当前仅支持 `Linux` 操作系统！！**
 
 ##  部署架构
-WeOracle 服务支持使用 Docker 进行部署和运行。
+TrustOracle 服务支持使用 Docker 进行部署和运行。
 
-同时，在部署 WeOracle 服务时，会同时部署一个 WeBASE-Front（Solidity 合约的开发和调试环境）服务，作为 Oracle 的开发和调试环境。
+同时，在部署 TrustOracle 服务时，会同时部署一个 WeBASE-Front（Solidity 合约的开发和调试环境）服务，作为 Oracle 的开发和调试环境。
 
-WeOracle 使用 Docker 模式的部署结构如下：
+TrustOracle 使用 Docker 模式的部署结构如下：
 
-![WeOracle-Docker-deploy](../img/WeOracle-Docker-Deploy.png)
+![TrustOracle-Docker-deploy](../img/TrustOracle-Docker-Deploy.png)
 
 
 * **WeBASE-Front**
 
     WeBASE-Front 是 [WeBASE](https://webasedoc.readthedocs.io/zh_CN/latest/docs/WeBASE-Front/README.html) 的一个子系统服务，针对 FISCO-BCOS 区块链服务提供 Solidity 合约的可视化开发，编译，部署和调试功能。
-    在进行 WeOracle 相关业务的合约开发和调试时，可以使用 WeBASE-Front 中的合约 IDE，方便合约的开发和调试，大大提高开发效率。
+    在进行 TrustOracle 相关业务的合约开发和调试时，可以使用 WeBASE-Front 中的合约 IDE，方便合约的开发和调试，大大提高开发效率。
 
-* **WeOracle-Web**
+* **TrustOracle-Web**
     
-    WeOracle-Web 是 WeOracle 服务的前端 Web，主要包含四个功能：
+    TrustOracle-Web 是 TrustOracle 服务的前端 Web，主要包含四个功能：
     * 分页查询 Oracle 请求历史记录
     * 单个查询 Oracle 请求明细（请求状态），
-    * WeOracle-Service 内置合约地址查询
-    * 查询所有 WeOracle-Service 服务列表
+    * TrustOracle-Service 内置合约地址查询
+    * 查询所有 TrustOracle-Service 服务列表
 
-* **WeOracle-Service**
+* **TrustOracle-Service**
 
-    WeOracle-Service 是 WeOracle 的服务端：
-    * 监听 FISCO-BCOS 链上 WeOracle 合约的事件
+    TrustOracle-Service 是 TrustOracle 的服务端：
+    * 监听 FISCO-BCOS 链上 TrustOracle 合约的事件
     * 接收链上事件，调用 Http API 接口或 VRF 随机数生成库，获取结果
     * 结果上链，供用户合约查询
     
-    具体，关于 WeOracle 原理，请参考：[Oracle-Service 原理介绍](../README.md#原理简介)
+    具体，关于 TrustOracle 原理，请参考：[Oracle-Service 原理介绍](../README.md#原理简介)
 
 
 ## 部署
@@ -56,7 +56,7 @@ WeOracle 使用 Docker 模式的部署结构如下：
 
 
 ### 一键部署脚本
-WeOracle Docker 模式部署，提供一键脚本 `deploy.sh` 部署工具：
+TrustOracle Docker 模式部署，提供一键脚本 `deploy.sh` 部署工具：
 
 * 自动安装 `OpenSSL, curl, wget, Docker, Docker Compose` 等依赖服务
 * 调用 FISCO-BCOS 一键部署脚本 `build_chain.sh`，部署 4 个区块链底层节点
@@ -100,7 +100,7 @@ Usage:
 
     -w        WeBASE-Front version, default v1.4.2
     -f        FISCO-BCOS version, default v2.6.0.
-    -o        WeOracle version, default v0.4.
+    -o        TrustOracle version, default v0.4.
     -i        Organization of docker images, default fiscoorg.
     -h        Show help info.
 ```
@@ -114,12 +114,12 @@ Usage:
 * `-h`：显示帮助文档
 
 * `-i`：
-    * **仅开发 WeOracle 服务时使用**。指定 Docker 镜像的组织名称。例如指定为: `testorg`，Docker 的拉取镜像命令就变成：`docker pull testorg/weoracle-service:${version}`。默认值：`fiscoorg`
+    * **仅开发 TrustOracle 服务时使用**。指定 Docker 镜像的组织名称。例如指定为: `testorg`，Docker 的拉取镜像命令就变成：`docker pull testorg/trustoracle-service:${version}`。默认值：`fiscoorg`
 
 ### 启动
-如果一键脚本 `deploy.sh` 执行成功后显示 `Deploy WeOracle service SUCCESS!!` ，表示部署成功。
+如果一键脚本 `deploy.sh` 执行成功后显示 `Deploy TrustOracle service SUCCESS!!` ，表示部署成功。
 
-使用 `bash start.sh` 脚本启动 WeOracle 服务。
+使用 `bash start.sh` 脚本启动 TrustOracle 服务。
 
 ### 停止
-使用 `bash stop.sh` 脚本停止 WeOracle 服务。
+使用 `bash stop.sh` 脚本停止 TrustOracle 服务。

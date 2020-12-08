@@ -8,7 +8,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @SpringBootApplication
-//@EnableJpaRepositories( basePackages = "com.webank.oracle.repository" )
 @EnableTransactionManagement
 public class Application {
 

@@ -1,4 +1,4 @@
-pragma solidity 0.6.6;
+pragma solidity ^0.6.6;
 
 import "./VRFConsumerBase.sol";
 
@@ -12,7 +12,6 @@ contract RandomNumberConsumer is VRFConsumerBase {
             _coordinator // VRF Coordinator
         ) public
     {
-         // keyHash = 0xeedf1a9c68b3f4a8b1a1032b2b5ad5c4795c026514f8317c7a215e218dccd6cf;
           keyHash = _keyHash;
     }
 

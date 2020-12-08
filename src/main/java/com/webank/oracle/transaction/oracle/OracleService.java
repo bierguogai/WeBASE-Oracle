@@ -56,8 +56,17 @@ public class OracleService extends AbstractCoreService {
     }
 
     @Override
+    public boolean isContractAddressValid(int chainId, int groupId, String contractAddress) {
+        try {
+            return OracleCore.load(contractAddress, web3jMapService.getNotNullWeb3j(chainId, groupId),
+                    keyStoreService.getCredentials(), ConstantProperties.GAS_PROVIDER).isValid();
+        } catch (Exception e) {
+            throw new OracleException(ConstantCode.CHECK_CONTRACT_VALID_ERROR);
+        }
+    }
+
+    @Override
     protected String deployContract(int chainId, int groupId) {
-        // check deployed ?
         Credentials credentials = keyStoreService.getCredentials();
         OracleCore oraliceCore = null;
         try {
@@ -120,7 +129,8 @@ public class OracleService extends AbstractCoreService {
             TransactionReceipt receipt = oracleCore.fulfillRequest(Numeric.hexStringToByteArray(requestId),
                     // TODO. safe convert ????? biginteger
                     oracleCoreLogResult.getCallbackAddress(), oracleCoreLogResult.getExpiration(), afterTimesAmount).send();
-            log.info("Write data to chain:[{}]", receipt.getStatus());
+            log.info("Write data to chain status: [{}], output:[{}]", receipt.getStatus(),receipt.getOutput());
+
             dealWithReceipt(receipt);
             log.info("upBlockChain success chainId: {}  groupId: {} . contractAddress:{} data:{} requestId:{}", chainId, groupId, contractAddress, afterTimesAmount, requestId);
         } catch (OracleException oe) {

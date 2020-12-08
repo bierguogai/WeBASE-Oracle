@@ -167,6 +167,7 @@ public abstract class AbstractEventCallback extends EventLogPushWithDecodeCallba
             log.error("Deploy contract error");
             return;
         }
+        // todo  add service name
         log.info("Deploy contract on group of chain:[{}:{}:{}],", eventRegister.getChainId(), eventRegister.getGroup(), contractAddress);
         this.setContractAddress(eventRegister, contractAddress);
 
