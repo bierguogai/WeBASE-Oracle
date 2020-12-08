@@ -11,7 +11,7 @@ abstract contract FiscoOracleClient {
   uint256 private requestCount = 1;
   mapping(bytes32 => address) private pendingRequests;
   mapping (address => uint) private reqc;
-  uint256 constant public EXPIRY_TIME = 10 minutes;
+  uint256 constant public EXPIRY_TIME = 10*60*1000;
 
   event Requested(bytes32 indexed id);
   event Fulfilled(bytes32 indexed id);
