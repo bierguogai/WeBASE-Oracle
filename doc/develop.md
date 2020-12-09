@@ -2,7 +2,10 @@
 
 
 ### 方式一：获取链下API数据
- 用户可以参考contracts/0.4/oracle/APIConsumer.sol合约实现自己的oracle合约。  
+ 用户可以参考contracts/0.4/oracle/APISampleOracle.sol合约实现自己的oracle合约。 只须改动url值即可。  
+ oracleCoreAddress地址可以通过界面或者接口(http://ip:5012/Oracle-Service/oracle/address?chainId=1&groupId=1)查询到。  
+   
+ 
   必须继承FiscoOracleClient合约即可。实现__callback方法，以便oracle-service将结果回写。  
   在request方法中填入要获取的链下url。  
   url格式：  
@@ -17,17 +20,18 @@ pragma solidity ^0.6.0;
 
 import "./FiscoOracleClient.sol";
 
-contract APIConsumer is FiscoOracleClient {
+contract APISampleOracle is FiscoOracleClient {
 
 
-    //指定处理请求的oracle
+    //指定处理的oracle
     address private oracleCoreAddress;
-  
 
     // Multiply the result by 1000000000000000000 to remove decimals
     uint256 private timesAmount  = 10**18;
 
-    mapping(bytes32=>int256) resultMap;
+    mapping(bytes32=>int256) private resultMap;
+
+    mapping(bytes32=>bool) private validIds;
 
     int256 public result;
     string url;
@@ -40,30 +44,32 @@ contract APIConsumer is FiscoOracleClient {
     function request() public returns (bytes32 requestId)
     {
 
-        // Set the URL to perform the GET request on
-         url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
-
-        // Sends the request
-        return sendRequestTo(oracleCoreAddress, url, timesAmount);
+          // Set your URL
+          // url = "plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)";
+         url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
+         bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
+         validIds[requestId] = true;
     }
 
     /**
-     * Receive the response in the form of uint256
+     * Receive the response in the form of int256
      */
     function __callback(bytes32 _requestId, int256 _result) public override onlyOracleCoreInvoke(_requestId)
     {
+        require(validIds[_requestId], "id must be not used!") ;
         resultMap[_requestId]= _result;
+        delete validIds[_requestId];
         result = _result ;
     }
 
 
-      function getResult()  public view  returns(int256){
+      function get()  public view  returns(int256){
          return result;
       }
 }
 ```
 
-### VRF获取可验证随机数
+### VRF获取可验证随机数(暂不支持国密)
   
   用户合约开发只需继承VRFConsumerBase（contracts/0.4/oracle目录下）合约即可。必须实现fulfillRandomness方法，以便oracle-service将结果回写。
 
