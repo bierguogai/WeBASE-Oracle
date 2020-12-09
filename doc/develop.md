@@ -2,7 +2,7 @@
 
 
 ### 方式一：获取链下API数据
- 用户可以参考contracts/0.4/oracle/APISampleOracle.sol合约实现自己的oracle合约。 只须改动url值即可。  
+ 用户可以参考contracts/0.4/sol-0.4/oracle/APISampleOracle.sol合约实现自己的oracle合约。 只须改动url值即可。  
  oracleCoreAddress地址可以通过界面或者接口(http://ip:5012/Oracle-Service/oracle/address?chainId=1&groupId=1)查询到。  
    
  
@@ -16,7 +16,7 @@
    合约解析如下：  
 ```
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.4.4;
 
 import "./FiscoOracleClient.sol";
 
@@ -49,6 +49,8 @@ contract APISampleOracle is FiscoOracleClient {
          url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
          bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
          validIds[requestId] = true;
+         return requestId;
+          
     }
 
     /**

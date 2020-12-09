@@ -127,7 +127,7 @@ sdk:
 ## 6. 查询不同不同链和群组的oracle-core合约地址
 
 ```
-http://{deployIP}:{port}/Oracle-Service/oracle/oracle-core-address?chainId=1&groupId=1
+http://{deployIP}:{port}/Oracle-Service/oracle/address?chainId=1&groupId=1
 示例：http://localhost:5102/Oracle-Service/oracle/address?chainId=1&groupId=1
 ```
 
