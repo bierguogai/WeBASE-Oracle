@@ -24,8 +24,8 @@ contract OracleCore is  Ownable {
   );
 
   constructor()
-    public
-    Ownable()
+  public
+  Ownable()
   {
 
   }
@@ -38,7 +38,7 @@ contract OracleCore is  Ownable {
     uint256 _expiryTime,
     bool _needProof
   )
-    external
+  external
   returns(bool)
   {
     bytes32 requestId = keccak256(abi.encodePacked(_callbackAddress, _nonce));
@@ -57,8 +57,8 @@ contract OracleCore is  Ownable {
       requestId,
       _url,
       expiration,
-     _timesAmount,
-     _needProof);
+      _timesAmount,
+      _needProof);
     return true;
   }
 
@@ -68,7 +68,7 @@ contract OracleCore is  Ownable {
     address _callbackAddress,
     uint256 _expiration,
     uint256 _result,
-    bytes calldata proof
+    bytes  proof
   )
     public
     onlyOwner
