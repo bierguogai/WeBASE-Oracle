@@ -99,6 +99,28 @@ public class CommonUtils {
     }
 
     /**
+     *
+     * @param params
+     * @param fieldName
+     * @return
+     */
+    public static Boolean getBooleanFromEventLog(List<EventResultEntity> params, String fieldName) {
+        return getBooleanFromEventLog(params,fieldName,false);
+    }
+
+    /**
+     *
+     * @param params
+     * @param fieldName
+     * @param defaultValue
+     * @return
+     */
+    public static Boolean getBooleanFromEventLog(List<EventResultEntity> params, String fieldName, boolean defaultValue) {
+        Boolean value = getDataFromEventLog(params, fieldName, Boolean.class);
+        return value == null ? defaultValue : value;
+    }
+
+    /**
      * @param params      Fields of the eventLog
      * @param fieldName   Field names to be returned
      * @param resultClazz Return value type

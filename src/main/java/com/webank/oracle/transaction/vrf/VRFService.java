@@ -119,7 +119,7 @@ public class VRFService extends AbstractCoreService {
         }
 
         String sender = vrfLogResult.getSender();
-        log.debug("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
+        log.info("upBlockChain start. CoordinatorAddress:[{}] sender:[{}] data:[{}] requestId:[{}]",vrfCoordinatorAddress, sender, proof, requestId);
         try {
             Web3j web3j = web3jMapService.getNotNullWeb3j(chainId, groupId);
             Credentials credentials = keyStoreService.getCredentials();
