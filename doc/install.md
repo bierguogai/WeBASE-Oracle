@@ -103,12 +103,13 @@ cd conf
 
 ```  
 
+
   国密配置：  
  ```
 sdk:
   encryptType: 1 #0:standard, 1:guomi
 ``` 
-  
+
 ## 5. 服务启停
 
 返回到dist目录执行：
@@ -127,7 +128,7 @@ sdk:
 
 ```
 http://{deployIP}:{port}/Oracle-Service/oracle/oracle-core-address?chainId=1&groupId=1
-示例：http://localhost:5102/Oracle-Service/oracle/oracle-core-address?chainId=1&groupId=1
+示例：http://localhost:5102/Oracle-Service/oracle/address?chainId=1&groupId=1
 ```
 
 - 部署服务器IP和服务端口需对应修改，网络策略需开通
