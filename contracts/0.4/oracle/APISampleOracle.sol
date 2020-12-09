@@ -31,6 +31,8 @@ contract APISampleOracle is FiscoOracleClient {
          url = "json(https://api.exchangerate-api.com/v4/latest/CNY).rates.JPY";
          bytes32  requestId = oracleQuery(oracleCoreAddress, url, timesAmount);
          validIds[requestId] = true;
+         return requestId;
+          
     }
 
     /**

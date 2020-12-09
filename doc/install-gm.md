@@ -13,7 +13,7 @@
 ## 2. 拉取代码
 执行命令：
 ```
-git clone -b dev-gm https://github.com/WeBankFinTech/WeBASE-Oracle.git
+git clone https://github.com/WeBankFinTech/WeBASE-Oracle.git
 ```
 
 进入目录：

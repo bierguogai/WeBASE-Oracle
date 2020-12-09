@@ -60,7 +60,7 @@ public class CompilerTest {
                 continue;
             }
             // choose file
-            if(!solFile.getName().equals("VRFCoordinator.sol")){
+            if(!solFile.getName().equals("APISampleOracle.sol")){
                 continue;
             }
             SolidityCompiler.Result res =
