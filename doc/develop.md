@@ -1,5 +1,5 @@
  ### 方式一：获取链下API数据
-  用户可以参考 [APISampleOracle.sol](./contracts/0.4/sol-0.4/oracle/APISampleOracle.sol) 合约实现自己的oracle业务合约。  
+  用户可以参考 [APISampleOracle.sol](../contracts/0.4/sol-0.4/oracle/APISampleOracle.sol) 合约实现自己的oracle业务合约。  
   合约解析如下：         
   - 用户合约需继承FiscoOracleClient合约
    ```
