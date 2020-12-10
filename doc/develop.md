@@ -26,14 +26,14 @@
               
         }
    ```
-  - 必须实现 **__callback(bytes32 _requestId, int256 _result)** 方法，用于TrustOracle预言机回调获取的结果。  
+  - 必须实现 **__callback(bytes32 _requestId, int256 _result)** 方法，用于`TrustOracle`预言机回调获取的结果。  
   - **get()** 方法获取本次请求结果, 可自行修改此函数, 获取结果后进行自己业务逻辑的计算。  
   
      
-   ***URL格式规范***
-   目前支持 `json` 和 `text/plain` 两种访问格式。并且链下API的`url`必须支持`HTTPS`访问。
-   遵循`jsonpath`格式，子元素 用 ***"."*** 表示；     
-   `text/plain`默认取第一行；
+   ***URL格式规范***  
+   目前支持 `json` 和 `text/plain` 两种访问格式。并且链下API的`url`必须支持`HTTPS`访问。  
+   `json`格式遵循`jsonpath`格式，子元素 用 ***"."*** 表示；       
+   `text/plain`格式默认取第一行结果值；
   ``` 
      //获取链下随机数API
        plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)
