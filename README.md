@@ -34,7 +34,7 @@
 #### 1.4 设计方案
     
   1 支持用户获取链下API数据     
-    如图![oracle流程图](img/oracle.png)    
+    如图![oracle流程图](img/BSN.png)    
   
 ### 1.5  用户开发指南  
    [快速开发自己的预言机](doc/develop.md)
