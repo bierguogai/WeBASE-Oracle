@@ -1,17 +1,17 @@
  ### 方式一：获取链下API数据
   用户可以参考 [APISampleOracle.sol](../contracts/0.4/sol-0.4/oracle/APISampleOracle.sol) 合约实现自己的oracle业务合约。  
   合约解析如下：         
-  - 用户合约需继承FiscoOracleClient合约
+  - 用户合约需继承 `FiscoOracleClient` 合约
    ```
     contract APISampleOracle is FiscoOracleClient
    ``` 
-  - 构造函数需要传入指定的TrustOracle服务方地址。地址可以通过[接口](./develop.md/#api_get)获取。  
+  - 构造函数需要传入指定的 `TrustOracle` 服务方地址。地址可以通过[接口](./develop.md/#api_get)获取。  
    ```
       constructor(address oracleAddress) public {  
             oracleCoreAddress = oracleAddress;      
       }  
    ```       
-  - 设定自己要访问的url。修改url变量赋值即可。  
+  - 设定自己要访问的 `url`。修改 `url` 变量赋值即可。  
   
    ```
       function request() public returns (bytes32 requestId)
@@ -31,9 +31,9 @@
   
      
    ***URL格式规范***
-   目前支持json和text/plain两种访问格式。并且链下API的url必须支持HTTPS访问。
-   遵循jsonpath格式，子元素 用 ***"."*** 表示；     
-   text/plain默认取第一行；
+   目前支持 `json` 和 `text/plain` 两种访问格式。并且链下API的`url`必须支持`HTTPS`访问。
+   遵循`jsonpath`格式，子元素 用 ***"."*** 表示；     
+   `text/plain`默认取第一行；
   ``` 
      //获取链下随机数API
        plain(https://www.random.org/integers/?num=100&min=1&max=100&col=1&base=10&format=plain&rnd=new)
@@ -48,7 +48,7 @@
 
 ### 获取合约地址
  
-  获取Oracle-Service服务方的Oracle-core合约地址调用一下接口即可。
+  获取 `Oracle-Service` 服务方的 `OracleCore` 合约地址只需调用以下接口即可。
   返回结果中***oracleCoreContractAddress***字段即为结果。
 ```Bash
 http://{deployIP}:{port}/Oracle-Service/oracle/address?chainId=1&groupId=1
